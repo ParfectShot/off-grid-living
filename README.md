@@ -14,7 +14,7 @@ This project uses Turborepo to manage the monorepo structure with two main appli
 ### Prerequisites
 
 - Node.js (v18+)
-- npm or yarn
+- npm or yarn or bun
 
 ### Installation
 
@@ -22,7 +22,7 @@ This project uses Turborepo to manage the monorepo structure with two main appli
 2. Install dependencies:
 
 ```bash
-npm install
+bun install
 ```
 
 ### Development
@@ -30,17 +30,17 @@ npm install
 Run both frontend and backend in development mode:
 
 ```bash
-npm run dev
+bun dev
 ```
 
 Or run specific applications:
 
 ```bash
 # Frontend only
-npm run dev --filter=frontend
+bun dev --filter=web
 
 # Backend only
-npm run dev --filter=backend
+bun dev --filter=api
 ```
 
 ### Building
@@ -48,7 +48,7 @@ npm run dev --filter=backend
 Build all applications:
 
 ```bash
-npm run build
+bun build
 ```
 
 ### Running Production
@@ -56,7 +56,7 @@ npm run build
 Start all applications in production mode:
 
 ```bash
-npm run start
+bun start
 ```
 
 ## Technologies Used
@@ -78,9 +78,9 @@ npm run start
 
 ```
 apps/
-├── frontend/         # React frontend application
+├── web/         # React frontend application
 │   └── src/          # Frontend source code
-├── backend/          # NestJS backend application
+├── api/          # NestJS backend application
 │   └── src/          # Backend source code
 packages/             # Shared packages (future use)
 ```

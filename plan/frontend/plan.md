@@ -4,7 +4,7 @@
 This document outlines the frontend implementation plan for the Off-Grid Living application. The frontend is built using React with TanStack Router and React Query.
 
 ## UI/UX Design Approach
-- [ ] Decide on a component library or custom design system
+- [x] Decide on a component library or custom design system
 - [ ] Establish design principles and guidelines
 - [ ] Create wireframes for key screens
 - [ ] Define responsive design strategy
