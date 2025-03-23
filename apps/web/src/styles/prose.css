@@ -1,0 +1,37 @@
+@layer base {
+  .prose {
+    @apply text-base leading-7 text-foreground;
+  }
+
+  .prose p {
+    @apply mb-4;
+  }
+
+  .prose h2 {
+    @apply mt-10 mb-4 text-2xl font-bold;
+  }
+
+  .prose h3 {
+    @apply mt-8 mb-3 text-xl font-bold;
+  }
+
+  .prose ul {
+    @apply mb-4 list-disc pl-8;
+  }
+
+  .prose li {
+    @apply mb-2;
+  }
+
+  .prose strong {
+    @apply font-bold;
+  }
+
+  .prose a {
+    @apply text-green-600 hover:underline;
+  }
+
+  .prose blockquote {
+    @apply pl-4 italic border-l-4 border-muted my-4;
+  }
+}

@@ -13,6 +13,8 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as PathlessLayoutImport } from './routes/_pathlessLayout'
 import { Route as IndexImport } from './routes/index'
+import { Route as BlogsIndexImport } from './routes/blogs/index'
+import { Route as BlogsIdImport } from './routes/blogs/$id'
 
 // Create/Update Routes
 
@@ -24,6 +26,18 @@ const PathlessLayoutRoute = PathlessLayoutImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BlogsIndexRoute = BlogsIndexImport.update({
+  id: '/blogs/',
+  path: '/blogs/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BlogsIdRoute = BlogsIdImport.update({
+  id: '/blogs/$id',
+  path: '/blogs/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -45,6 +59,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PathlessLayoutImport
       parentRoute: typeof rootRoute
     }
+    '/blogs/$id': {
+      id: '/blogs/$id'
+      path: '/blogs/$id'
+      fullPath: '/blogs/$id'
+      preLoaderRoute: typeof BlogsIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/blogs/': {
+      id: '/blogs/'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof BlogsIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -53,36 +81,46 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof PathlessLayoutRoute
+  '/blogs/$id': typeof BlogsIdRoute
+  '/blogs': typeof BlogsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof PathlessLayoutRoute
+  '/blogs/$id': typeof BlogsIdRoute
+  '/blogs': typeof BlogsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_pathlessLayout': typeof PathlessLayoutRoute
+  '/blogs/$id': typeof BlogsIdRoute
+  '/blogs/': typeof BlogsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | ''
+  fullPaths: '/' | '' | '/blogs/$id' | '/blogs'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | ''
-  id: '__root__' | '/' | '/_pathlessLayout'
+  to: '/' | '' | '/blogs/$id' | '/blogs'
+  id: '__root__' | '/' | '/_pathlessLayout' | '/blogs/$id' | '/blogs/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PathlessLayoutRoute: typeof PathlessLayoutRoute
+  BlogsIdRoute: typeof BlogsIdRoute
+  BlogsIndexRoute: typeof BlogsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PathlessLayoutRoute: PathlessLayoutRoute,
+  BlogsIdRoute: BlogsIdRoute,
+  BlogsIndexRoute: BlogsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -96,7 +134,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_pathlessLayout"
+        "/_pathlessLayout",
+        "/blogs/$id",
+        "/blogs/"
       ]
     },
     "/": {
@@ -104,6 +144,12 @@ export const routeTree = rootRoute
     },
     "/_pathlessLayout": {
       "filePath": "_pathlessLayout.tsx"
+    },
+    "/blogs/$id": {
+      "filePath": "blogs/$id.tsx"
+    },
+    "/blogs/": {
+      "filePath": "blogs/index.tsx"
     }
   }
 }

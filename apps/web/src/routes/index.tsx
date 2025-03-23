@@ -2,12 +2,21 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ArrowRight, Calculator, Home, Newspaper, Star, Sun } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Link } from '@tanstack/react-router'
+import { BlogCard } from '~/components/blog/BlogCard'
 
 export const Route = createFileRoute('/')({
   component: LandingPage,
 })
 
+// Import blog posts data from the blogs page
+import { blogPosts } from '~/data/blogPosts'
+
 function LandingPage() {
+  // Get the 3 most recent blog posts
+  const latestPosts = [...blogPosts]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3)
+
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
@@ -129,29 +138,8 @@ function LandingPage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="group relative overflow-hidden rounded-lg border shadow-sm">
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={`/images/blog-${i}.jpg`}
-                      alt={`Blog post ${i} thumbnail`}
-                      className="object-cover transition-transform group-hover:scale-105 w-full h-full"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-xl font-bold">How to Set Up Your First Solar Panel System</h3>
-                    <p className="mt-2 text-muted-foreground">
-                      A beginner's guide to installing and configuring a small-scale solar power system for your
-                      off-grid home.
-                    </p>
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">March 15, 2023</span>
-                      <Link to="/blogs/1" className="text-sm font-medium text-green-600 hover:underline">
-                        Read More
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+              {latestPosts.map((post) => (
+                <BlogCard key={post.id} post={post} />
               ))}
             </div>
             <div className="flex justify-center">
