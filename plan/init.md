@@ -1,16 +1,17 @@
 # Off-Grid Living Application - Initialization Plan
 
 ## Overview
-This document outlines the initial setup process for the Off-Grid Living application. We're starting with a basic TanStack Router and React Query setup and will build upon it.
+This document outlines the initial setup process for the Off-Grid Living application. We're using a turborepo monorepo setup with a React frontend (utilizing TanStack Router and React Query) and a NestJS backend.
 
 ## Initial Setup Checklist
 
-### 1. Project Structure Cleanup
-- [x] Review and understand the current TanStack Router configuration
-- [x] Review and understand the React Query integration
-- [x] Identify core files that should be preserved (like router.tsx)
-- [x] Create a list of default files to be removed or modified
-- [x] Clear unnecessary boilerplate code while preserving routing and query functionality
+### 1. Project Structure Setup
+- [x] Set up turborepo monorepo structure
+- [x] Configure NestJS backend
+- [x] Configure React frontend with TanStack Router
+- [x] Set up shared packages and libraries
+- [x] Implement proper workspace configuration
+- [x] Configure build scripts and dependencies
 
 ### 2. Core Features Definition
 - [x] Define the primary purpose of the Off-Grid Living application
@@ -31,21 +32,21 @@ This document outlines the initial setup process for the Off-Grid Living applica
 - [ ] Define responsive design strategy
 
 ### 5. State Management Strategy
-- [ ] Determine how to leverage React Query for server state
+- [x] Determine how to leverage React Query for server state
 - [ ] Plan local state management approach
 - [ ] Define caching strategies
 - [ ] Create a data fetching pattern to follow
 
 ### 6. Routing Structure
-- [ ] Map out application routes
+- [x] Map out application routes
 - [ ] Define route parameters and dynamic routes
 - [ ] Plan for protected/authenticated routes
 - [ ] Establish route-level data loading patterns
 
 ### 7. Development Process
 - [ ] Set up testing strategy (unit, integration, e2e)
-- [ ] Establish coding standards and conventions
-- [ ] Create branch strategy for version control
+- [x] Establish coding standards and conventions
+- [x] Create branch strategy for version control
 - [ ] Define PR review process
 
 ### 8. Deployment Planning
@@ -56,10 +57,10 @@ This document outlines the initial setup process for the Off-Grid Living applica
 
 ## Implementation Roadmap
 
-1. **Phase 1: Foundation**
-   - Setup project structure
-   - Implement core routing
-   - Create basic layouts and templates
+1. **Phase 1: Foundation** ✅
+   - Setup monorepo project structure
+   - Configure NestJS backend
+   - Set up React frontend with TanStack Router
 
 2. **Phase 2: Core Features**
    - Implement authentication
@@ -76,15 +77,25 @@ This document outlines the initial setup process for the Off-Grid Living applica
    - Documentation
    - Deployment preparation
 
-## Notes on Existing Setup
+## Monorepo Structure
 
-We currently have a TanStack Router with React Query integration. The router setup includes:
-- Query client initialization
-- Route tree configuration
-- Default error and not found components
+Our turborepo monorepo setup consists of:
 
-This foundation will be preserved as we build the application.
+- **apps/web**: React frontend with TanStack Router and React Query
+- **apps/api**: NestJS backend
+- **packages/**: Shared libraries and utilities
+
+This structure enables code sharing, consistent tooling, and coordinated versioning across our frontend and backend.
+
+## NestJS Backend
+
+The backend is built with NestJS, providing:
+- Modern TypeScript-based architecture
+- Module-based organization
+- Built-in dependency injection
+- Robust API development tools
+- Excellent integration with various databases and services
 
 ## Next Steps
 
-After approval of this plan, we'll begin with Phase 1 by cleaning up the project structure and establishing the core architectural patterns.
+With our monorepo structure in place, we'll now focus on implementing the core features outlined in the frontend and backend plans while maintaining consistency across the application.
