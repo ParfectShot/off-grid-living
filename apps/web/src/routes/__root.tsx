@@ -1,6 +1,5 @@
 import {
   HeadContent,
-  Link,
   Outlet,
   Scripts,
   createRootRouteWithContext,
@@ -13,6 +12,8 @@ import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import appCss from '~/styles/app.css?url'
 import { seo } from '~/utils/seo'
+import { ThemeProvider } from '~/components/theme-provider'
+import { RootLayout } from '~/layouts/RootLayout'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -27,9 +28,8 @@ export const Route = createRootRouteWithContext<{
         content: 'width=device-width, initial-scale=1',
       },
       ...seo({
-        title:
-          'TanStack Start | Type-Safe, Client-First, Full-Stack React Framework',
-        description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+        title: 'Off-Grid Living | Sustainable and Independent Living Resources',
+        description: 'Resources, guides, and tools for living off the grid sustainably and independently.',
       }),
     ],
     links: [
@@ -68,32 +68,44 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <ThemeProvider defaultTheme="system" storageKey="ui-theme">
+      <RootDocument>
+        <RootLayout />
+      </RootDocument>
+    </ThemeProvider>
   )
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* Script to avoid theme flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const storageKey = "ui-theme";
+                  const theme = localStorage.getItem(storageKey);
+                  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches 
+                    ? "dark" 
+                    : "light";
+                  
+                  document.documentElement.classList.remove("light", "dark");
+                  document.documentElement.classList.add(theme === "system" ? systemTheme : theme || systemTheme);
+                } catch (e) {
+                  console.error("Theme initialization failed:", e);
+                }
+              })();
+            `,
+          }}
+        />
       </head>
-      <body>
-        <div className="p-2 flex gap-2 text-lg">
-          <Link
-            to="/"
-            activeProps={{
-              className: 'font-bold',
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Home
-          </Link>{' '}
-        </div>
-        <hr />
+      <body className="relative min-h-screen bg-background font-sans antialiased transition-colors duration-300" suppressHydrationWarning>
         {children}
+        
         <TanStackRouterDevtools position="bottom-right" />
         <ReactQueryDevtools buttonPosition="bottom-left" />
         <Scripts />
