@@ -5,25 +5,25 @@ This document provides a detailed plan for cleaning up the current project struc
 ## Files to Keep
 
 1. **Router Configuration**
-   - `src/router.tsx` - Contains the TanStack router and React Query setup
-   - `src/routeTree.gen.tsx` - Generated route tree file
+   - `apps/frontend/src/router.tsx` - Contains the TanStack router and React Query setup
+   - `apps/frontend/src/routeTree.gen.tsx` - Generated route tree file
 
 2. **Core Components**
-   - `src/components/DefaultCatchBoundary.tsx` - Error boundary component
-   - `src/components/NotFound.tsx` - 404 page component
+   - `apps/frontend/src/components/DefaultCatchBoundary.tsx` - Error boundary component
+   - `apps/frontend/src/components/NotFound.tsx` - 404 page component
 
 ## Files to Create/Modify
 
 1. **Entry Point**
-   - `src/main.tsx` - Clean up and ensure it correctly initializes the router
+   - `apps/frontend/src/main.tsx` - Clean up and ensure it correctly initializes the router
 
 2. **App Structure**
-   - `src/App.tsx` - Simplify to only include router provider
-   - `src/layouts/RootLayout.tsx` - Create a new root layout component
+   - `apps/frontend/src/App.tsx` - Simplify to only include router provider
+   - `apps/frontend/src/layouts/RootLayout.tsx` - Create a new root layout component
 
 3. **Route Structure**
-   - `src/routes/__root.tsx` - Root route component
-   - `src/routes/index.tsx` - Home page route
+   - `apps/frontend/src/routes/__root.tsx` - Root route component
+   - `apps/frontend/src/routes/index.tsx` - Home page route
 
 ## Files to Remove
 
@@ -39,20 +39,32 @@ This document provides a detailed plan for cleaning up the current project struc
 - [x] Keep essential router and query related files intact
 - [x] Create the basic folder structure:
   ```
-  src/
-  ├── components/     # Reusable UI components
-  ├── layouts/        # Page layout components
-  ├── routes/         # Route components
-  ├── hooks/          # Custom React hooks
-  ├── utils/          # Utility functions
-  ├── types/          # TypeScript types/interfaces
-  ├── services/       # API services
-  ├── assets/         # Static assets
-  ├── styles/         # Global styles
-  ├── main.tsx        # Entry point
-  ├── App.tsx         # Main App component
-  ├── router.tsx      # Router configuration
-  └── routeTree.gen.tsx # Generated route tree
+  apps/
+  ├── frontend/         # React frontend application
+  │   ├── src/
+  │   │   ├── components/     # Reusable UI components
+  │   │   ├── layouts/        # Page layout components
+  │   │   ├── routes/         # Route components
+  │   │   ├── hooks/          # Custom React hooks
+  │   │   ├── utils/          # Utility functions
+  │   │   ├── types/          # TypeScript types/interfaces
+  │   │   ├── services/       # API services
+  │   │   ├── assets/         # Static assets
+  │   │   ├── styles/         # Global styles
+  │   │   ├── main.tsx        # Entry point
+  │   │   ├── App.tsx         # Main App component
+  │   │   ├── router.tsx      # Router configuration
+  │   │   └── routeTree.gen.tsx # Generated route tree
+  │   ├── package.json
+  │   └── tsconfig.json
+  ├── backend/          # NestJS backend application
+  │   ├── src/
+  │   │   ├── main.ts
+  │   │   ├── app.module.ts
+  │   │   ├── controllers/
+  │   │   └── services/
+  │   ├── package.json
+  │   └── tsconfig.json
   ```
 - [x] Remove any unnecessary files
 - [x] Test the application to ensure it still works after cleanup
@@ -81,3 +93,18 @@ After completing the cleanup:
 - Simplified the App component to only handle the router provider
 - Established a clean entry point in `main.tsx`
 - Removed unnecessary example routes (posts, users, etc.) from the root component
+
+## Monorepo Configuration
+
+1. **Root Configuration**
+   - Create a `turbo.json` file at the root for Turborepo configuration
+   - Set up root `package.json` with workspace configuration
+   - Configure root-level scripts for managing all packages
+
+2. **Frontend Configuration**
+   - Update path references in TanStack Router setup
+   - Configure build and dev scripts
+
+3. **Backend Configuration**
+   - Configure NestJS application
+   - Set up API endpoints for the frontend
