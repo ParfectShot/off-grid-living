@@ -1,7 +1,7 @@
 {
   "name": "off-grid-living",
   "private": true,
-  "packageManager": "bun@1.2.1",
+  "packageManager": "bun@1.2.5",
   "workspaces": [
     "apps/*",
     "packages/*"
