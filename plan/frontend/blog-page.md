@@ -123,7 +123,8 @@ interface BlogPost {
   readTime: string;
   tags: string[];
   featured: boolean;
-  imageUrl: string;
+  featuredImage: string; // Main image path for the blog post
+  images?: string[]; // Additional images for the article content
   author?: {
     name: string;
     avatar?: string;
@@ -181,7 +182,7 @@ interface Comment {
 - [ ] Implement share functionality
 
 ### Phase 5: Data Integration
-- [ ] Create mock data for development
+- [x] Create mock data for development
 - [ ] Set up API endpoints for blog posts
 - [ ] Integrate data fetching for listing and detail pages
 - [ ] Implement pagination logic
@@ -190,7 +191,9 @@ interface Comment {
 ### Phase 6: Performance & SEO
 - [ ] Implement SEO metadata for blog pages
 - [ ] Add structured data for articles
-- [ ] Optimize images with proper sizing and lazy loading
+- [x] Organize images in proper directory structure
+- [x] Implement image lazy loading
+- [ ] Optimize images with responsive sizing
 - [ ] Implement client-side caching
 - [ ] Add analytics tracking
 
@@ -254,6 +257,34 @@ interface Comment {
 - Use route-based code splitting for detail pages
 - Minimize layout shifts during page load
 
+## Image Management
+
+### Directory Structure
+```
+/public/assets/
+├── blog/
+│   ├── featured/       # Featured blog post images (1200x630px)
+│   └── posts/          # Content images for blog posts (800x600px)
+├── products/
+│   ├── reviews/        # Product review images
+│   └── gallery/        # Product gallery images
+├── icons/              # Site-wide icons
+└── common/             # Common images like logos
+```
+
+### Image Components
+- **ResponsiveImage**: For optimized, responsive image loading
+- **Image**: Base component with lazy loading for all images
+- **BlogHeroImage**: Specialized component for blog hero sections
+
+### Image Best Practices
+1. Use WebP format when available for better performance
+2. Implement proper image sizing for different viewports
+3. Use lazy loading for all images below the fold
+4. Include meaningful alt text for accessibility
+5. Follow consistent naming convention: `category-name-descriptor.jpg`
+
+
 ## Next Steps
 
 1. Create basic route and component structure
@@ -263,3 +294,4 @@ interface Comment {
 5. Build comment system UI components
 6. Connect to actual data source
 7. Optimize for performance and SEO
+8. Optimize image loading and responsive image implementation

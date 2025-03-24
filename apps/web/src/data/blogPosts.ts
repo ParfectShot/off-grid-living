@@ -12,6 +12,11 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "8 min read",
     tags: ["solar", "beginners", "installation"],
     featured: true,
+    featuredImage: "/assets/blog/featured/american-public-power-association-513dBrMJ_5w-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/solar-installation-1.jpg",
+      "/assets/blog/posts/solar-maintenance-2.jpg"
+    ]
   },
   {
     id: 2,
@@ -22,6 +27,11 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "6 min read",
     tags: ["tools", "essentials", "homesteading"],
     featured: false,
+    featuredImage: "/assets/blog/featured/bill-mead-wmaP3Tl80ww-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/tools-1.jpg",
+      "/assets/blog/posts/tools-2.jpg"
+    ]
   },
   {
     id: 3,
@@ -32,6 +42,11 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "10 min read",
     tags: ["water", "sustainability", "DIY"],
     featured: false,
+    featuredImage: "/assets/blog/featured/chelsea-WvusC5M-TM8-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/rainwater-1.jpg",
+      "/assets/blog/posts/rainwater-2.jpg"
+    ]
   },
   {
     id: 4,
@@ -43,6 +58,11 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "12 min read",
     tags: ["construction", "energy-efficiency", "cabin"],
     featured: true,
+    featuredImage: "/assets/blog/featured/ricardo-gomez-angel-IQDWnu2xfRI-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/cabin-1.jpg",
+      "/assets/blog/posts/cabin-2.jpg"
+    ]
   },
   {
     id: 5,
@@ -54,6 +74,11 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "7 min read",
     tags: ["waste", "composting", "bathroom"],
     featured: false,
+    featuredImage: "/assets/blog/featured/justin-lim-Fpcy-AdFhUg-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/composting-1.jpg",
+      "/assets/blog/posts/composting-2.jpg"
+    ]
   },
   {
     id: 6,
@@ -64,6 +89,11 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "9 min read",
     tags: ["gardening", "food", "seasonal"],
     featured: false,
+    featuredImage: "/assets/blog/featured/nuno-marques-0GbrjL3vZF4-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/growing-1.jpg",
+      "/assets/blog/posts/growing-2.jpg"
+    ]
   },
   {
     id: 7,
@@ -74,6 +104,11 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "11 min read",
     tags: ["solar", "batteries", "DIY"],
     featured: true,
+    featuredImage: "/assets/blog/featured/american-public-power-association-XGAZzyLzn18-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/battery-1.jpg",
+      "/assets/blog/posts/battery-2.jpg"
+    ]
   },
   {
     id: 8,
@@ -85,6 +120,11 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "8 min read",
     tags: ["family", "lifestyle", "children"],
     featured: false,
+    featuredImage: "/assets/blog/featured/ricardo-gomez-angel-MagdWoazARo-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/children-1.jpg",
+      "/assets/blog/posts/children-2.jpg"
+    ]
   },
   {
     id: 9,
@@ -95,5 +135,10 @@ export const blogPosts: BlogPostSummary[] = [
     readTime: "7 min read",
     tags: ["winter", "preparation", "maintenance"],
     featured: false,
+    featuredImage: "/assets/blog/featured/vivint-solar-ZEiFiOsV3K4-unsplash.jpg",
+    images: [
+      "/assets/blog/posts/winter-1.jpg",
+      "/assets/blog/posts/winter-2.jpg"
+    ]
   },
 ]

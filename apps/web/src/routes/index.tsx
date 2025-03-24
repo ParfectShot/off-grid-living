@@ -118,7 +118,7 @@ function LandingPage() {
               </div>
               <div className="flex items-center justify-center">
                 <img
-                  src="/images/calculator-preview.jpg"
+                  src="/assets/blog/featured/bill-mead-wmaP3Tl80ww-unsplash.jpg"
                   alt="Solar panel calculator screenshot"
                   className="rounded-lg object-cover shadow-lg w-full max-w-[600px] h-auto"
                 />
@@ -171,7 +171,7 @@ function LandingPage() {
                 <div key={i} className="flex flex-col overflow-hidden rounded-lg border shadow-sm">
                   <div className="aspect-video relative">
                     <img
-                      src={`/images/product-${i}.jpg`}
+                      src={`/assets/blog/featured/yue-chan-j8bxJBbLjIo-unsplash.jpg`}
                       alt={`Product ${i} thumbnail`}
                       className="object-cover w-full h-full"
                     />

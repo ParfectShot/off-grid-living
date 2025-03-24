@@ -13,6 +13,8 @@ export interface BlogPostSummary {
   tags: string[]
   featured?: boolean
   imageUrl?: string
+  featuredImage: string
+  images?: string[]
 }
 
 interface BlogCardProps {
@@ -25,7 +27,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
     <div className="group relative overflow-hidden rounded-lg border shadow-sm bg-card hover:shadow-md transition-shadow">
       <div className="aspect-video overflow-hidden bg-muted">
         <Image
-          src={post.imageUrl || `/placeholder.svg?height=300&width=500&text=${encodeURIComponent(post.title)}`}
+          src={post.featuredImage || `/placeholder.svg?height=300&width=500&text=${encodeURIComponent(post.title)}`}
           width={500}
           height={300}
           alt={post.title}
