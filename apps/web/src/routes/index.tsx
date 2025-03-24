@@ -1,15 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { ArrowRight, Calculator, Home, Newspaper, Star, Sun } from 'lucide-react'
+import { ArrowRight, Calculator, Home, Newspaper, Star, Sun, BookOpen } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Link } from '@tanstack/react-router'
 import { BlogCard } from '~/components/blog/BlogCard'
 
+// Import blog posts data from the blogs page
+import { blogPosts } from '~/data/blogPosts'
+
+// Import featured guides from guides page
+import { featuredGuides } from '~/data/guides'
+
 export const Route = createFileRoute('/')({
   component: LandingPage,
 })
-
-// Import blog posts data from the blogs page
-import { blogPosts } from '~/data/blogPosts'
 
 function LandingPage() {
   // Get the 3 most recent blog posts
@@ -30,10 +33,10 @@ function LandingPage() {
                 Discover resources, tools, and insights to help you build a sustainable, self-sufficient lifestyle.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Button className="bg-green-600 hover:bg-green-700">
+                <Link to="/guides" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 hover:bg-green-700 h-10 px-4 py-2 text-white">
                   Start Your Journey
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                </Link>
                 <Button variant="outline">Learn More</Button>
               </div>
             </div>
@@ -55,9 +58,9 @@ function LandingPage() {
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-4">
               <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
                 <Home className="h-12 w-12 text-green-600" />
-                <h3 className="text-xl font-bold">Home</h3>
+                <h3 className="text-xl font-bold">Guides</h3>
                 <p className="text-center text-muted-foreground">
-                  Get inspired with off-grid home designs and practical living solutions.
+                  Get inspired with off-grid guides and practical living solutions.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
@@ -127,7 +130,66 @@ function LandingPage() {
           </div>
         </section>
         
+        {/* Guides section */}
         <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                  Comprehensive Off-Grid Guides
+                </h2>
+                <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+                  Learn everything you need to know about sustainable living with our detailed guides.
+                </p>
+              </div>
+            </div>
+            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
+              {featuredGuides.map((guide, index) => (
+                <div key={index} className="flex flex-col overflow-hidden rounded-lg border shadow-sm">
+                  <div className="aspect-video relative">
+                    <img
+                      src={guide.image || "/images/placeholder.jpg"}
+                      alt={guide.title}
+                      className="object-cover w-full h-full"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white">
+                        {guide.level}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-1 flex-col p-4">
+                    <h3 className="text-xl font-bold">{guide.title}</h3>
+                    <div className="mt-1 flex items-center text-sm text-muted-foreground">
+                      <BookOpen className="mr-1 h-4 w-4" />
+                      <span>{guide.readTime}</span>
+                    </div>
+                    <p className="mt-2 flex-1 text-muted-foreground">
+                      {guide.description}
+                    </p>
+                    <div className="mt-4 flex items-center justify-end">
+                      <Link to={`/guides/${guide.categorySlug}/${guide.slug}`} className="text-sm font-medium text-green-600 hover:underline">
+                        Read Guide
+                        <ArrowRight className="ml-1 inline h-4 w-4" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-center">
+              <Link 
+                to="/guides" 
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+              >
+                View All Guides
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+        
+        <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -154,7 +216,7 @@ function LandingPage() {
           </div>
         </section>
         
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
@@ -207,7 +269,7 @@ function LandingPage() {
           </div>
         </section>
         
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-16">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
               <div className="space-y-4">

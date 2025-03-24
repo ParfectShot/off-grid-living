@@ -13,11 +13,14 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as PathlessLayoutImport } from './routes/_pathlessLayout'
 import { Route as IndexImport } from './routes/index'
+import { Route as GuidesIndexImport } from './routes/guides/index'
 import { Route as CalculatorsIndexImport } from './routes/calculators/index'
 import { Route as BlogsIndexImport } from './routes/blogs/index'
 import { Route as BlogsIdImport } from './routes/blogs/$id'
+import { Route as GuidesCategoryIndexImport } from './routes/guides/$category/index'
 import { Route as CalculatorsSolarSystemIndexImport } from './routes/calculators/solar-system/index'
 import { Route as CalculatorsHomeLoadIndexImport } from './routes/calculators/home-load/index'
+import { Route as GuidesCategorySlugImport } from './routes/guides/$category/$slug'
 
 // Create/Update Routes
 
@@ -29,6 +32,12 @@ const PathlessLayoutRoute = PathlessLayoutImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GuidesIndexRoute = GuidesIndexImport.update({
+  id: '/guides/',
+  path: '/guides/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -50,6 +59,12 @@ const BlogsIdRoute = BlogsIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const GuidesCategoryIndexRoute = GuidesCategoryIndexImport.update({
+  id: '/guides/$category/',
+  path: '/guides/$category/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const CalculatorsSolarSystemIndexRoute =
   CalculatorsSolarSystemIndexImport.update({
     id: '/calculators/solar-system/',
@@ -60,6 +75,12 @@ const CalculatorsSolarSystemIndexRoute =
 const CalculatorsHomeLoadIndexRoute = CalculatorsHomeLoadIndexImport.update({
   id: '/calculators/home-load/',
   path: '/calculators/home-load/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const GuidesCategorySlugRoute = GuidesCategorySlugImport.update({
+  id: '/guides/$category/$slug',
+  path: '/guides/$category/$slug',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -102,6 +123,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/guides/': {
+      id: '/guides/'
+      path: '/guides'
+      fullPath: '/guides'
+      preLoaderRoute: typeof GuidesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/guides/$category/$slug': {
+      id: '/guides/$category/$slug'
+      path: '/guides/$category/$slug'
+      fullPath: '/guides/$category/$slug'
+      preLoaderRoute: typeof GuidesCategorySlugImport
+      parentRoute: typeof rootRoute
+    }
     '/calculators/home-load/': {
       id: '/calculators/home-load/'
       path: '/calculators/home-load'
@@ -116,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorsSolarSystemIndexImport
       parentRoute: typeof rootRoute
     }
+    '/guides/$category/': {
+      id: '/guides/$category/'
+      path: '/guides/$category'
+      fullPath: '/guides/$category'
+      preLoaderRoute: typeof GuidesCategoryIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -127,8 +169,11 @@ export interface FileRoutesByFullPath {
   '/blogs/$id': typeof BlogsIdRoute
   '/blogs': typeof BlogsIndexRoute
   '/calculators': typeof CalculatorsIndexRoute
+  '/guides': typeof GuidesIndexRoute
+  '/guides/$category/$slug': typeof GuidesCategorySlugRoute
   '/calculators/home-load': typeof CalculatorsHomeLoadIndexRoute
   '/calculators/solar-system': typeof CalculatorsSolarSystemIndexRoute
+  '/guides/$category': typeof GuidesCategoryIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -137,8 +182,11 @@ export interface FileRoutesByTo {
   '/blogs/$id': typeof BlogsIdRoute
   '/blogs': typeof BlogsIndexRoute
   '/calculators': typeof CalculatorsIndexRoute
+  '/guides': typeof GuidesIndexRoute
+  '/guides/$category/$slug': typeof GuidesCategorySlugRoute
   '/calculators/home-load': typeof CalculatorsHomeLoadIndexRoute
   '/calculators/solar-system': typeof CalculatorsSolarSystemIndexRoute
+  '/guides/$category': typeof GuidesCategoryIndexRoute
 }
 
 export interface FileRoutesById {
@@ -148,8 +196,11 @@ export interface FileRoutesById {
   '/blogs/$id': typeof BlogsIdRoute
   '/blogs/': typeof BlogsIndexRoute
   '/calculators/': typeof CalculatorsIndexRoute
+  '/guides/': typeof GuidesIndexRoute
+  '/guides/$category/$slug': typeof GuidesCategorySlugRoute
   '/calculators/home-load/': typeof CalculatorsHomeLoadIndexRoute
   '/calculators/solar-system/': typeof CalculatorsSolarSystemIndexRoute
+  '/guides/$category/': typeof GuidesCategoryIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -160,8 +211,11 @@ export interface FileRouteTypes {
     | '/blogs/$id'
     | '/blogs'
     | '/calculators'
+    | '/guides'
+    | '/guides/$category/$slug'
     | '/calculators/home-load'
     | '/calculators/solar-system'
+    | '/guides/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -169,8 +223,11 @@ export interface FileRouteTypes {
     | '/blogs/$id'
     | '/blogs'
     | '/calculators'
+    | '/guides'
+    | '/guides/$category/$slug'
     | '/calculators/home-load'
     | '/calculators/solar-system'
+    | '/guides/$category'
   id:
     | '__root__'
     | '/'
@@ -178,8 +235,11 @@ export interface FileRouteTypes {
     | '/blogs/$id'
     | '/blogs/'
     | '/calculators/'
+    | '/guides/'
+    | '/guides/$category/$slug'
     | '/calculators/home-load/'
     | '/calculators/solar-system/'
+    | '/guides/$category/'
   fileRoutesById: FileRoutesById
 }
 
@@ -189,8 +249,11 @@ export interface RootRouteChildren {
   BlogsIdRoute: typeof BlogsIdRoute
   BlogsIndexRoute: typeof BlogsIndexRoute
   CalculatorsIndexRoute: typeof CalculatorsIndexRoute
+  GuidesIndexRoute: typeof GuidesIndexRoute
+  GuidesCategorySlugRoute: typeof GuidesCategorySlugRoute
   CalculatorsHomeLoadIndexRoute: typeof CalculatorsHomeLoadIndexRoute
   CalculatorsSolarSystemIndexRoute: typeof CalculatorsSolarSystemIndexRoute
+  GuidesCategoryIndexRoute: typeof GuidesCategoryIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -199,8 +262,11 @@ const rootRouteChildren: RootRouteChildren = {
   BlogsIdRoute: BlogsIdRoute,
   BlogsIndexRoute: BlogsIndexRoute,
   CalculatorsIndexRoute: CalculatorsIndexRoute,
+  GuidesIndexRoute: GuidesIndexRoute,
+  GuidesCategorySlugRoute: GuidesCategorySlugRoute,
   CalculatorsHomeLoadIndexRoute: CalculatorsHomeLoadIndexRoute,
   CalculatorsSolarSystemIndexRoute: CalculatorsSolarSystemIndexRoute,
+  GuidesCategoryIndexRoute: GuidesCategoryIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -218,8 +284,11 @@ export const routeTree = rootRoute
         "/blogs/$id",
         "/blogs/",
         "/calculators/",
+        "/guides/",
+        "/guides/$category/$slug",
         "/calculators/home-load/",
-        "/calculators/solar-system/"
+        "/calculators/solar-system/",
+        "/guides/$category/"
       ]
     },
     "/": {
@@ -237,11 +306,20 @@ export const routeTree = rootRoute
     "/calculators/": {
       "filePath": "calculators/index.tsx"
     },
+    "/guides/": {
+      "filePath": "guides/index.tsx"
+    },
+    "/guides/$category/$slug": {
+      "filePath": "guides/$category/$slug.tsx"
+    },
     "/calculators/home-load/": {
       "filePath": "calculators/home-load/index.tsx"
     },
     "/calculators/solar-system/": {
       "filePath": "calculators/solar-system/index.tsx"
+    },
+    "/guides/$category/": {
+      "filePath": "guides/$category/index.tsx"
     }
   }
 }

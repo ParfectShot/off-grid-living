@@ -24,7 +24,10 @@ This document outlines the frontend implementation plan for the Off-Grid Living 
       - Home Load Calculator (/calculators/home-load) ✅
       - Solar System Calculator (/calculators/solar-system) ⏳
   - Reviews (/reviews, /reviews/[id])
-  - Guides (/guides, /guides/[path])
+  - Guides (/guides, /guides/[path]) ✅
+      - Guides Index (/guides) ✅
+      - Guide Categories (/guides/[category]) ✅
+      - Individual guides (/guides/[category]/[slug]) ✅
 - [x] Define route parameters and dynamic routes
 - [ ] Plan for protected/authenticated routes
 - [ ] Establish route-level data loading patterns
@@ -38,9 +41,9 @@ This document outlines the frontend implementation plan for the Off-Grid Living 
 ## Component Architecture
 - [ ] Define component hierarchy
 - [ ] Plan for component reusability
-- [ ] Establish naming conventions
+- [x] Establish naming conventions
 - [ ] Create shared component library
-- [ ] Design progressive disclosure patterns for guides
+- [x] Design progressive disclosure patterns for guides ✅
 
 ## Performance Optimization
 - [ ] Plan for code splitting
@@ -67,12 +70,12 @@ This document outlines the frontend implementation plan for the Off-Grid Living 
 2. **Phase 2: Feature Implementation**
    - Build authentication UI
    - Implement dashboard views
-   - Create forms and interactive elements ✅ (Calculator forms)
-   - Develop structured guide components
+   - Create forms and interactive elements ✅ (Calculator forms, Guides sections)
+   - Develop structured guide components ✅
 
 3. **Phase 3: Refinement**
    - Add advanced UI features
-   - Implement responsive design ✅ (Home Load Calculator mobile view)
+   - Implement responsive design ✅ (Home Load Calculator mobile view, Guides pages)
    - Optimize loading states
 
 4. **Phase 4: Finalization**

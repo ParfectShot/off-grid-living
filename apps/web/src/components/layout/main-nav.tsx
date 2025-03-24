@@ -58,6 +58,16 @@ export function MainNav({
         Calculators
       </Link>
       <Link
+        to="/guides"
+        activeProps={{
+          className: 'text-green-600 font-bold',
+        }}
+        className={navItemClass}
+        onClick={onClick}
+      >
+        Guides
+      </Link>
+      <Link
         to="/reviews"
         activeProps={{
           className: 'text-green-600 font-bold',
@@ -74,7 +84,6 @@ export function MainNav({
       >
         Get Started
       </Button>
-      {/* Removed theme toggle from bottom of vertical nav */}
     </nav>
   );
 }

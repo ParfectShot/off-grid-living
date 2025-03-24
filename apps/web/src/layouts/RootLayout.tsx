@@ -1,7 +1,7 @@
 import { Link, Outlet } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Header } from '~/components/layout/Header'
-import { MobileMenu } from '~/components/layout/MobileMenu'
+import { Header } from '~/components/layout/main-header'
+import { MobileMenu } from '~/components/layout/mobile-menu'
 
 export function RootLayout({ children }: { children?: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Home, X } from 'lucide-react';
 import { Button } from '~/components/ui/button';
-import { MainNav } from '~/components/layout/MainNav';
+import { MainNav } from '~/components/layout/main-nav';
 
 interface HeaderProps {
   isMobileMenuOpen: boolean;

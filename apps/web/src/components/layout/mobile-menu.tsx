@@ -1,7 +1,7 @@
 import { X } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { ModeToggle } from '~/components/mode-toggle';
-import { MainNav } from './MainNav';
+import { MainNav } from './main-nav';
 
 interface MobileMenuProps {
   setIsMobileMenuOpen: (isOpen: boolean) => void;
