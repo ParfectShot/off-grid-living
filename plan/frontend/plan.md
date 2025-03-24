@@ -16,8 +16,16 @@ This document outlines the frontend implementation plan for the Off-Grid Living 
 - [ ] Create a data fetching pattern to follow
 
 ## Routing Structure
-- [ ] Map out application routes
-- [ ] Define route parameters and dynamic routes
+- [x] Map out application routes
+  - Home (/) ✅
+  - Blogs (/blogs, /blogs/[id]) ✅
+  - Calculators (/calculators, /calculators/[type]) ✅
+      - Calculators Index (/calculators) ✅
+      - Home Load Calculator (/calculators/home-load) ✅
+      - Solar System Calculator (/calculators/solar-system) ⏳
+  - Reviews (/reviews, /reviews/[id])
+  - Guides (/guides, /guides/[path])
+- [x] Define route parameters and dynamic routes
 - [ ] Plan for protected/authenticated routes
 - [ ] Establish route-level data loading patterns
 
@@ -32,6 +40,7 @@ This document outlines the frontend implementation plan for the Off-Grid Living 
 - [ ] Plan for component reusability
 - [ ] Establish naming conventions
 - [ ] Create shared component library
+- [ ] Design progressive disclosure patterns for guides
 
 ## Performance Optimization
 - [ ] Plan for code splitting
@@ -39,21 +48,31 @@ This document outlines the frontend implementation plan for the Off-Grid Living 
 - [ ] Set up performance monitoring
 - [ ] Define performance benchmarks
 
+## Images and Assets
+- [ ] Organize asset directory structure
+- [ ] Create placeholder images for development
+- [ ] Find/create high-quality images for:
+  - [ ] Home page sections
+  - [ ] Calculator preview cards (home load & solar system calculators)
+  - [ ] Blog posts
+  - [ ] Product reviews
+
 ## Implementation Roadmap
 
 1. **Phase 1: Foundation**
-   - Set up project structure
-   - Implement core layouts
-   - Create basic UI components
+   - Set up project structure ✅
+   - Implement core layouts ✅
+   - Create basic UI components ✅
 
 2. **Phase 2: Feature Implementation**
    - Build authentication UI
    - Implement dashboard views
-   - Create forms and interactive elements
+   - Create forms and interactive elements ✅ (Calculator forms)
+   - Develop structured guide components
 
 3. **Phase 3: Refinement**
    - Add advanced UI features
-   - Implement responsive design
+   - Implement responsive design ✅ (Home Load Calculator mobile view)
    - Optimize loading states
 
 4. **Phase 4: Finalization**

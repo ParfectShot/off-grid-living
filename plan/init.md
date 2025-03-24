@@ -15,12 +15,17 @@ This document outlines the initial setup process for the Off-Grid Living applica
 
 ### 2. Core Features Definition
 - [x] Define the primary purpose of the Off-Grid Living application
-- [x] List main features required for MVP (Minimum Viable Product)
+- [x] List main features required for MVP (Minimum Viable Product):
+  - Homepage with key sections
+  - Blog content management
+  - Calculator tools
+  - Product reviews
+  - Structured guides
 - [x] Organize features by priority
 - [x] Establish technical requirements for each feature
 
 ### 3. Data Model Planning
-- [ ] Identify key entities (Users, Properties, Resources, etc.)
+- [ ] Identify key entities (Users, Properties, Resources, Guides, etc.)
 - [ ] Define relationships between entities
 - [ ] Create schema drafts for each entity
 - [ ] Plan API endpoints needed
@@ -66,6 +71,7 @@ This document outlines the initial setup process for the Off-Grid Living applica
    - Implement authentication
    - Build primary features
    - Create data management components
+   - Develop guides framework with hierarchical content structure
 
 3. **Phase 3: Enhancement**
    - Add advanced features

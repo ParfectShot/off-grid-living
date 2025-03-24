@@ -14,11 +14,11 @@ This document outlines the Minimum Viable Product (MVP) for an off-grid living w
 - Footer with essential links
 
 ### Priority 2: Calculator Tools
-- Home load calculator
-  - Basic appliance inventory
-  - Power consumption calculation
-  - Daily/monthly estimates
-- Solar system calculator
+- Home load calculator ✅
+  - Basic appliance inventory ✅
+  - Power consumption calculation ✅
+  - Daily/monthly estimates ✅
+- Solar system calculator ⏳
   - Solar panel requirements based on load
   - Basic system sizing
   - Storage recommendations
@@ -28,6 +28,7 @@ This document outlines the Minimum Viable Product (MVP) for an off-grid living w
 - Blog post detail pages
 - Initial set of educational content
 - Reviews page structure
+- Guides section with structured content paths
 
 ### Priority 4: Engagement Features
 - Newsletter subscription
@@ -59,17 +60,17 @@ This document outlines the Minimum Viable Product (MVP) for an off-grid living w
 ### 3. Calculators Page
 - **Purpose**: Interactive tools to help users plan their off-grid systems
 - **Key Components**:
-  - **Home Load Calculator**
-    - Inventory of household appliances/devices
-    - Power consumption calculation
-    - Daily/monthly usage estimates
-    - Energy-saving recommendations
-  - **Solar System Calculator**
+  - **Home Load Calculator** ✅
+    - Inventory of household appliances/devices ✅
+    - Power consumption calculation ✅
+    - Daily/monthly usage estimates ✅
+    - Energy-saving recommendations ✅
+  - **Solar System Calculator** ⏳
     - Solar panel requirements based on energy needs
     - Battery storage recommendations
     - Cost estimates
     - System sizing guidance
-  - Results saving/sharing functionality
+  - Results saving/sharing functionality ⏳
 
 ### 4. Reviews Page
 - **Purpose**: Honest assessments of solar and off-grid products
@@ -82,6 +83,19 @@ This document outlines the Minimum Viable Product (MVP) for an off-grid living w
     - Installation ease
   - Comparison features
   - User comments/experiences section
+
+### 5. Guides Page
+- **Purpose**: Structured educational content to help users navigate off-grid living concepts
+- **Key Components**:
+  - **Getting Started Guide**
+    - What is off-grid living?
+    - Key considerations (Power needs, Water systems, Initial costs)
+    - Step-by-step approach
+    - Common questions
+  - Clear navigation between guide sections
+  - Visual aids and diagrams
+  - Downloadable/printable versions
+  - Related calculators and tools
 
 ## Technical Requirements
 
@@ -147,21 +161,22 @@ This document outlines the Minimum Viable Product (MVP) for an off-grid living w
 
 ## Implementation Phases
 
-### Phase 1: Core Structure (Weeks 1-2)
+### Phase 1: Core Structure (Weeks 1-2) ✅
 - Set up project architecture
 - Implement responsive layout components 
 - Create navigation and footer
 - Build home page structure
 
 ### Phase 2: Calculator Tools (Weeks 3-4)
-- Develop home load calculator
-- Implement solar system calculator
-- Create results visualization components
+- Develop home load calculator ✅
+- Implement solar system calculator ⏳
+- Create results visualization components ✅
 
 ### Phase 3: Content Pages (Weeks 5-6)
 - Build blog listing and detail pages
 - Implement reviews system
 - Create content management interface
+- Develop structured guides framework
 
 ### Phase 4: Enhancement & Polish (Weeks 7-8)
 - Add search functionality
@@ -178,6 +193,7 @@ This document outlines the Minimum Viable Product (MVP) for an off-grid living w
 | 3 | Load Calculator | Interface, calculation logic, basic styling |
 | 4 | Solar Calculator | Interface, calculation logic, results display |
 | 5 | Blog System | Listing page, category filters, detail view |
+| 5-6 | Guides System | Getting started guide, navigation structure, content formatting |
 | 6 | Reviews System | Product listing, rating components, detail pages |
 | 7 | Refinement | Search functionality, UX improvements |
 | 8 | Finalization | Performance optimization, testing, deployment |
@@ -206,23 +222,28 @@ This document outlines the Minimum Viable Product (MVP) for an off-grid living w
    - Brief explanation of benefits
    - Direct links to each calculator
 
-5. **Blog Posts Preview**
+5. **Guides Showcase**
+   - Featured guides with descriptive icons
+   - Brief description of guide benefits
+   - "Get Started" CTAs for each guide
+
+6. **Blog Posts Preview**
    - 3 latest/featured posts
    - Thumbnail, title, excerpt
    - "View All Posts" link
 
-6. **Product Reviews Preview**
+7. **Product Reviews Preview**
    - Featured product reviews
    - Rating indicators
    - Category links
 
-7. **Newsletter Section**
+8. **Newsletter Section**
    - Brief pitch
    - Email input
    - Subscription button
    - Privacy assurance
 
-8. **Footer**
+9. **Footer**
    - Secondary navigation
    - Social links
    - Contact information
@@ -230,10 +251,10 @@ This document outlines the Minimum Viable Product (MVP) for an off-grid living w
 
 ## Next Steps
 
-1. Finalize technology decisions (component library)
-2. Create detailed wireframes for each page
-3. Develop core layout components
-4. Implement calculator logic
+1. Finalize technology decisions (component library) ✅
+2. Create detailed wireframes for each page ✅
+3. Develop core layout components ✅
+4. Implement calculator logic ✅ (Home Load Calculator)
 5. Begin content creation for blog posts
 
 ## Technical Considerations

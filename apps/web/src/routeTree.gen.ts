@@ -13,8 +13,11 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as PathlessLayoutImport } from './routes/_pathlessLayout'
 import { Route as IndexImport } from './routes/index'
+import { Route as CalculatorsIndexImport } from './routes/calculators/index'
 import { Route as BlogsIndexImport } from './routes/blogs/index'
 import { Route as BlogsIdImport } from './routes/blogs/$id'
+import { Route as CalculatorsSolarSystemIndexImport } from './routes/calculators/solar-system/index'
+import { Route as CalculatorsHomeLoadIndexImport } from './routes/calculators/home-load/index'
 
 // Create/Update Routes
 
@@ -29,6 +32,12 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CalculatorsIndexRoute = CalculatorsIndexImport.update({
+  id: '/calculators/',
+  path: '/calculators/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const BlogsIndexRoute = BlogsIndexImport.update({
   id: '/blogs/',
   path: '/blogs/',
@@ -38,6 +47,19 @@ const BlogsIndexRoute = BlogsIndexImport.update({
 const BlogsIdRoute = BlogsIdImport.update({
   id: '/blogs/$id',
   path: '/blogs/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CalculatorsSolarSystemIndexRoute =
+  CalculatorsSolarSystemIndexImport.update({
+    id: '/calculators/solar-system/',
+    path: '/calculators/solar-system/',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const CalculatorsHomeLoadIndexRoute = CalculatorsHomeLoadIndexImport.update({
+  id: '/calculators/home-load/',
+  path: '/calculators/home-load/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -73,6 +95,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/calculators/': {
+      id: '/calculators/'
+      path: '/calculators'
+      fullPath: '/calculators'
+      preLoaderRoute: typeof CalculatorsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/calculators/home-load/': {
+      id: '/calculators/home-load/'
+      path: '/calculators/home-load'
+      fullPath: '/calculators/home-load'
+      preLoaderRoute: typeof CalculatorsHomeLoadIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/calculators/solar-system/': {
+      id: '/calculators/solar-system/'
+      path: '/calculators/solar-system'
+      fullPath: '/calculators/solar-system'
+      preLoaderRoute: typeof CalculatorsSolarSystemIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -83,6 +126,9 @@ export interface FileRoutesByFullPath {
   '': typeof PathlessLayoutRoute
   '/blogs/$id': typeof BlogsIdRoute
   '/blogs': typeof BlogsIndexRoute
+  '/calculators': typeof CalculatorsIndexRoute
+  '/calculators/home-load': typeof CalculatorsHomeLoadIndexRoute
+  '/calculators/solar-system': typeof CalculatorsSolarSystemIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -90,6 +136,9 @@ export interface FileRoutesByTo {
   '': typeof PathlessLayoutRoute
   '/blogs/$id': typeof BlogsIdRoute
   '/blogs': typeof BlogsIndexRoute
+  '/calculators': typeof CalculatorsIndexRoute
+  '/calculators/home-load': typeof CalculatorsHomeLoadIndexRoute
+  '/calculators/solar-system': typeof CalculatorsSolarSystemIndexRoute
 }
 
 export interface FileRoutesById {
@@ -98,14 +147,39 @@ export interface FileRoutesById {
   '/_pathlessLayout': typeof PathlessLayoutRoute
   '/blogs/$id': typeof BlogsIdRoute
   '/blogs/': typeof BlogsIndexRoute
+  '/calculators/': typeof CalculatorsIndexRoute
+  '/calculators/home-load/': typeof CalculatorsHomeLoadIndexRoute
+  '/calculators/solar-system/': typeof CalculatorsSolarSystemIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/blogs/$id' | '/blogs'
+  fullPaths:
+    | '/'
+    | ''
+    | '/blogs/$id'
+    | '/blogs'
+    | '/calculators'
+    | '/calculators/home-load'
+    | '/calculators/solar-system'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/blogs/$id' | '/blogs'
-  id: '__root__' | '/' | '/_pathlessLayout' | '/blogs/$id' | '/blogs/'
+  to:
+    | '/'
+    | ''
+    | '/blogs/$id'
+    | '/blogs'
+    | '/calculators'
+    | '/calculators/home-load'
+    | '/calculators/solar-system'
+  id:
+    | '__root__'
+    | '/'
+    | '/_pathlessLayout'
+    | '/blogs/$id'
+    | '/blogs/'
+    | '/calculators/'
+    | '/calculators/home-load/'
+    | '/calculators/solar-system/'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,6 +188,9 @@ export interface RootRouteChildren {
   PathlessLayoutRoute: typeof PathlessLayoutRoute
   BlogsIdRoute: typeof BlogsIdRoute
   BlogsIndexRoute: typeof BlogsIndexRoute
+  CalculatorsIndexRoute: typeof CalculatorsIndexRoute
+  CalculatorsHomeLoadIndexRoute: typeof CalculatorsHomeLoadIndexRoute
+  CalculatorsSolarSystemIndexRoute: typeof CalculatorsSolarSystemIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -121,6 +198,9 @@ const rootRouteChildren: RootRouteChildren = {
   PathlessLayoutRoute: PathlessLayoutRoute,
   BlogsIdRoute: BlogsIdRoute,
   BlogsIndexRoute: BlogsIndexRoute,
+  CalculatorsIndexRoute: CalculatorsIndexRoute,
+  CalculatorsHomeLoadIndexRoute: CalculatorsHomeLoadIndexRoute,
+  CalculatorsSolarSystemIndexRoute: CalculatorsSolarSystemIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -136,7 +216,10 @@ export const routeTree = rootRoute
         "/",
         "/_pathlessLayout",
         "/blogs/$id",
-        "/blogs/"
+        "/blogs/",
+        "/calculators/",
+        "/calculators/home-load/",
+        "/calculators/solar-system/"
       ]
     },
     "/": {
@@ -150,6 +233,15 @@ export const routeTree = rootRoute
     },
     "/blogs/": {
       "filePath": "blogs/index.tsx"
+    },
+    "/calculators/": {
+      "filePath": "calculators/index.tsx"
+    },
+    "/calculators/home-load/": {
+      "filePath": "calculators/home-load/index.tsx"
+    },
+    "/calculators/solar-system/": {
+      "filePath": "calculators/solar-system/index.tsx"
     }
   }
 }

@@ -27,11 +27,13 @@ This document tracks the implementation progress of the Off-Grid Living website'
 ## Pending Features
 
 ### Home Page Improvements
+- [ ] Functionality of call-to-action buttons
 - [ ] Add real images for blog posts and product reviews
 - [ ] Implement functional newsletter subscription
 - [ ] Add testimonials section
 - [ ] Create FAQ accordion section
 - [ ] Add social media links
+- [ ] Create guides showcase section with featured guides
 
 ### Performance Optimizations
 - [ ] Optimize images for faster loading
@@ -52,7 +54,7 @@ This document tracks the implementation progress of the Off-Grid Living website'
 - Added close button and animations
 - Prevented body scroll when menu is open
 
-### Theme Toggle (2023-03-23)
+### Theme Toggle (2025-03-23)
 - Added theme toggle in header and mobile menu
 - Implemented system preference detection
 - Fixed flash of unstyled content with client-side script
@@ -63,3 +65,4 @@ This document tracks the implementation progress of the Off-Grid Living website'
 - Implement analytics tracking
 - Add content transitions and animations
 - Create component documentation
+- Develop guides section with content path visualization
