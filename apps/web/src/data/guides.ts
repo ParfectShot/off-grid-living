@@ -45,6 +45,7 @@ export const guideCategories: GuideCategory[] = [
         readTime: "10 min read",
         level: "Beginner",
         lastUpdated: "March 15, 2023",
+        image: "/assets/guides/getting-started/off-grid-cabin.jpeg",
         sections: [
           { id: "introduction", title: "Introduction" },
           { id: "definition", title: "What Does Off-Grid Mean?" },
@@ -62,6 +63,7 @@ export const guideCategories: GuideCategory[] = [
         category: "Getting Started",
         readTime: "8 min read",
         level: "Beginner",
+        image: "/assets/guides/getting-started/off-grid-essentials.jpeg",
       },
       // ...existing code...
     ],
@@ -151,6 +153,7 @@ export const featuredGuides: Guide[] = [
     readTime: "10 min read",
     level: "Beginner",
     lastUpdated: "March 15, 2023",
+    image: "/assets/guides/getting-started/off-grid-cabin.jpeg",
     sections: [
       { id: "introduction", title: "Introduction" },
       { id: "definition", title: "What Does Off-Grid Mean?" },
@@ -169,6 +172,7 @@ export const featuredGuides: Guide[] = [
     category: "Getting Started",
     readTime: "8 min read",
     level: "Beginner",
+    image: "/assets/guides/getting-started/off-grid-essentials.jpeg",
     featured: true,
   },
   // ...existing code...

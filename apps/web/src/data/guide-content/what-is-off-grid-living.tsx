@@ -25,7 +25,7 @@ export const WhatIsOffGridLivingContent = () => {
         </p>
         <div className="relative aspect-video overflow-hidden rounded-lg mb-6">
           <img
-            src="/placeholder.svg?height=600&width=1200&text=Off-Grid+Living"
+            src="/assets/guides/getting-started/off-grid-cabin.jpeg"
             alt="Off-grid cabin in nature"
             className="object-cover w-full h-full"
           />
@@ -291,7 +291,7 @@ export const WhatIsOffGridLivingContent = () => {
           <TabsContent value="rural" className="space-y-4 pt-4">
             <div className="aspect-video relative overflow-hidden rounded-lg">
               <img
-                src="/placeholder.svg?height=400&width=800&text=Rural+Homestead"
+                src="/assets/guides/getting-started/rural-off-grid-homestead.jpeg"
                 alt="Rural off-grid homestead"
                 className="object-cover w-full h-full"
               />
@@ -325,7 +325,7 @@ export const WhatIsOffGridLivingContent = () => {
           <TabsContent value="urban" className="space-y-4 pt-4">
             <div className="aspect-video relative overflow-hidden rounded-lg">
               <img
-                src="/placeholder.svg?height=400&width=800&text=Urban+Off-Grid"
+                src="/assets/guides/getting-started/urban-off-grid-home.jpeg"
                 alt="Urban off-grid home"
                 className="object-cover w-full h-full"
               />
@@ -359,7 +359,7 @@ export const WhatIsOffGridLivingContent = () => {
           <TabsContent value="mobile" className="space-y-4 pt-4">
             <div className="aspect-video relative overflow-hidden rounded-lg">
               <img
-                src="/placeholder.svg?height=400&width=800&text=Mobile+Off-Grid"
+                src="/assets/guides/getting-started/mobile-off-grid-living.jpeg"
                 alt="Mobile off-grid living"
                 className="object-cover w-full h-full"
               />
