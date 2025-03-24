@@ -24,7 +24,6 @@ import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import Image from '~/components/ui/image'
 import { BlogCard } from '~/components/blog/BlogCard'
-import ProseCss from '~/styles/prose.css'
 import { blogPosts } from '~/data/blogPosts'
 
 export const Route = createFileRoute('/blogs/$id')({
@@ -89,6 +88,7 @@ const getRelatedPosts = (relatedIds: number[]) => {
       category: "Tools & Equipment",
       readTime: "6 min read",
       tags: ["tools", "essentials", "homesteading"],
+      featuredImage: "/assets/blog/featured/bill-mead-wmaP3Tl80ww-unsplash.jpg",
     },
     {
       id: 3,
@@ -98,6 +98,7 @@ const getRelatedPosts = (relatedIds: number[]) => {
       category: "Water Systems",
       readTime: "10 min read",
       tags: ["water", "sustainability", "DIY"],
+      featuredImage: "/assets/blog/featured/chelsea-WvusC5M-TM8-unsplash.jpg",
     },
     {
       id: 7,
@@ -107,6 +108,7 @@ const getRelatedPosts = (relatedIds: number[]) => {
       category: "Solar Energy",
       readTime: "11 min read",
       tags: ["solar", "batteries", "DIY"],
+      featuredImage: "/assets/blog/featured/american-public-power-association-513dBrMJ_5w-unsplash.jpg",
     },
   ]
 
@@ -166,7 +168,7 @@ function BlogPostPage() {
             {/* Featured image */}
             <div className="relative aspect-video overflow-hidden rounded-lg mb-8">
               <Image
-                src={`/placeholder.svg?height=600&width=1200&text=Featured+Image`}
+                src={`${post.featuredImage || "/placeholder.svg?height=600&width=1200&text=Featured+Image"}`}
                 alt={post.title}
                 width={1200}
                 height={600}

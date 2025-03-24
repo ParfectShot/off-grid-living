@@ -87,8 +87,8 @@ function LandingPage() {
         
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-16">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-              <div className="space-y-4">
+            <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-12">
+              <div className="space-y-4 md:w-1/2">
                 <div className="inline-block rounded-lg bg-green-100 px-3 py-1 text-sm text-green-600">
                   Featured Tools
                 </div>
@@ -99,7 +99,7 @@ function LandingPage() {
                   Our specialized calculators help you determine your energy needs and design the perfect solar system
                   for your off-grid home.
                 </p>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <div className="flex flex-col gap-2 md:flex-row">
                   <Link 
                     to="/calculators/home-load" 
                     className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 text-white hover:bg-green-700 h-10 px-4 py-2"
@@ -116,11 +116,11 @@ function LandingPage() {
                   </Link>
                 </div>
               </div>
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center md:w-1/2">
                 <img
                   src="/assets/blog/featured/bill-mead-wmaP3Tl80ww-unsplash.jpg"
                   alt="Solar panel calculator screenshot"
-                  className="rounded-lg object-cover shadow-lg w-full max-w-[600px] h-auto"
+                  className="rounded-lg object-cover shadow-lg w-full max-w-11/12 h-auto"
                 />
               </div>
             </div>
