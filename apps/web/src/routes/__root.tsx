@@ -115,7 +115,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <SpeedInsights />
         <Analytics mode="production" />
         
-        <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-2YSE678JXW"></script>
         <script>
           window.dataLayer = window.dataLayer || [];
