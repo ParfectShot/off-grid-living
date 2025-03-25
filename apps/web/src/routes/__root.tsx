@@ -56,6 +56,11 @@ export const Route = createRootRouteWithContext<{
       { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
       { rel: 'icon', href: '/favicon.ico' },
     ],
+    scripts: [
+      {
+        src: "https://www.googletagmanager.com/gtag/js?id=G-2YSE678JXW",
+      }
+    ],
   }),
   errorComponent: (props) => {
     return (
@@ -66,6 +71,15 @@ export const Route = createRootRouteWithContext<{
   },
   notFoundComponent: () => <NotFound />,
   component: RootComponent,
+  scripts: [
+    {
+      children: `window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-2YSE678JXW');`,
+    }
+  ]
 })
 
 function RootComponent() {
@@ -114,15 +128,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
         <SpeedInsights />
         <Analytics mode="production" />
-        
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2YSE678JXW"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-        
-          gtag('config', 'G-2YSE678JXW');
-        </script>
 
       </body>
     </html>
