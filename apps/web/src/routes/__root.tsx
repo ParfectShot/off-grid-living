@@ -66,11 +66,6 @@ export const Route = createRootRouteWithContext<{
   },
   notFoundComponent: () => <NotFound />,
   component: RootComponent,
-  scripts: [
-    {
-      children: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-2YSE678JXW');`,
-    }
-  ]
 })
 
 function RootComponent() {
@@ -111,6 +106,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         />
         <meta name="google-site-verification" content="TT6Q0Nw9rcPnAj7v0eSZ38s6IPDZigFvz5m9Owzuq-M" />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-2YSE678JXW"></script>
+        <script dangerouslySetInnerHTML={{
+          __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-2YSE678JXW');`
+        }}></script>
       </head>
       <body className="relative min-h-screen bg-background font-sans antialiased transition-colors duration-300" suppressHydrationWarning>
         {children}
