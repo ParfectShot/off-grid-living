@@ -104,6 +104,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             `,
           }}
         />
+        <meta name="google-site-verification" content="TT6Q0Nw9rcPnAj7v0eSZ38s6IPDZigFvz5m9Owzuq-M" />
       </head>
       <body className="relative min-h-screen bg-background font-sans antialiased transition-colors duration-300" suppressHydrationWarning>
         {children}
