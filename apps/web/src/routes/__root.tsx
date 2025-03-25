@@ -112,7 +112,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ReactQueryDevtools buttonPosition="bottom-left" />
         <Scripts />
         <SpeedInsights />
-        <Analytics mode="production />
+        <Analytics mode="production" />
       </body>
     </html>
   )
