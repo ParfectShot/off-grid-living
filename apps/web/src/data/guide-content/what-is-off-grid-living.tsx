@@ -5,14 +5,14 @@ import {
   DollarSign,
   Calculator,
   ArrowRight,
-} from "lucide-react"
-import { Link } from "@tanstack/react-router"
+} from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
-import { Button } from "~/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table"
-import { Badge } from "~/components/ui/badge"
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Badge } from "~/components/ui/badge";
 
 export const WhatIsOffGridLivingContent = () => {
   return (
@@ -20,8 +20,10 @@ export const WhatIsOffGridLivingContent = () => {
       {/* Guide introduction */}
       <div id="introduction" className="space-y-4 mb-10">
         <p className="text-xl text-muted-foreground">
-          An introduction to the concept, benefits, and challenges of living off the grid, and why more people
-          are choosing this lifestyle.
+          Dreaming of a life powered by the sun and independent from the grid? You're not alone. Off-grid
+          living is a growing movement driven by a desire for sustainability, self-reliance, and a closer
+          connection with nature. This guide provides an introduction to the concept, benefits, and challenges
+          of living off the grid, and explores why more people are choosing this lifestyle.
         </p>
         <div className="relative aspect-video overflow-hidden rounded-lg mb-6">
           <img
@@ -51,21 +53,23 @@ export const WhatIsOffGridLivingContent = () => {
           <ul className="list-disc pl-5 space-y-1">
             <li>
               <strong>Energy Independence:</strong> Generating your own power through solar, wind, micro-hydro,
-              or other renewable sources
+              or other renewable sources <em>ensures you're not reliant on the public electricity grid.</em>
             </li>
             <li>
               <strong>Water Self-Sufficiency:</strong> Collecting, storing, and treating your own water supply
+              <em>provides independence from municipal water systems.</em>
             </li>
             <li>
               <strong>Food Production:</strong> Growing, raising, foraging, or hunting a significant portion of
-              your food
+              your food <em>reduces reliance on traditional grocery supply chains.</em>
             </li>
             <li>
               <strong>Waste Management:</strong> Handling waste through composting toilets, greywater systems,
-              and other sustainable methods
+              and other sustainable methods <em>minimizes the need for public sewage systems.</em>
             </li>
             <li>
               <strong>Reduced Consumption:</strong> Living with less and being mindful of resource usage
+              <em>is a core principle of self-sufficient living.</em>
             </li>
           </ul>
         </div>
@@ -163,114 +167,6 @@ export const WhatIsOffGridLivingContent = () => {
           Many people who transition to off-grid living report a greater sense of purpose, reduced stress, and
           improved quality of life. The direct connection between daily actions and their consequences creates a
           more mindful approach to living.
-        </p>
-      </section>
-
-      {/* Challenges to Consider */}
-      <section id="challenges" className="scroll-mt-20 space-y-4 mb-10">
-        <h2 className="text-2xl font-bold tracking-tight">Challenges to Consider</h2>
-        <p>
-          While off-grid living offers many benefits, it's important to approach this lifestyle with a realistic
-          understanding of the challenges involved:
-        </p>
-
-        <Table className="my-6">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Challenge</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="w-[150px]">Difficulty</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">Initial Investment</TableCell>
-              <TableCell>
-                Setting up off-grid systems (solar, water collection, etc.) requires significant upfront costs
-                before realizing long-term savings.
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className="bg-red-50 text-red-600 hover:bg-red-50">
-                  High
-                </Badge>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Technical Knowledge</TableCell>
-              <TableCell>
-                Maintaining off-grid systems requires learning new skills and understanding various
-                technologies.
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className="bg-amber-50 text-amber-600 hover:bg-amber-50">
-                  Medium
-                </Badge>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Weather Dependence</TableCell>
-              <TableCell>
-                Renewable energy systems are affected by weather patterns, requiring backup systems and careful
-                planning.
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className="bg-amber-50 text-amber-600 hover:bg-amber-50">
-                  Medium
-                </Badge>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Legal Restrictions</TableCell>
-              <TableCell>
-                Building codes, zoning laws, and regulations can limit off-grid options in many areas.
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className="bg-red-50 text-red-600 hover:bg-red-50">
-                  High
-                </Badge>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Physical Labor</TableCell>
-              <TableCell>
-                Off-grid living often requires more physical work than conventional living arrangements.
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className="bg-amber-50 text-amber-600 hover:bg-amber-50">
-                  Medium
-                </Badge>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Isolation</TableCell>
-              <TableCell>
-                Many off-grid properties are in remote locations, which can lead to social isolation.
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className="bg-amber-50 text-amber-600 hover:bg-amber-50">
-                  Medium
-                </Badge>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Limited Resources</TableCell>
-              <TableCell>
-                You may need to adapt to using less water, electricity, and other resources than in conventional
-                living.
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline" className="bg-green-50 text-green-600 hover:bg-green-50">
-                  Low
-                </Badge>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-
-        <p>
-          Understanding these challenges is not meant to discourage you, but rather to help you prepare
-          adequately. Many off-grid dwellers find that overcoming these challenges is part of what makes the
-          lifestyle rewarding.
         </p>
       </section>
 
@@ -399,6 +295,38 @@ export const WhatIsOffGridLivingContent = () => {
         </p>
       </section>
 
+      {/* Challenges Preview */}
+      <section id="challenges" className="scroll-mt-20 space-y-4 mb-10">
+        <h2 className="text-2xl font-bold tracking-tight">Challenges to Consider</h2>
+        <p>
+          While off-grid living offers many benefits, it's important to approach this lifestyle with a realistic
+          understanding of the challenges involved.
+        </p>
+
+        <div className="bg-muted p-6 rounded-lg my-6">
+          <h3 className="font-semibold mb-2">Key Challenges Include:</h3>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>Initial investment costs for solar systems, water collection, and other infrastructure</li>
+            <li>Technical knowledge required to maintain and troubleshoot systems</li>
+            <li>Weather dependence affecting energy production</li>
+            <li>Legal restrictions and zoning laws that may limit off-grid options</li>
+            <li>Physical labor demands and ongoing maintenance requirements</li>
+          </ul>
+          <div className="mt-4">
+            <Link to="/guides/getting-started/key-considerations" className="text-green-600 flex items-center hover:underline font-medium">
+              <ArrowRight className="h-4 w-4 mr-1" />
+              Read our detailed "Key Considerations" guide for a comprehensive analysis of these challenges
+            </Link>
+          </div>
+        </div>
+
+        <p>
+          Understanding these challenges is not meant to discourage you, but rather to help you prepare
+          adequately. Many off-grid dwellers find that overcoming these challenges is part of what makes the
+          lifestyle rewarding.
+        </p>
+      </section>
+
       {/* Resources & Next Steps */}
       <section id="resources" className="scroll-mt-20 space-y-4 mb-10">
         <h2 className="text-2xl font-bold tracking-tight">Resources & Next Steps</h2>
@@ -495,5 +423,5 @@ export const WhatIsOffGridLivingContent = () => {
         </div>
       </section>
     </>
-  )
-}
+  );
+};

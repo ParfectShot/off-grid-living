@@ -28,13 +28,24 @@ export interface GuideCategory {
   guides: Guide[]
 }
 
-// Guide categories with their respective guides
+// Add navigation metadata to categories
+export interface GuideCategoryWithMeta extends GuideCategory {
+  // Auto-generated navigation from guides array
+  navigation?: {
+    title: string;
+    slug: string;
+    next?: string;
+    current?: boolean;
+  }[];
+}
+
+// Updated guide categories with guides from multiple categories
 export const guideCategories: GuideCategory[] = [
   {
     title: "Getting Started",
     description: "Essential information for beginners looking to transition to off-grid living",
     slug: "getting-started",
-    icon: "Lightbulb", // Using string name instead of JSX component
+    icon: "Lightbulb",
     guides: [
       {
         title: "What is Off-Grid Living?",
@@ -50,8 +61,8 @@ export const guideCategories: GuideCategory[] = [
           { id: "introduction", title: "Introduction" },
           { id: "definition", title: "What Does Off-Grid Mean?" },
           { id: "benefits", title: "Benefits of Off-Grid Living" },
-          { id: "challenges", title: "Challenges to Consider" },
           { id: "types", title: "Types of Off-Grid Living" },
+          { id: "challenges", title: "Challenges to Consider" },
           { id: "resources", title: "Resources & Next Steps" },
         ],
       },
@@ -65,7 +76,40 @@ export const guideCategories: GuideCategory[] = [
         level: "Beginner",
         image: "/assets/guides/getting-started/off-grid-essentials.jpeg",
       },
-      // ...existing code...
+      {
+        title: "Step-by-Step Approach",
+        description: "A detailed guide to planning and executing your off-grid living journey",
+        slug: "step-by-step-approach",
+        categorySlug: "getting-started",
+        category: "Getting Started",
+        readTime: "12 min read",
+        level: "Intermediate",
+        image: "/assets/guides/getting-started/step-by-step-approach.jpeg",
+      },
+      {
+        title: "Common Questions About Off-Grid Living",
+        description: "Answers to frequently asked questions about the practical realities of off-grid living",
+        slug: "common-questions",
+        categorySlug: "getting-started",
+        category: "Getting Started",
+        readTime: "15 min read",
+        level: "Beginner",
+        lastUpdated: "April 10, 2023",
+        image: "/assets/guides/getting-started/common-questions.jpeg",
+        sections: [
+          { id: "introduction", title: "Introduction" },
+          { id: "finding-land", title: "Finding Suitable Land" },
+          { id: "power-sources", title: "Power Sources" },
+          { id: "water-needs", title: "Water Systems" },
+          { id: "waste-management", title: "Waste Management" },
+          { id: "shelter-types", title: "Shelter Options" },
+          { id: "heating", title: "Heating Solutions" },
+          { id: "connectivity", title: "Staying Connected" },
+          { id: "motivations", title: "Motivations" },
+          { id: "initial-challenges", title: "Initial Challenges" },
+        ],
+      }
+      // ...existing guides for Getting Started if any...
     ],
   },
   {
@@ -142,6 +186,28 @@ export const guideCategories: GuideCategory[] = [
   },
 ]
 
+// Process guide categories to add navigation metadata
+export const processCategoryNavigation = (categorySlug: string, currentSlug?: string): GuideCategoryWithMeta | undefined => {
+  const category = guideCategories.find(cat => cat.slug === categorySlug);
+  if (!category) return undefined;
+  
+  // Create a copy with navigation metadata
+  const processedCategory: GuideCategoryWithMeta = {
+    ...category,
+    navigation: category.guides.map((guide, index) => {
+      const nextGuide = category.guides[index + 1];
+      return {
+        title: guide.title,
+        slug: guide.slug,
+        current: guide.slug === currentSlug,
+        ...(nextGuide ? { next: nextGuide.slug } : {})
+      };
+    })
+  };
+  
+  return processedCategory;
+};
+
 // Featured guides to highlight
 export const featuredGuides: Guide[] = [
   {
@@ -175,55 +241,64 @@ export const featuredGuides: Guide[] = [
     image: "/assets/guides/getting-started/off-grid-essentials.jpeg",
     featured: true,
   },
-  // ...existing code...
+  // ...existing featured guides...
 ]
 
-// Helper functions
+// Updated helper functions to be generic across all categories
 export function findGuideBySlug(categorySlug: string, guideSlug: string): Guide | undefined {
-  const category = guideCategories.find(cat => cat.slug === categorySlug);
-  if (!category) return undefined;
-  
-  return category.guides.find(guide => guide.slug === guideSlug);
+  // Search the guide categories matching the given categorySlug and guideSlug.
+  for (const cat of guideCategories) {
+    // If a categorySlug was provided, filter by it; otherwise check all categories.
+    if (categorySlug && cat.slug !== categorySlug) continue;
+    const guide = cat.guides.find(g => g.slug === guideSlug);
+    if (guide) return guide;
+  }
+  return undefined;
 }
 
 export function getRelatedGuides(currentGuide: Guide, limit: number = 3): Guide[] {
-  // First, find guides in the same category
+  // First, try to get guides from the same category.
   const sameCategory = guideCategories
     .find(cat => cat.slug === currentGuide.categorySlug)?.guides
-    .filter(guide => guide.slug !== currentGuide.slug) || [];
+    .filter(guide => guide.slug !== currentGuide.slug) || []
   
-  // If we have enough guides in the same category, return them
-  if (sameCategory.length >= limit) {
-    return sameCategory.slice(0, limit);
-  }
-  
-  // Otherwise, add guides from other categories
-  let result = [...sameCategory];
-  
-  // Add featured guides if needed
+  let result = sameCategory.slice(0, limit);
+
+  // If not enough, add featured guides first (excluding currentGuide)
   if (result.length < limit) {
     const featuredToAdd = featuredGuides
-      .filter(guide => 
-        guide.slug !== currentGuide.slug && 
-        !result.some(g => g.slug === guide.slug)
-      )
+      .filter(guide => guide.slug !== currentGuide.slug && !result.some(g => g.slug === guide.slug))
       .slice(0, limit - result.length);
-    
     result = [...result, ...featuredToAdd];
   }
   
-  // Add more guides if still needed
+  // If still not enough, collect guides globally.
   if (result.length < limit) {
     const otherGuides = guideCategories
       .flatMap(cat => cat.guides)
-      .filter(guide => 
-        guide.slug !== currentGuide.slug && 
-        !result.some(g => g.slug === guide.slug)
-      )
+      .filter(guide => guide.slug !== currentGuide.slug && !result.some(g => g.slug === guide.slug))
       .slice(0, limit - result.length);
-    
     result = [...result, ...otherGuides];
   }
   
   return result.slice(0, limit);
+}
+
+// Helper function to get guide navigation data
+export function getGuideNavigation(categorySlug: string, currentSlug: string) {
+  const category = processCategoryNavigation(categorySlug, currentSlug);
+  return category?.navigation || [];
+}
+
+// Helper to find the next and previous guides
+export function getAdjacentGuides(categorySlug: string, currentSlug: string) {
+  const navigation = getGuideNavigation(categorySlug, currentSlug);
+  const currentIndex = navigation.findIndex(item => item.slug === currentSlug);
+  
+  return {
+    prevItem: currentIndex > 0 ? navigation[currentIndex - 1] : null,
+    nextItem: currentIndex >= 0 && navigation[currentIndex].next
+      ? navigation.find(item => item.slug === navigation[currentIndex].next)
+      : null
+  };
 }

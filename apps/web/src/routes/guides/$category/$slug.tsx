@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { Link, useParams, createFileRoute } from "@tanstack/react-router"
 import {
   ArrowRight,
@@ -13,8 +13,13 @@ import {
 
 import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
-import { findGuideBySlug, getRelatedGuides } from "~/data/guides"
-import { WhatIsOffGridLivingContent } from "~/data/guide-content/what-is-off-grid-living"
+import { 
+  findGuideBySlug, 
+  getRelatedGuides, 
+  getGuideNavigation,
+  getAdjacentGuides
+} from "~/data/guides"
+import { getGuideContent } from "~/data/guide-registry"
 
 export const Route = createFileRoute('/guides/$category/$slug')({
   component: GuideDetailPage,
@@ -28,18 +33,15 @@ function GuideDetailPage() {
   const guide = findGuideBySlug(category, slug)
   const relatedGuides = guide ? getRelatedGuides(guide, 3) : []
   
-  // For our MVP, we're only implementing the "what-is-off-grid-living" guide
-  // In a production app, we would dynamically import guide content based on the slug
-  const guideContent = slug === "what-is-off-grid-living" ? <WhatIsOffGridLivingContent /> : null
-
-  // Navigation for "Getting Started" guides - we would make this dynamic in a full implementation
-  const guideNavigation = [
-    { title: "What is Off-Grid Living?", slug: "what-is-off-grid-living", current: slug === "what-is-off-grid-living" },
-    { title: "Key Considerations", slug: "key-considerations", current: slug === "key-considerations" },
-    { title: "Step-by-Step Approach", slug: "step-by-step-approach", current: slug === "step-by-step-approach" },
-    { title: "Common Questions", slug: "common-questions", current: slug === "common-questions" },
-  ]
-
+  // Get guide navigation for the category
+  const guideNavigation = getGuideNavigation(category, slug)
+  
+  // Get adjacent guides for navigation
+  const { prevItem, nextItem } = getAdjacentGuides(category, slug)
+  
+  // Dynamic content loading based on slug
+  const GuideContent = slug ? getGuideContent(slug) : null;
+  
   // Track reading progress
   useEffect(() => {
     const handleScroll = () => {
@@ -263,21 +265,34 @@ function GuideDetailPage() {
               </h1>
 
               {/* Guide content */}
-              {guideContent || (
-                <div className="space-y-4">
-                  <p className="text-xl text-muted-foreground">
-                    {guide.description}
-                  </p>
-                  <div className="my-8 p-4 bg-muted rounded-md">
-                    <p className="text-center">This guide is coming soon. Please check back later.</p>
+              <Suspense fallback={<div className="p-4 text-center">Loading guide content...</div>}>
+                {GuideContent ? (
+                  <GuideContent />
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-xl text-muted-foreground">
+                      {guide.description}
+                    </p>
+                    <div className="my-8 p-4 bg-muted rounded-md">
+                      <p className="text-center">This guide is coming soon. Please check back later.</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </Suspense>
 
               {/* Guide navigation */}
               <div className="flex flex-col sm:flex-row justify-between gap-4 mt-10 pt-6 border-t print:hidden">
-                {/* Show previous guide if available, otherwise disable */}
-                {slug === "what-is-off-grid-living" ? (
+                {prevItem ? (
+                  <Link to={`/guides/${category}/${prevItem.slug}`} className="flex-1">
+                    <Button variant="outline" className="w-full justify-start gap-2 py-8">
+                      <ChevronLeft className="h-4 w-4" />
+                      <div className="text-left">
+                        <div className="text-xs text-muted-foreground">Previous</div>
+                        <div className="text-sm font-medium truncate">{prevItem.title}</div>
+                      </div>
+                    </Button>
+                  </Link>
+                ) : (
                   <Button variant="outline" className="flex-1 justify-start gap-2" disabled>
                     <ChevronLeft className="h-4 w-4" />
                     <div className="text-left">
@@ -285,25 +300,14 @@ function GuideDetailPage() {
                       <div className="text-sm font-medium truncate">No previous guide</div>
                     </div>
                   </Button>
-                ) : (
-                  <Link to={`/guides/${category}/what-is-off-grid-living`} className="flex-1">
-                    <Button variant="outline" className="w-full justify-start gap-2">
-                      <ChevronLeft className="h-4 w-4" />
-                      <div className="text-left">
-                        <div className="text-xs text-muted-foreground">Previous</div>
-                        <div className="text-sm font-medium truncate">What is Off-Grid Living?</div>
-                      </div>
-                    </Button>
-                  </Link>
                 )}
                 
-                {/* Show next guide if available */}
-                {slug === "what-is-off-grid-living" ? (
-                  <Link to={`/guides/${category}/key-considerations`} className="flex-1">
-                    <Button variant="outline" className="w-full justify-end gap-2">
+                {nextItem ? (
+                  <Link to={`/guides/${category}/${nextItem.slug}`} className="flex-1">
+                    <Button variant="outline" className="w-full justify-end gap-2 py-8">
                       <div className="text-right">
                         <div className="text-xs text-muted-foreground">Next</div>
-                        <div className="text-sm font-medium truncate">Key Considerations</div>
+                        <div className="text-sm font-medium truncate">{nextItem.title}</div>
                       </div>
                       <ChevronRight className="h-4 w-4" />
                     </Button>
