@@ -25,9 +25,9 @@ This document outlines the initial setup process for the Off-Grid Living applica
 - [x] Establish technical requirements for each feature
 
 ### 3. Data Model Planning
-- [ ] Identify key entities (Users, Properties, Resources, Guides, etc.)
-- [ ] Define relationships between entities
-- [ ] Create schema drafts for each entity
+- [x] Identify key entities (Users, Properties, Resources, Guides, etc.)
+- [x] Define relationships between entities
+- [x] Create schema drafts for each entity
 - [ ] Plan API endpoints needed
 
 ### 4. UI/UX Design Approach
@@ -92,6 +92,17 @@ Our turborepo monorepo setup consists of:
 - **packages/**: Shared libraries and utilities
 
 This structure enables code sharing, consistent tooling, and coordinated versioning across our frontend and backend.
+
+## Database & State Management
+
+We've implemented Convex as our backend database service, which provides:
+- Real-time data synchronization
+- Type-safe schema definition
+- Simple and intuitive API
+- Excellent performance characteristics
+- Built-in authentication
+
+Our schema currently defines models for products, variants, specifications, brands, and categories, with plans to expand to support blog posts, guides, and user-related functionality.
 
 ## NestJS Backend
 

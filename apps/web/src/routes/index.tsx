@@ -1,24 +1,29 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Calculator, Home, Newspaper, Star, Sun, BookOpen } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Link } from '@tanstack/react-router'
 import { BlogCard } from '~/components/blog/BlogCard'
+import { api } from "~/convex/_generated/api";
 
 // Import blog posts data from the blogs page
 import { blogPosts } from '~/data/blogPosts'
 
 // Import featured guides from guides page
 import { featuredGuides } from '~/data/guides'
+import { convexQuery } from '@convex-dev/react-query';
 
 export const Route = createFileRoute('/')({
   component: LandingPage,
 })
 
 function LandingPage() {
+  const {data} = useSuspenseQuery(convexQuery(api.products.get, {}));
   // Get the 3 most recent blog posts
   const latestPosts = [...blogPosts]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3)
+
 
   return (
     <div className="flex min-h-screen flex-col">
