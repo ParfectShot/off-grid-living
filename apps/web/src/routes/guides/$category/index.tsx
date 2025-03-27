@@ -71,7 +71,7 @@ function GuideCategoryPage() {
             </div>
             {categoryData.guides.length > 0 && (
               <Link to={`/guides/${category}/${categoryData.guides[0].slug}`}>
-                <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
+                <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 hover:bg-green-700 h-10 px-4 py-2 text-white">
                   Start with {categoryData.guides[0].title}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
