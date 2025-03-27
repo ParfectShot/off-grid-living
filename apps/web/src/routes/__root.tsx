@@ -13,15 +13,13 @@ import { Analytics } from '@vercel/analytics/react';
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import appCss from '~/styles/app.css?url'
-import { seo } from '~/utils/seo'
 import { ThemeProvider } from '~/components/theme-provider'
 import { RootLayout } from '~/layouts/RootLayout'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
-  head: (props: any) => {
-    console.log(props)
+  head: () => {
     return {
       meta: [
         {
@@ -31,10 +29,6 @@ export const Route = createRootRouteWithContext<{
           name: 'viewport',
           content: 'width=device-width, initial-scale=1',
         },
-        ...seo({
-          title: 'Off-Grid Living: Cabins, Solar Power & Self-Sufficiency | Off Grid Collective',
-          description: 'Explore the off-grid lifestyle with the Off Grid Collective. Find resources on building cabins, implementing renewable energy solutions, managing waste and water, and connecting with others seeking independence and self-sufficiency',
-        }),
       ],
       links: [
         { rel: 'stylesheet', href: appCss },

@@ -1,20 +1,30 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link } from '@tanstack/react-router'
+import { convexQuery } from '@convex-dev/react-query';
 import { ArrowRight, Calculator, Home, Newspaper, Star, Sun, BookOpen } from 'lucide-react'
 import { Button } from '~/components/ui/button'
-import { Link } from '@tanstack/react-router'
 import { BlogCard } from '~/components/blog/BlogCard'
 import { api } from "~/convex/_generated/api";
+import { seo } from '~/utils/seo';
 
 // Import blog posts data from the blogs page
 import { blogPosts } from '~/data/blogPosts'
-
 // Import featured guides from guides page
 import { featuredGuides } from '~/data/guides'
-import { convexQuery } from '@convex-dev/react-query';
 
 export const Route = createFileRoute('/')({
   component: LandingPage,
+  head: () => {
+    return {
+      meta: [
+        ...seo({
+          title: 'Off-Grid Living: Cabins, Solar Power & Self-Sufficiency | Off Grid Collective',
+          description: 'Explore the off-grid lifestyle with the Off Grid Collective. Find resources on building cabins, implementing renewable energy solutions, managing waste and water, and connecting with others seeking independence and self-sufficiency',
+        }),
+      ]
+    }
+  }
 })
 
 function LandingPage() {
