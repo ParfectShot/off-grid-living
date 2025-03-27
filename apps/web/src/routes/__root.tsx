@@ -20,44 +20,47 @@ import { RootLayout } from '~/layouts/RootLayout'
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
-  head: () => ({
-    meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      ...seo({
-        title: 'Off-Grid Living: Cabins, Solar Power & Self-Sufficiency | Off Grid Collective',
-        description: 'Explore the off-grid lifestyle with the Off Grid Collective. Find resources on building cabins, implementing renewable energy solutions, managing waste and water, and connecting with others seeking independence and self-sufficiency',
-      }),
-    ],
-    links: [
-      { rel: 'stylesheet', href: appCss },
-      {
-        rel: 'apple-touch-icon',
-        sizes: '180x180',
-        href: '/apple-touch-icon.png',
-      },
-      {
-        rel: 'icon',
-        type: 'image/png',
-        sizes: '32x32',
-        href: '/favicon-32x32.png',
-      },
-      {
-        rel: 'icon',
-        type: 'image/png',
-        sizes: '16x16',
-        href: '/favicon-16x16.png',
-      },
-      { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
-      { rel: 'icon', href: '/favicon.ico' },
-      {rel: 'canonical', href: `https://offgridcollective.co/`}
-    ],
-  }),
+  head: (props: any) => {
+    console.log(props)
+    return {
+      meta: [
+        {
+          charSet: 'utf-8',
+        },
+        {
+          name: 'viewport',
+          content: 'width=device-width, initial-scale=1',
+        },
+        ...seo({
+          title: 'Off-Grid Living: Cabins, Solar Power & Self-Sufficiency | Off Grid Collective',
+          description: 'Explore the off-grid lifestyle with the Off Grid Collective. Find resources on building cabins, implementing renewable energy solutions, managing waste and water, and connecting with others seeking independence and self-sufficiency',
+        }),
+      ],
+      links: [
+        { rel: 'stylesheet', href: appCss },
+        {
+          rel: 'apple-touch-icon',
+          sizes: '180x180',
+          href: '/apple-touch-icon.png',
+        },
+        {
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '32x32',
+          href: '/favicon-32x32.png',
+        },
+        {
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '16x16',
+          href: '/favicon-16x16.png',
+        },
+        { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
+        { rel: 'icon', href: '/favicon.ico' },
+        {rel: 'canonical', href: `https://offgridcollective.co/`}
+      ],
+    }
+  },
   errorComponent: (props) => {
     return (
       <RootDocument>

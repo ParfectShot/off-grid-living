@@ -12,8 +12,9 @@ import { seo } from "~/utils/seo"
 export const Route = createFileRoute('/guides/$category/')({
   component: GuideCategoryPage,
   head: () => {
-    const { category } = useParams({});
-    const seoInfo = seoDataMapGuideCategories[category as keyof typeof seoDataMapGuideCategories] || {
+    // const { category } = useParams({});
+    // const seoInfo = seoDataMapGuideCategories[category as keyof typeof seoDataMapGuideCategories] || {
+      const seoInfo = {
       title: 'Off-Grid Guides: Cabins, Renewable Energy & Self-Sufficiency | Off Grid Collective',
       description: 'Find comprehensive guides on off-grid living at the Off Grid Collective...',
     };
@@ -25,9 +26,9 @@ export const Route = createFileRoute('/guides/$category/')({
           description: seoInfo.description,
         }),
       ],
-      links: [
-        { rel: 'canonical', href: `https://offgridcollective.co/guides/${category}` },
-      ],
+      // links: [
+      //   { rel: 'canonical', href: `https://offgridcollective.co/guides/` },
+      // ],
     };
   },
 })
