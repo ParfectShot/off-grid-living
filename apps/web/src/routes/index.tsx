@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/button'
 import { BlogCard } from '~/components/blog/BlogCard'
 import { api } from "~/convex/_generated/api";
 import { seo } from '~/utils/seo';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
 
 // Import blog posts data from the blogs page
 import { blogPosts } from '~/data/blogPosts'
@@ -52,7 +53,7 @@ function LandingPage() {
                   Start Your Journey
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-                <Button variant="outline">Learn More</Button>
+                {/* <Button variant="outline">Learn More</Button> */}
               </div>
             </div>
           </div>
@@ -71,34 +72,61 @@ function LandingPage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-4">
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-                <Home className="h-12 w-12 text-green-600" />
-                <h3 className="text-xl font-bold">Guides</h3>
-                <p className="text-center text-muted-foreground">
-                  Get inspired with off-grid guides and practical living solutions.
-                </p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-                <Newspaper className="h-12 w-12 text-green-600" />
-                <h3 className="text-xl font-bold">Blogs</h3>
-                <p className="text-center text-muted-foreground">
-                  Read stories and advice from experienced off-grid enthusiasts.
-                </p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-                <Calculator className="h-12 w-12 text-green-600" />
-                <h3 className="text-xl font-bold">Calculators</h3>
-                <p className="text-center text-muted-foreground">
-                  Plan your energy needs with our home load and solar system calculators.
-                </p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-                <Star className="h-12 w-12 text-green-600" />
-                <h3 className="text-xl font-bold">Reviews</h3>
-                <p className="text-center text-muted-foreground">
-                  Find the best solar products with our detailed reviews and comparisons.
-                </p>
-              </div>
+              <Link to="/guides" className="block h-full">
+                <Card className="h-full transition-all hover:shadow-md">
+                  <CardHeader className="flex flex-col items-center space-y-2 pb-2">
+                    <Home className="h-12 w-12 text-green-600" />
+                    <CardTitle className="text-xl">Guides</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-center">
+                      Get inspired with off-grid guides and practical living solutions.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+              
+              <Link to="/blogs" className="block h-full">
+                <Card className="h-full transition-all hover:shadow-md">
+                  <CardHeader className="flex flex-col items-center space-y-2 pb-2">
+                    <Newspaper className="h-12 w-12 text-green-600" />
+                    <CardTitle className="text-xl">Blogs</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-center">
+                      Read stories and advice from experienced off-grid enthusiasts.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+              
+              <Link to="/calculators" className="block h-full">
+                <Card className="h-full transition-all hover:shadow-md">
+                  <CardHeader className="flex flex-col items-center space-y-2 pb-2">
+                    <Calculator className="h-12 w-12 text-green-600" />
+                    <CardTitle className="text-xl">Calculators</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-center">
+                      Plan your energy needs with our home load and solar system calculators.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+              
+              <Link to="/reviews" className="block h-full">
+                <Card className="h-full transition-all hover:shadow-md">
+                  <CardHeader className="flex flex-col items-center space-y-2 pb-2">
+                    <Star className="h-12 w-12 text-green-600" />
+                    <CardTitle className="text-xl">Reviews</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-center">
+                      Find the best solar products with our detailed reviews and comparisons.
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
             </div>
           </div>
         </section>
@@ -215,11 +243,19 @@ function LandingPage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-              {latestPosts.map((post) => (
+              {/* {latestPosts.map((post) => (
                 <BlogCard key={post.id} post={post} />
-              ))}
+              ))} */}
+              
+              {/* Coming Soon Banner */}
+              <div className="col-span-full flex flex-col items-center justify-center p-12 border-2 border-dashed border-green-600 rounded-lg bg-green-50">
+                <h3 className="text-2xl font-bold text-green-700 mb-2">Blog Posts Coming Soon!</h3>
+                <p className="text-center text-muted-foreground">
+                  We're working on some amazing content to help you on your off-grid journey. Check back soon!
+                </p>
+              </div>
             </div>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <Link 
                 to="/blogs" 
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
@@ -227,7 +263,7 @@ function LandingPage() {
                 View All Blog Posts
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </div>
+            </div> */}
           </div>
         </section>
         
@@ -244,7 +280,7 @@ function LandingPage() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((i) => (
+              {/* {[1, 2, 3].map((i) => (
                 <div key={i} className="flex flex-col overflow-hidden rounded-lg border shadow-sm">
                   <div className="aspect-video relative">
                     <img
@@ -270,9 +306,17 @@ function LandingPage() {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))} */}
+              
+              {/* Coming Soon Banner */}
+              <div className="col-span-full flex flex-col items-center justify-center p-12 border-2 border-dashed border-green-600 rounded-lg bg-green-50">
+                <h3 className="text-2xl font-bold text-green-700 mb-2">Product Reviews Coming Soon!</h3>
+                <p className="text-center text-muted-foreground">
+                  We're testing and reviewing the best off-grid products to help you make informed decisions. Stay tuned!
+                </p>
+              </div>
             </div>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <Link 
                 to="/reviews" 
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
@@ -280,7 +324,7 @@ function LandingPage() {
                 View All Reviews
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </div>
+            </div> */}
           </div>
         </section>
         

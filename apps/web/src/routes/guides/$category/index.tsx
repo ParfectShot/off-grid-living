@@ -1,11 +1,13 @@
 import { Link, useParams, createFileRoute } from "@tanstack/react-router"
 import { ArrowRight, BookOpen, ChevronRight } from "lucide-react"
+import { useQuery } from "convex/react"
+import { api } from "~/convex/_generated/api"
 
 import { Button } from "~/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
 import { Badge } from "~/components/ui/badge"
 import { GuideIcon } from "~/components/guide-icon"
-import { guideCategories } from "~/data/guides"
+import { Skeleton } from "~/components/ui/skeleton"
 import { seoDataMap as seoDataMapGuideCategories } from "~/data/seo/guides/categories"
 import { seo } from "~/utils/seo"
 
@@ -36,10 +38,18 @@ export const Route = createFileRoute('/guides/$category/')({
 function GuideCategoryPage() {
   const { category } = useParams({ strict: false })
   
-  // Find the category data
-  const categoryData = guideCategories.find(cat => cat.slug === category)
+  // Fetch category data from Convex
+  const categoryData = useQuery(api.guides.getGuideCategoryBySlug, { slug: category })
+  const guides = useQuery(api.guides.getGuideByCategorySlug, { categorySlug: category })
+  const otherCategories = useQuery(api.guides.getGuideCategories) || []
 
-  if (!categoryData) {
+  // Loading states
+  const isLoading = !categoryData || !guides || !otherCategories
+  
+  // Filter out the current category from other categories
+  const filteredOtherCategories = otherCategories.filter(cat => cat.slug !== category)
+
+  if (!isLoading && !categoryData) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
@@ -58,24 +68,39 @@ function GuideCategoryPage() {
       <section className="w-full py-12 md:py-24 lg:py-32 bg-green-50 dark:bg-green-950/30">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="rounded-full bg-green-100 dark:bg-green-900 p-3">
-                <GuideIcon name={categoryData?.icon || "BookOpen"} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">{categoryData.title} Guides</h1>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                {categoryData.description}
-              </p>
-            </div>
-            {categoryData.guides.length > 0 && (
-              <Link to={`/guides/${category}/${categoryData.guides[0].slug}`}>
-                <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 hover:bg-green-700 h-10 px-4 py-2 text-white">
-                  Start with {categoryData.guides[0].title}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+            {isLoading ? (
+              // Loading state for category header
+              <>
+                <Skeleton className="h-12 w-12 rounded-full mb-4" />
+                <div className="space-y-2">
+                  <Skeleton className="h-10 w-64 mx-auto" />
+                  <Skeleton className="h-5 w-full max-w-[700px] mx-auto" />
+                  <Skeleton className="h-5 w-3/4 max-w-[600px] mx-auto" />
+                </div>
+                <Skeleton className="h-10 w-40 mt-4" />
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="rounded-full bg-green-100 dark:bg-green-900 p-3">
+                    <GuideIcon name={categoryData?.icon || "BookOpen"} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">{categoryData.title} Guides</h1>
+                  <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+                    {categoryData.description}
+                  </p>
+                </div>
+                {guides.length > 0 && (
+                  <Link to={`/guides/${category}/${guides[0].slug}`}>
+                    <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 hover:bg-green-700 h-10 px-4 py-2 text-white">
+                      Start with {guides[0].title}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -92,7 +117,9 @@ function GuideCategoryPage() {
             Guides
           </Link>
           <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground font-medium">{categoryData.title}</span>
+          <span className="text-foreground font-medium">
+            {isLoading ? <Skeleton className="h-4 w-20 inline-block" /> : categoryData.title}
+          </span>
         </div>
       </div>
 
@@ -100,29 +127,45 @@ function GuideCategoryPage() {
       <section className="w-full py-12">
         <div className="container px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categoryData.guides.map((guide, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                    <Badge variant="outline">{guide.level}</Badge>
-                    <span className="flex items-center">
-                      <BookOpen className="h-3 w-3 mr-1" />
-                      {guide.readTime}
-                    </span>
-                  </div>
-                  <CardTitle className="text-lg">{guide.title}</CardTitle>
-                  <CardDescription>{guide.description}</CardDescription>
-                </CardHeader>
-                <CardFooter className="pt-2">
-                  <Link to={`/guides/${category}/${guide.slug}`} className="w-full">
-                    <Button className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
-                      Read Guide
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))}
+            {isLoading ? (
+              // Loading skeletons for guides
+              Array(6).fill(0).map((_, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <Skeleton className="h-4 w-20 mb-2" />
+                    <Skeleton className="h-5 w-full mb-2" />
+                    <Skeleton className="h-4 w-full" />
+                  </CardHeader>
+                  <CardFooter>
+                    <Skeleton className="h-9 w-full" />
+                  </CardFooter>
+                </Card>
+              ))
+            ) : (
+              guides.map((guide) => (
+                <Card key={guide._id} className="hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                      <Badge variant="outline">{guide.level}</Badge>
+                      <span className="flex items-center">
+                        <BookOpen className="h-3 w-3 mr-1" />
+                        {guide.readTime}
+                      </span>
+                    </div>
+                    <CardTitle className="text-lg">{guide.title}</CardTitle>
+                    <CardDescription>{guide.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="pt-2">
+                    <Link to={`/guides/${category}/${guide.slug}`} className="w-full">
+                      <Button className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
+                        Read Guide
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -136,10 +179,23 @@ function GuideCategoryPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {guideCategories
-              .filter(cat => cat.slug !== category)
-              .map((cat, index) => (
-                <Card key={index} className="hover:shadow-md transition-shadow">
+            {isLoading ? (
+              // Loading skeletons for other categories
+              Array(3).fill(0).map((_, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <Skeleton className="h-8 w-8 rounded-full mb-2" />
+                    <Skeleton className="h-5 w-full mb-2" />
+                    <Skeleton className="h-4 w-full" />
+                  </CardHeader>
+                  <CardFooter>
+                    <Skeleton className="h-9 w-full" />
+                  </CardFooter>
+                </Card>
+              ))
+            ) : (
+              filteredOtherCategories.map((cat) => (
+                <Card key={cat._id} className="hover:shadow-md transition-shadow">
                   <CardHeader>
                     <div className="flex items-center gap-2 mb-2">
                       <div className="rounded-full bg-green-100 dark:bg-green-900 p-2">
@@ -158,7 +214,8 @@ function GuideCategoryPage() {
                     </Link>
                   </CardFooter>
                 </Card>
-              ))}
+              ))
+            )}
           </div>
         </div>
       </section>

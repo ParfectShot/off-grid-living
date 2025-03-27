@@ -3,6 +3,7 @@ import { ReactNode } from "react"
 export interface GuideSection {
   id: string
   title: string
+  order?: number // Added order property
 }
 
 export interface Guide {
@@ -58,12 +59,12 @@ export const guideCategories: GuideCategory[] = [
         lastUpdated: "March 15, 2023",
         image: "/assets/guides/getting-started/off-grid-cabin.jpeg",
         sections: [
-          { id: "introduction", title: "Introduction" },
-          { id: "definition", title: "What Does Off-Grid Mean?" },
-          { id: "benefits", title: "Benefits of Off-Grid Living" },
-          { id: "types", title: "Types of Off-Grid Living" },
-          { id: "challenges", title: "Challenges to Consider" },
-          { id: "resources", title: "Resources & Next Steps" },
+          { id: "introduction", title: "Introduction", order: 0 },
+          { id: "definition", title: "What Does Off-Grid Mean?", order: 1 },
+          { id: "benefits", title: "Benefits of Off-Grid Living", order: 2 },
+          { id: "types", title: "Types of Off-Grid Living", order: 3 },
+          { id: "challenges", title: "Challenges to Consider", order: 4 },
+          { id: "resources", title: "Resources & Next Steps", order: 5 },
         ],
       },
       {

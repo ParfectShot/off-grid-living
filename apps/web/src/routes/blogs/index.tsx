@@ -23,6 +23,21 @@ export const Route = createFileRoute('/blogs/')({
 function BlogsPage() {
   const featuredPosts = blogPosts.filter(post => post.featured)
   const allTags = Array.from(new Set(blogPosts.flatMap(post => post.tags)))
+
+  return (
+    <div className="flex min-h-screen flex-col p-4">
+      {/* Coming Soon Banner */}
+      <div className="col-span-full flex flex-col items-center justify-center p-12 border-2 border-dashed border-green-600 rounded-lg bg-green-50">
+        <h3 className="text-2xl font-bold text-green-700 mb-2">
+          Blog Posts Coming Soon!
+        </h3>
+        <p className="text-center text-muted-foreground">
+          We're working on some amazing content to help you on your off-grid
+          journey. Check back soon!
+        </p>
+      </div>
+    </div>
+  );
   
   return (
     <div className="flex min-h-screen flex-col">

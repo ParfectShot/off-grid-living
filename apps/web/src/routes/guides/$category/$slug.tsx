@@ -1,5 +1,7 @@
 import { useState, useEffect, Suspense } from "react"
 import { Link, useParams, createFileRoute } from "@tanstack/react-router"
+import { useQuery } from "convex/react"
+import { api } from "~/convex/_generated/api"
 import {
   ArrowRight,
   BookOpen,
@@ -9,19 +11,29 @@ import {
   Bookmark,
   ChevronRight,
   ChevronLeft,
+  Copy,
+  Check,
 } from "lucide-react"
 
 import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
-import { 
-  findGuideBySlug, 
-  getRelatedGuides, 
-  getGuideNavigation,
-  getAdjacentGuides
-} from "~/data/guides"
+import { Skeleton } from "~/components/ui/skeleton"
 import { getGuideContent } from "~/data/guide-registry"
 import { seoDataMap } from "~/data/seo/guides/guides"
 import { seo } from "~/utils/seo"
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from "~/components/ui/accordion"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover"
+import { Input } from "~/components/ui/input"
+import { toast } from "sonner"
 
 export const Route = createFileRoute('/guides/$category/$slug')({
   component: GuideDetailPage,
@@ -29,10 +41,21 @@ export const Route = createFileRoute('/guides/$category/$slug')({
     const {params} = props;
     const { category, slug } = params;
 
-    const seoInfo = seoDataMap[category as keyof typeof seoDataMap]?.[slug as keyof typeof seoDataMap["getting-started"]] || {
+    // Type-safe way to access nested properties
+    let seoInfo = {
       title: 'Off Grid Collective: Guide', // Default title
       description: 'Explore our comprehensive guides on off-grid living.', // Default description
     };
+
+    // Check if category exists in seoDataMap
+    if (category && typeof category === 'string' && category in seoDataMap) {
+      const categoryData = seoDataMap[category as keyof typeof seoDataMap];
+      
+      // Check if slug exists in the category data
+      if (slug && typeof slug === 'string' && slug in categoryData) {
+        seoInfo = categoryData[slug as keyof typeof categoryData];
+      }
+    }
 
     return {
       meta: [
@@ -52,15 +75,39 @@ function GuideDetailPage() {
   const { category, slug } = useParams({ strict: false })
   const [progress, setProgress] = useState(0)
   const [activeSection, setActiveSection] = useState("")
+  const [isShareOpen, setIsShareOpen] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
 
-  const guide = findGuideBySlug(category, slug)
-  const relatedGuides = guide ? getRelatedGuides(guide, 3) : []
+  // Fetch guide data from Convex
+  const guide = useQuery(api.guides.getGuideBySlug, { slug }) 
+  const categoryData = useQuery(api.guides.getGuideCategoryBySlug, { slug: category })
+  const guidesInCategory = useQuery(api.guides.getGuideByCategorySlug, { categorySlug: category })
   
-  // Get guide navigation for the category
-  const guideNavigation = getGuideNavigation(category, slug)
+  // Loading states
+  const isLoading = !guide || !categoryData || !guidesInCategory
+  
+  // Generate guide navigation data
+  const guideNavigation = !isLoading ? guidesInCategory.map((g, index) => {
+    const nextGuide = guidesInCategory[index + 1];
+    return {
+      title: g.title,
+      slug: g.slug,
+      current: g.slug === slug,
+      ...(nextGuide ? { next: nextGuide.slug } : {})
+    };
+  }) : []
   
   // Get adjacent guides for navigation
-  const { prevItem, nextItem } = getAdjacentGuides(category, slug)
+  const currentIndex = guideNavigation.findIndex(item => item.slug === slug)
+  const prevItem = currentIndex > 0 ? guideNavigation[currentIndex - 1] : null
+  const nextItem = currentIndex >= 0 && guideNavigation[currentIndex].next
+    ? guideNavigation.find(item => item.slug === guideNavigation[currentIndex].next)
+    : null
+  
+  // Get related guides (simplified version)
+  const relatedGuides = !isLoading 
+    ? guidesInCategory.filter(g => g.slug !== slug).slice(0, 3)
+    : []
   
   // Dynamic content loading based on slug
   const GuideContent = slug ? getGuideContent(slug) : null;
@@ -81,14 +128,15 @@ function GuideDetailPage() {
 
   // Set initial active section
   useEffect(() => {
-    if (guide?.sections?.length) {
-      setActiveSection(guide.sections[0].id)
+    if (!guide) return;
+    if (guide.sections.length) {
+      setActiveSection(guide.sections[0].sectionId)
     }
   }, [guide])
 
   // Handle section visibility tracking
   useEffect(() => {
-    if (!guide?.sections?.length) return;
+    if (!guide) return;
 
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
@@ -105,7 +153,7 @@ function GuideDetailPage() {
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     
     guide.sections.forEach(section => {
-      const element = document.getElementById(section.id);
+      const element = document.getElementById(section.sectionId);
       if (element) observer.observe(element);
     });
 
@@ -117,7 +165,32 @@ function GuideDetailPage() {
     window.print()
   }
 
-  if (!guide) {
+  // Handle share functionality
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
+  
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(currentUrl)
+      setIsCopied(true)
+      toast.success("Link copied to clipboard!")
+      
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setIsCopied(false)
+      }, 2000)
+    } catch (err) {
+      toast.error("Failed to copy link")
+    }
+  }
+  
+  // Auto-copy to clipboard when popover opens
+  useEffect(() => {
+    if (isShareOpen) {
+      copyToClipboard()
+    }
+  }, [isShareOpen])
+
+  if (!isLoading && !guide) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
@@ -130,6 +203,11 @@ function GuideDetailPage() {
       </div>
     )
   }
+
+  // Find the primary category
+  const primaryCategory = !isLoading && guide && guide.categories 
+    ? guide.categories.find(cat => cat.isPrimary)?.title || categoryData.title
+    : categoryData?.title;
 
   return (
     <>
@@ -155,60 +233,46 @@ function GuideDetailPage() {
             </Link>
             <ChevronRight className="h-4 w-4" />
             <Link to={`/guides/${category}`} className="hover:text-foreground">
-              {guide.category}
+              {isLoading ? <Skeleton className="h-4 w-20 inline-block" /> : categoryData.title}
             </Link>
             <ChevronRight className="h-4 w-4" />
-            <span className="text-foreground font-medium">{guide.title}</span>
+            <span className="text-foreground font-medium">
+              {isLoading ? <Skeleton className="h-4 w-32 inline-block" /> : guide.title}
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Left sidebar - Guide navigation */}
             <div className="lg:col-span-1 print:hidden">
               <div className="sticky top-24 space-y-6">
                 <div className="space-y-2">
-                  <h2 className="text-lg font-semibold">{guide.category} Guide</h2>
-                  <div className="space-y-1">
-                    {guideNavigation.map((item, index) => (
-                      <Link
-                        key={index}
-                        to={`/guides/${category}/${item.slug}`}
-                        className={`flex items-center p-2 rounded-md text-sm ${
-                          item.current ? "bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 font-medium" : "hover:bg-muted"
-                        }`}
-                      >
-                        {item.current && <ChevronRight className="h-4 w-4 mr-1" />}
-                        {item.title}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
-                {/* On this page - section navigation */}
-                {guide.sections && (
-                  <div className="space-y-2">
-                    <h2 className="text-sm font-semibold text-muted-foreground">ON THIS PAGE</h2>
-                    <div className="space-y-1">
-                      {guide.sections.map((section) => (
-                        <a
-                          key={section.id}
-                          href={`#${section.id}`}
-                          className={`flex items-center p-2 rounded-md text-sm ${
-                            activeSection === section.id
-                              ? "bg-muted text-foreground font-medium"
-                              : "text-muted-foreground hover:text-foreground"
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            document.getElementById(section.id)?.scrollIntoView({ behavior: "smooth" })
-                            setActiveSection(section.id)
-                          }}
-                        >
-                          {section.title}
-                        </a>
+                  {isLoading ? (
+                    <>
+                      <Skeleton className="h-6 w-40 mb-4" />
+                      {Array(5).fill(0).map((_, i) => (
+                        <Skeleton key={i} className="h-8 w-full mb-2" />
                       ))}
-                    </div>
-                  </div>
-                )}
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="text-lg font-semibold">{primaryCategory} Guide</h2>
+                      <div className="space-y-1">
+                        {guideNavigation.map((item, index) => (
+                          <Link
+                            key={index}
+                            to={`/guides/${category}/${item.slug}`}
+                            className={`flex items-center p-2 rounded-md text-sm ${
+                              item.current ? "bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 font-medium" : "hover:bg-muted"
+                            }`}
+                          >
+                            {item.current && <ChevronRight className="h-4 w-4 mr-1" />}
+                            {item.title}
+                          </Link>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
 
                 {/* Guide actions */}
                 <div className="space-y-2">
@@ -216,80 +280,175 @@ function GuideDetailPage() {
                     <Printer className="h-4 w-4" />
                     Print Guide
                   </Button>
-                  <Button variant="outline" className="w-full justify-start gap-2">
-                    <Download className="h-4 w-4" />
-                    Download PDF
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start gap-2">
-                    <Bookmark className="h-4 w-4" />
-                    Save for Later
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start gap-2">
-                    <Share2 className="h-4 w-4" />
-                    Share Guide
-                  </Button>
+                  
+                  {/* Share Guide button with popover */}
+                  <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start gap-2">
+                        <Share2 className="h-4 w-4" />
+                        Share Guide
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80" align="start" sideOffset={5}>
+                      <div className="space-y-4">
+                        <h3 className="font-medium">Share this guide</h3>
+                        <div className="flex space-x-2">
+                          <Input 
+                            value={currentUrl} 
+                            readOnly
+                            className="flex-1 text-sm"
+                            onClick={(e) => (e.target as HTMLInputElement).select()}
+                          />
+                          <Button 
+                            size="icon" 
+                            variant="outline"
+                            onClick={copyToClipboard}
+                            className="shrink-0"
+                          >
+                            {isCopied ? (
+                              <Check className="h-4 w-4 text-green-600" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
 
-                {/* Related resources */}
-                <div className="space-y-2">
-                  <h2 className="text-lg font-semibold">Related Resources</h2>
+                {/* Related resources
+                {isLoading ? (
                   <div className="space-y-2">
-                    <Link
-                      to="/calculators/home-load"
-                      className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
-                    >
-                      <ArrowRight className="h-4 w-4 mr-2 text-green-600" />
-                      Home Load Calculator
-                    </Link>
-                    <Link
-                      to="/calculators/solar-system"
-                      className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
-                    >
-                      <ArrowRight className="h-4 w-4 mr-2 text-green-600" />
-                      Solar System Calculator
-                    </Link>
-                    {relatedGuides.map((related, index) => (
-                      <Link 
-                        key={index}
-                        to={`/guides/${related.categorySlug}/${related.slug}`} 
-                        className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
-                      >
-                        <BookOpen className="h-4 w-4 mr-2 text-green-600" />
-                        {related.title}
-                      </Link>
+                    <Skeleton className="h-6 w-40 mb-3" />
+                    {Array(3).fill(0).map((_, i) => (
+                      <Skeleton key={i} className="h-8 w-full mb-2" />
                     ))}
                   </div>
-                </div>
+                ) : (
+                  <div className="space-y-2">
+                    <h2 className="text-lg font-semibold">Related Resources</h2>
+                    <div className="space-y-2">
+                      <Link
+                        to="/calculators/home-load"
+                        className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
+                      >
+                        <ArrowRight className="h-4 w-4 mr-2 text-green-600" />
+                        Home Load Calculator
+                      </Link>
+                      <Link
+                        to="/calculators/solar-system"
+                        className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
+                      >
+                        <ArrowRight className="h-4 w-4 mr-2 text-green-600" />
+                        Solar System Calculator
+                      </Link>
+                      {relatedGuides.map((related, index) => (
+                        <Link 
+                          key={index}
+                          to={`/guides/${category}/${related.slug}`} 
+                          className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
+                        >
+                          <BookOpen className="h-4 w-4 mr-2 text-green-600" />
+                          {related.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )} */}
               </div>
             </div>
 
             {/* Main content */}
             <div className="lg:col-span-3 max-w-3xl">
-              {/* Guide metadata */}
-              <div className="flex flex-wrap items-center gap-2 mb-6">
-                <Badge className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
-                  {guide.category}
-                </Badge>
-                <Badge variant="outline">{guide.level}</Badge>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <BookOpen className="h-3 w-3 mr-1" />
-                  <span>{guide.readTime}</span>
-                </div>
-                {guide.lastUpdated && (
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <span>Last updated: {guide.lastUpdated}</span>
+              {isLoading ? (
+                // Loading skeleton UI for guide
+                <>
+                  <div className="flex flex-wrap items-center gap-2 mb-6">
+                    <Skeleton className="h-6 w-24" />
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-6 w-32" />
                   </div>
-                )}
-              </div>
+                  <Skeleton className="h-12 w-3/4 mb-6" />
+                  <div className="space-y-4">
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-6 w-5/6" />
+                    <Skeleton className="h-6 w-4/5" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Guide metadata */}
+                  <div className="flex flex-wrap items-center gap-2 mb-6">
+                    <Badge className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
+                      {primaryCategory}
+                    </Badge>
+                    <Badge variant="outline">{guide.level}</Badge>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <BookOpen className="h-3 w-3 mr-1" />
+                      <span>{guide.readTime}</span>
+                    </div>
+                    {guide.lastUpdated && (
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <span>Last updated: {guide.lastUpdated}</span>
+                      </div>
+                    )}
+                  </div>
 
-              {/* Guide title */}
-              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-6">
-                {guide.title}
-              </h1>
+                  {/* Guide title */}
+                  <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-6">
+                    {guide.title}
+                  </h1>
+                </>
+              )}
+
+              {/* Section navigation accordion - NEW */}
+              {!isLoading && guide.sections && (
+                <div className="mb-8 print:hidden">
+                  <Accordion type="single" collapsible className="bg-muted/50 rounded-md p-2">
+                    <AccordionItem value="sections">
+                      <AccordionTrigger className="text-sm font-medium px-2">
+                        Quick Navigation
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 pt-2">
+                          {guide.sections.map((section) => (
+                            <a
+                              key={section.sectionId}
+                              href={`#${section.sectionId}`}
+                              className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                document.getElementById(section.sectionId)?.scrollIntoView({ behavior: "smooth" })
+                                setActiveSection(section.sectionId)
+                              }}
+                            >
+                              <ChevronRight className="h-3 w-3 mr-1 text-green-600" />
+                              {section.title}
+                            </a>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              )}
 
               {/* Guide content */}
               <Suspense fallback={<div className="p-4 text-center">Loading guide content...</div>}>
-                {GuideContent ? (
+                {isLoading ? (
+                  <div className="space-y-4 mt-8">
+                    {Array(6).fill(0).map((_, i) => (
+                      <div key={i} className="mb-8">
+                        <Skeleton className="h-8 w-64 mb-4" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-3/4 mb-2" />
+                        <Skeleton className="h-4 w-5/6" />
+                      </div>
+                    ))}
+                  </div>
+                ) : GuideContent ? (
                   <GuideContent />
                 ) : (
                   <div className="space-y-4">
@@ -305,44 +464,91 @@ function GuideDetailPage() {
 
               {/* Guide navigation */}
               <div className="flex flex-col sm:flex-row justify-between gap-4 mt-10 pt-6 border-t print:hidden">
-                {prevItem ? (
-                  <Link to={`/guides/${category}/${prevItem.slug}`} className="flex-1">
-                    <Button variant="outline" className="w-full justify-start gap-2 py-8">
-                      <ChevronLeft className="h-4 w-4" />
-                      <div className="text-left">
-                        <div className="text-xs text-muted-foreground">Previous</div>
-                        <div className="text-sm font-medium truncate">{prevItem.title}</div>
-                      </div>
-                    </Button>
-                  </Link>
+                {isLoading ? (
+                  <>
+                    <Skeleton className="flex-1 h-16" />
+                    <Skeleton className="flex-1 h-16" />
+                  </>
                 ) : (
-                  <Button variant="outline" className="flex-1 justify-start gap-2" disabled>
-                    <ChevronLeft className="h-4 w-4" />
-                    <div className="text-left">
-                      <div className="text-xs text-muted-foreground">Previous</div>
-                      <div className="text-sm font-medium truncate">No previous guide</div>
-                    </div>
-                  </Button>
+                  <>
+                    {prevItem ? (
+                      <Link to={`/guides/${category}/${prevItem.slug}`} className="flex-1">
+                        <Button variant="outline" className="w-full justify-start gap-2 py-8">
+                          <ChevronLeft className="h-4 w-4" />
+                          <div className="text-left">
+                            <div className="text-xs text-muted-foreground">Previous</div>
+                            <div className="text-sm font-medium truncate">{prevItem.title}</div>
+                          </div>
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Button variant="outline" className="flex-1 justify-start gap-2" disabled>
+                        <ChevronLeft className="h-4 w-4" />
+                        <div className="text-left">
+                          <div className="text-xs text-muted-foreground">Previous</div>
+                          <div className="text-sm font-medium truncate">No previous guide</div>
+                        </div>
+                      </Button>
+                    )}
+                    
+                    {nextItem ? (
+                      <Link to={`/guides/${category}/${nextItem.slug}`} className="flex-1">
+                        <Button variant="outline" className="w-full justify-end gap-2 py-8">
+                          <div className="text-right">
+                            <div className="text-xs text-muted-foreground">Next</div>
+                            <div className="text-sm font-medium truncate">{nextItem.title}</div>
+                          </div>
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Button variant="outline" className="flex-1 justify-end gap-2" disabled>
+                        <div className="text-right">
+                          <div className="text-xs text-muted-foreground">Next</div>
+                          <div className="text-sm font-medium truncate">No next guide</div>
+                        </div>
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </>
                 )}
-                
-                {nextItem ? (
-                  <Link to={`/guides/${category}/${nextItem.slug}`} className="flex-1">
-                    <Button variant="outline" className="w-full justify-end gap-2 py-8">
-                      <div className="text-right">
-                        <div className="text-xs text-muted-foreground">Next</div>
-                        <div className="text-sm font-medium truncate">{nextItem.title}</div>
-                      </div>
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button variant="outline" className="flex-1 justify-end gap-2" disabled>
-                    <div className="text-right">
-                      <div className="text-xs text-muted-foreground">Next</div>
-                      <div className="text-sm font-medium truncate">No next guide</div>
+              </div>
+            </div>
+            
+            {/* Right sidebar - NEW - for "ON THIS PAGE" section */}
+            <div className="hidden lg:block lg:col-span-1 print:hidden">
+              <div className="sticky top-24 space-y-6">
+                {isLoading ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-24 mb-3" />
+                    {Array(4).fill(0).map((_, i) => (
+                      <Skeleton key={i} className="h-8 w-full mb-2" />
+                    ))}
+                  </div>
+                ) : guide.sections && (
+                  <div className="space-y-2">
+                    <h2 className="text-sm font-semibold text-muted-foreground">ON THIS PAGE</h2>
+                    <div className="space-y-1">
+                      {guide.sections.map((section) => (
+                        <a
+                          key={section.sectionId}
+                          href={`#${section.sectionId}`}
+                          className={`flex items-center p-2 rounded-md text-sm ${
+                            activeSection === section.sectionId
+                              ? "bg-muted text-foreground font-medium"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            document.getElementById(section.sectionId)?.scrollIntoView({ behavior: "smooth" })
+                            setActiveSection(section.sectionId)
+                          }}
+                        >
+                          {section.title}
+                        </a>
+                      ))}
                     </div>
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                  </div>
                 )}
               </div>
             </div>

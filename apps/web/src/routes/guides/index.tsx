@@ -1,13 +1,16 @@
 import { Link } from "@tanstack/react-router"
 import { createFileRoute } from "@tanstack/react-router"
 import { ArrowRight, BookOpen, Download, FileText, Battery, Droplets } from "lucide-react"
+import { useQuery } from "convex/react"
+import { api } from "~/convex/_generated/api"
 
 import { Button } from "~/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
 import { Badge } from "~/components/ui/badge"
 import { GuideIcon } from "~/components/guide-icon"
-import { guideCategories, featuredGuides } from "~/data/guides"
 import { seo } from '~/utils/seo'
+import { Skeleton } from "~/components/ui/skeleton"
+import { Id } from "~/convex/_generated/dataModel"
 
 export const Route = createFileRoute("/guides/")({
   component: GuidesPage,
@@ -25,6 +28,13 @@ export const Route = createFileRoute("/guides/")({
 })
 
 function GuidesPage() {
+  // Fetch guide categories and featured guides from Convex
+  const categories = useQuery(api.guides.getGuideCategories)
+  const featuredGuides = useQuery(api.guides.getFeaturedGuides)
+  
+  // Loading states
+  const isLoading = !categories || !featuredGuides
+  
   return (
     <main className="flex-1">
       <section className="w-full py-12 md:py-24 lg:py-32 bg-green-50 dark:bg-green-950/30">
@@ -68,39 +78,59 @@ function GuidesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredGuides.map((guide, index) => (
-              <Card key={index} className="overflow-hidden flex flex-col">
-                <div className="aspect-video relative overflow-hidden">
-                  <img
-                    src={guide.image || "/images/placeholder.jpg"}
-                    alt={guide.title}
-                    className="w-full h-full object-cover transition-transform hover:scale-105"
-                  />
-                  <div className="absolute top-2 right-2">
-                    <Badge className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">Featured</Badge>
+            {isLoading ? (
+              // Loading skeleton UI
+              Array(3).fill(0).map((_, index) => (
+                <Card key={index} className="overflow-hidden flex flex-col">
+                  <div className="aspect-video relative">
+                    <Skeleton className="h-full w-full" />
                   </div>
-                </div>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                    <Badge variant="outline">{guide.level}</Badge>
-                    <span className="flex items-center">
-                      <BookOpen className="h-3 w-3 mr-1" />
-                      {guide.readTime}
-                    </span>
+                  <CardHeader className="pb-2">
+                    <Skeleton className="h-4 w-20 mb-2" />
+                    <Skeleton className="h-5 w-full mb-2" />
+                    <Skeleton className="h-4 w-full" />
+                  </CardHeader>
+                  <CardFooter className="mt-auto pt-2">
+                    <Skeleton className="h-9 w-full" />
+                  </CardFooter>
+                </Card>
+              ))
+            ) : (
+              featuredGuides.map((guide) => (
+                <Card key={guide._id} className="overflow-hidden flex flex-col pt-0">
+                  <div className="aspect-video relative overflow-hidden">
+                    <img
+                      src={guide.image || "/images/placeholder.jpg"}
+                      alt={guide.title}
+                      className="w-full h-full object-cover transition-transform hover:scale-105"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <Badge className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white">Featured</Badge>
+                    </div>
                   </div>
-                  <CardTitle>{guide.title}</CardTitle>
-                  <CardDescription>{guide.description}</CardDescription>
-                </CardHeader>
-                <CardFooter className="mt-auto pt-2">
-                  <Link to={`/guides/${guide.categorySlug}/${guide.slug}`} className="w-full">
-                    <Button className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
-                      Read Guide
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))}
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                      <Badge variant="outline">{guide.level}</Badge>
+                      <span className="flex items-center">
+                        <BookOpen className="h-3 w-3 mr-1" />
+                        {guide.readTime}
+                      </span>
+                    </div>
+                    <CardTitle>{guide.title}</CardTitle>
+                    <CardDescription>{guide.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="mt-auto pt-2">
+                    {/* We'll need to fetch the primary category for each guide */}
+                    <Link to={`/guides/getting-started/${guide.slug}`} className="w-full">
+                      <Button className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
+                        Read Guide
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -114,45 +144,51 @@ function GuidesPage() {
           </div>
 
           <div className="space-y-12">
-            {guideCategories.map((category, index) => (
-              <div key={index}>
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="rounded-full bg-green-100 dark:bg-green-900 p-2">
-                    <GuideIcon name={category.icon} />
+            {isLoading ? (
+              // Loading skeletons for categories
+              Array(3).fill(0).map((_, index) => (
+                <div key={index}>
+                  <div className="flex items-center gap-2 mb-6">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div className="w-full">
+                      <Skeleton className="h-6 w-48 mb-2" />
+                      <Skeleton className="h-4 w-full" />
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold">{category.title}</h3>
-                    <p className="text-muted-foreground">{category.description}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array(3).fill(0).map((_, guideIndex) => (
+                      <Card key={guideIndex}>
+                        <CardHeader>
+                          <Skeleton className="h-4 w-20 mb-2" />
+                          <Skeleton className="h-5 w-full mb-2" />
+                          <Skeleton className="h-4 w-full" />
+                        </CardHeader>
+                        <CardFooter>
+                          <Skeleton className="h-9 w-full" />
+                        </CardFooter>
+                      </Card>
+                    ))}
                   </div>
                 </div>
+              ))
+            ) : (
+              categories.map((category) => (
+                <div key={category._id}>
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="rounded-full bg-green-100 dark:bg-green-900 p-2">
+                      <GuideIcon name={category.icon} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold">{category.title}</h3>
+                      <p className="text-muted-foreground">{category.description}</p>
+                    </div>
+                  </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {category.guides.map((guide, guideIndex) => (
-                    <Card key={guideIndex} className="hover:shadow-md transition-shadow">
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                          <Badge variant="outline">{guide.level}</Badge>
-                          <span className="flex items-center">
-                            <BookOpen className="h-3 w-3 mr-1" />
-                            {guide.readTime}
-                          </span>
-                        </div>
-                        <CardTitle className="text-lg">{guide.title}</CardTitle>
-                        <CardDescription>{guide.description}</CardDescription>
-                      </CardHeader>
-                      <CardFooter className="pt-2">
-                        <Link to={`/guides/${category.slug}/${guide.slug}`} className="w-full">
-                          <Button variant="outline" className="w-full">
-                            Read Guide
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        </Link>
-                      </CardFooter>
-                    </Card>
-                  ))}
+                  {/* For each category, we need to fetch its guides */}
+                  <CategoryGuides categoryId={category._id} categorySlug={category.slug} />
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -198,9 +234,9 @@ function GuidesPage() {
                   <CardDescription>{resource.description}</CardDescription>
                 </CardHeader>
                 <CardFooter>
-                  <Button variant="outline" className="w-full gap-2">
+                  <Button variant="outline" className="w-full gap-2" disabled>
                     <Download className="h-4 w-4" />
-                    Download
+                    Download (Coming Soon)
                   </Button>
                 </CardFooter>
               </Card>
@@ -252,5 +288,58 @@ function GuidesPage() {
         </div>
       </section>
     </main>
+  )
+}
+
+// Helper component to fetch and display guides for a category
+function CategoryGuides({ categoryId, categorySlug }: { categoryId: Id<"guideCategories">; categorySlug: string }) {
+  const guides = useQuery(api.guides.getGuidesByCategory, { categoryId })
+  const isLoading = !guides
+  
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array(3).fill(0).map((_, index) => (
+          <Card key={index}>
+            <CardHeader>
+              <Skeleton className="h-4 w-20 mb-2" />
+              <Skeleton className="h-5 w-full mb-2" />
+              <Skeleton className="h-4 w-full" />
+            </CardHeader>
+            <CardFooter>
+              <Skeleton className="h-9 w-full" />
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {guides.map((guide) => (
+        <Card key={guide._id} className="hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+              <Badge variant="outline">{guide.level}</Badge>
+              <span className="flex items-center">
+                <BookOpen className="h-3 w-3 mr-1" />
+                {guide.readTime}
+              </span>
+            </div>
+            <CardTitle className="text-lg">{guide.title}</CardTitle>
+            <CardDescription>{guide.description}</CardDescription>
+          </CardHeader>
+          <CardFooter className="pt-2">
+            <Link to={`/guides/${categorySlug}/${guide.slug}`} className="w-full">
+              <Button variant="outline" className="w-full">
+                Read Guide
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
   )
 }

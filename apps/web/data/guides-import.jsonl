@@ -1,0 +1,29 @@
+{"table":"guideCategories","data":{"title":"Getting Started","description":"Essential information for beginners looking to transition to off-grid living","slug":"getting-started","icon":"Lightbulb"}}
+{"table":"guideCategories","data":{"title":"Power Systems","description":"Comprehensive guides on designing, installing, and maintaining off-grid power systems","slug":"power-systems","icon":"Zap"}}
+{"table":"guideCategories","data":{"title":"Water Systems","description":"Solutions for water collection, storage, filtration, and management","slug":"water-systems","icon":"Droplets"}}
+{"table":"guideCategories","data":{"title":"Shelter & Construction","description":"Building and maintaining sustainable, energy-efficient off-grid homes","slug":"shelter","icon":"Home"}}
+{"table":"guideCategories","data":{"title":"Food Production","description":"Growing, preserving, and managing your own food supply","slug":"food","icon":"Leaf"}}
+{"table":"guideCategories","data":{"title":"Tools & Equipment","description":"Essential tools and equipment for off-grid living and maintenance","slug":"tools","icon":"Hammer"}}
+{"table":"guideCategories","data":{"title":"Climate Considerations","description":"Adapting off-grid strategies for different climate zones","slug":"climate","icon":"Thermometer"}}
+{"table":"guideCategories","data":{"title":"Safety & Resilience","description":"Preparing for emergencies and ensuring long-term sustainability","slug":"safety","icon":"ShieldCheck"}}
+{"table":"guides","data":{"title":"What is Off-Grid Living?","description":"An introduction to the concept, benefits, and challenges of living off the grid","slug":"what-is-off-grid-living","categorySlug":"getting-started","readTime":"10 min read","level":"Beginner","lastUpdated":"March 15, 2023","image":"/assets/guides/getting-started/off-grid-cabin.jpeg","featured":true}}
+{"table":"guides","data":{"title":"Key Considerations Before Going Off-Grid","description":"Essential factors to evaluate before making the transition to an off-grid lifestyle","slug":"key-considerations","categorySlug":"getting-started","readTime":"8 min read","level":"Beginner","image":"/assets/guides/getting-started/off-grid-essentials.jpeg","featured":true}}
+{"table":"guides","data":{"title":"Step-by-Step Approach","description":"A detailed guide to planning and executing your off-grid living journey","slug":"step-by-step-approach","categorySlug":"getting-started","readTime":"12 min read","level":"Intermediate","image":"/assets/guides/getting-started/step-by-step-approach.jpeg"}}
+{"table":"guides","data":{"title":"Common Questions About Off-Grid Living","description":"Answers to frequently asked questions about the practical realities of off-grid living","slug":"common-questions","categorySlug":"getting-started","readTime":"15 min read","level":"Beginner","lastUpdated":"April 10, 2023","image":"/assets/guides/getting-started/common-questions.jpeg"}}
+{"table":"guides","data":{"title":"Solar Power Basics","description":"Understanding solar panels, charge controllers, inverters, and batteries","slug":"solar-basics","categorySlug":"power-systems","readTime":"12 min read","level":"Beginner"}}
+{"table":"guideSections","data":{"guideSlug":"what-is-off-grid-living","id":"introduction","title":"Introduction","order":0}}
+{"table":"guideSections","data":{"guideSlug":"what-is-off-grid-living","id":"definition","title":"What Does Off-Grid Mean?","order":1}}
+{"table":"guideSections","data":{"guideSlug":"what-is-off-grid-living","id":"benefits","title":"Benefits of Off-Grid Living","order":2}}
+{"table":"guideSections","data":{"guideSlug":"what-is-off-grid-living","id":"types","title":"Types of Off-Grid Living","order":3}}
+{"table":"guideSections","data":{"guideSlug":"what-is-off-grid-living","id":"challenges","title":"Challenges to Consider","order":4}}
+{"table":"guideSections","data":{"guideSlug":"what-is-off-grid-living","id":"resources","title":"Resources & Next Steps","order":5}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"introduction","title":"Introduction","order":0}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"finding-land","title":"Finding Suitable Land","order":1}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"power-sources","title":"Power Sources","order":2}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"water-needs","title":"Water Systems","order":3}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"waste-management","title":"Waste Management","order":4}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"shelter-types","title":"Shelter Options","order":5}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"heating","title":"Heating Solutions","order":6}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"connectivity","title":"Staying Connected","order":7}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"motivations","title":"Motivations","order":8}}
+{"table":"guideSections","data":{"guideSlug":"common-questions","id":"initial-challenges","title":"Initial Challenges","order":9}}

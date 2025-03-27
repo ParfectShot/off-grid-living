@@ -14,7 +14,9 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as brands from "../brands.js";
+import type * as bulkImport from "../bulkImport.js";
 import type * as categories from "../categories.js";
+import type * as guides from "../guides.js";
 import type * as productAttributes from "../productAttributes.js";
 import type * as productImages from "../productImages.js";
 import type * as products from "../products.js";
@@ -44,7 +46,9 @@ import type * as schema_productVariants from "../schema/productVariants.js";
  */
 declare const fullApi: ApiFromModules<{
   brands: typeof brands;
+  bulkImport: typeof bulkImport;
   categories: typeof categories;
+  guides: typeof guides;
   productAttributes: typeof productAttributes;
   productImages: typeof productImages;
   products: typeof products;

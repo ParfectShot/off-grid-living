@@ -4,4 +4,7 @@ import { v } from "convex/values";
 export const guideToCategory = defineTable({
   guideId: v.id("guides"),
   categoryId: v.id("guideCategories"),
-}).index("by_guideId_categoryId", ["guideId", "categoryId"]);
+  isPrimary: v.boolean(), // To indicate the primary category
+}).index("by_guideId", ["guideId"])
+  .index("by_categoryId", ["categoryId"])
+  .index("by_guide_and_category", ["guideId", "categoryId"]);
