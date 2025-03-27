@@ -8,6 +8,16 @@ import { blogPosts } from '~/data/blogPosts'
 
 export const Route = createFileRoute('/blogs/')({
   component: BlogsPage,
+  head: () => {
+    return {
+      meta: [
+        {
+          name: 'robots',
+          content: 'noindex',
+        },
+      ],
+    }
+  }
 })
 
 function BlogsPage() {

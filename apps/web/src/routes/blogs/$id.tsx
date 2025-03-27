@@ -28,6 +28,16 @@ import { blogPosts } from '~/data/blogPosts'
 
 export const Route = createFileRoute('/blogs/$id')({
   component: BlogPostPage,
+  head: () => {
+    return {
+      meta: [
+        {
+          name: 'robots',
+          content: 'noindex',
+        },
+      ],
+    }
+  }
 })
 
 // Mock data for a single blog post

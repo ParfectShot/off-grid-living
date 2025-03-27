@@ -6,6 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 
 export const Route = createFileRoute("/calculators/solar-system/")({
   component: SolarSystemCalculatorPage,
+  head: () => {
+    return {
+      meta: [
+        {
+          name: 'robots',
+          content: 'noindex',
+        },
+      ],
+    }
+  }
 })
 
 function SolarSystemCalculatorPage() {
