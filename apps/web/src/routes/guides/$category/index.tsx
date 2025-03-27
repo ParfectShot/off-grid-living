@@ -6,9 +6,30 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/comp
 import { Badge } from "~/components/ui/badge"
 import { GuideIcon } from "~/components/guide-icon"
 import { guideCategories } from "~/data/guides"
+import { seoDataMap as seoDataMapGuideCategories } from "~/data/seo/guides/categories"
+import { seo } from "~/utils/seo"
 
 export const Route = createFileRoute('/guides/$category/')({
   component: GuideCategoryPage,
+  head: () => {
+    const { category } = useParams({});
+    const seoInfo = seoDataMapGuideCategories[category as keyof typeof seoDataMapGuideCategories] || {
+      title: 'Off-Grid Guides: Cabins, Renewable Energy & Self-Sufficiency | Off Grid Collective',
+      description: 'Find comprehensive guides on off-grid living at the Off Grid Collective...',
+    };
+
+    return {
+      meta: [
+        ...seo({
+          title: seoInfo.title,
+          description: seoInfo.description,
+        }),
+      ],
+      links: [
+        { rel: 'canonical', href: `https://offgridcollective.co/guides/${category}` },
+      ],
+    };
+  },
 })
 
 function GuideCategoryPage() {

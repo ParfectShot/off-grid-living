@@ -7,9 +7,21 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/comp
 import { Badge } from "~/components/ui/badge"
 import { GuideIcon } from "~/components/guide-icon"
 import { guideCategories, featuredGuides } from "~/data/guides"
+import { seo } from '~/utils/seo'
 
 export const Route = createFileRoute("/guides/")({
   component: GuidesPage,
+  head: () => ({
+    meta: [
+      ...seo({
+        title: 'Off-Grid Guides: Cabins, Renewable Energy & Self-Sufficiency | Off Grid Collective',
+        description: 'Find comprehensive guides on off-grid living at the Off Grid Collective. Explore our featured sections and categories covering DIY solar installations, water system upgrades, cabin building, and solutions for common challenges like proving residence without bills',
+      }),
+    ],
+    links: [
+      {rel: 'canonical', href: `https://offgridcollective.co/guides`}
+    ]
+  })
 })
 
 function GuidesPage() {

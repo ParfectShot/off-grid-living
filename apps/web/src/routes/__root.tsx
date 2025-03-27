@@ -30,8 +30,8 @@ export const Route = createRootRouteWithContext<{
         content: 'width=device-width, initial-scale=1',
       },
       ...seo({
-        title: 'Off-Grid Living | Sustainable and Independent Living Resources',
-        description: 'Resources, guides, and tools for living off the grid sustainably and independently.',
+        title: 'Off-Grid Living: Cabins, Solar Power & Self-Sufficiency | Off Grid Collective',
+        description: 'Explore the off-grid lifestyle with the Off Grid Collective. Find resources on building cabins, implementing renewable energy solutions, managing waste and water, and connecting with others seeking independence and self-sufficiency',
       }),
     ],
     links: [
@@ -55,6 +55,7 @@ export const Route = createRootRouteWithContext<{
       },
       { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
       { rel: 'icon', href: '/favicon.ico' },
+      {rel: 'canonical', href: `https://offgridcollective.co/`}
     ],
   }),
   errorComponent: (props) => {

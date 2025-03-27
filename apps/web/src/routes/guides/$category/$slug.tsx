@@ -20,9 +20,31 @@ import {
   getAdjacentGuides
 } from "~/data/guides"
 import { getGuideContent } from "~/data/guide-registry"
+import { seoDataMap } from "~/data/seo/guides/guides"
+import { seo } from "~/utils/seo"
 
 export const Route = createFileRoute('/guides/$category/$slug')({
   component: GuideDetailPage,
+  head: () => {
+    const { category, slug } = useParams({});
+
+    const seoInfo = seoDataMap[category as keyof typeof seoDataMap]?.[slug as keyof typeof seoDataMap["getting-started"]] || {
+      title: 'Off Grid Collective: Guide', // Default title
+      description: 'Explore our comprehensive guides on off-grid living.', // Default description
+    };
+
+    return {
+      meta: [
+        ...seo({
+          title: seoInfo.title,
+          description: seoInfo.description,
+        }),
+      ],
+      links: [
+        { rel: 'canonical', href: `https://offgridcollective.co/guides/${category}/${slug}` },
+      ],
+    };
+  },
 })
 
 function GuideDetailPage() {
