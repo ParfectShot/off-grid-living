@@ -88,7 +88,7 @@ function CalculatorsPage() {
                 <CardContent className="pt-6">
                   <div className="aspect-video relative overflow-hidden rounded-lg mb-4 bg-muted">
                     <img
-                      src="/images/calculators/solar-system-preview.jpeg"
+                      src="/assets/calculators/solar-system-preview.jpeg"
                       alt="Solar System Calculator Preview"
                       className="object-cover w-full h-full"
                     />
