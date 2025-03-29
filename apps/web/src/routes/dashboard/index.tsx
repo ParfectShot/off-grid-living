@@ -6,6 +6,14 @@ import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/")({
   component: DashboardPage,
+  head: () => ({
+    meta: [
+      {
+        name: "robots",
+        content: "noindex, nofollow",
+      },
+    ],
+  }),
 });
 
 function DashboardPage() {

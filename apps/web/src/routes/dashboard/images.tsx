@@ -23,7 +23,15 @@ interface ProcessedImage {
 }
 
 export const Route = createFileRoute('/dashboard/images')({
-  component: ImagesPage
+  component: ImagesPage,
+  head: () => ({
+    meta: [
+      {
+        name: "robots",
+        content: "noindex, nofollow",
+      },
+    ],
+  }),
 });
 
 function ImagesPage() {
@@ -189,12 +197,21 @@ function ImagesPage() {
       const result = await listS3Buckets({
         data: { region: s3Region }
       });
-      
       if (result.success) {
-        setBuckets(result.buckets);
-        if (result.buckets.length > 0 && !s3Bucket) {
-          setS3Bucket(result.buckets[0].name);
-          loadS3Folders(result.buckets[0].name);
+        // Ensure buckets have required fields before setting state
+        const validBuckets = result.buckets
+          .filter(bucket => typeof bucket.name === 'string' && bucket.name.trim() !== '')
+          .map(bucket => ({
+            name: bucket.name as string, // We filtered out undefined/empty names
+            creationDate: bucket.creationDate
+          }));
+        
+        setBuckets(validBuckets);
+        
+        if (validBuckets.length > 0 && !s3Bucket) {
+          const firstBucketName = validBuckets[0].name;
+          setS3Bucket(firstBucketName);
+          loadS3Folders(firstBucketName);
         } else if (s3Bucket) {
           loadS3Folders(s3Bucket);
         }
@@ -225,8 +242,8 @@ function ImagesPage() {
       });
       
       if (result.success) {
-        setFolders(result.folders);
-        setCurrentPrefix(result.prefix);
+        setFolders(result.folders || []);
+        setCurrentPrefix(result.prefix || '');
       } else {
         console.error('Error loading folders:', result.error);
       }
@@ -279,7 +296,8 @@ function ImagesPage() {
         const files = [{
           filePath: `public${image.originalUrl}`,
           s3Key: `images/original/${image.id}.${image.fileExtension}`,
-          contentType: image.contentType
+          contentType: image.contentType,
+          bucket: s3Bucket
         }];
 
         // Add variants
@@ -287,7 +305,8 @@ function ImagesPage() {
           files.push({
             filePath: `public${variant.url}`,
             s3Key: `images/variants/${image.id}_${variant.width}.${image.fileExtension}`,
-            contentType: image.contentType
+            contentType: image.contentType,
+            bucket: s3Bucket
           });
         });
 
@@ -310,15 +329,16 @@ function ImagesPage() {
         }
       });
 
-      if (result.success) {
+      if (result.success && result.results) {
         // Update processed images with S3 URLs
         setProcessedImages(prev => {
           return prev.map(image => {
-            const originalS3Result = result.results.find((r: { key: string }) => 
-              r.key.includes(`/${image.id}.${image.fileExtension}`)
+            // Find the result for this image
+            const originalS3Result = result.results.find(r => 
+              r.key && r.key.includes(`/${image.id}.${image.fileExtension}`)
             );
             
-            if (originalS3Result) {
+            if (originalS3Result && originalS3Result.url) {
               return {
                 ...image,
                 s3Url: originalS3Result.url
@@ -334,7 +354,7 @@ function ImagesPage() {
         // Switch to S3 tab after successful upload
         setActiveTab("s3");
       } else {
-        setUploadError(`Uploaded ${result.totalUploaded} files, but ${result.totalFailed} failed.`);
+        setUploadError(`Uploaded ${result.totalUploaded || 0} files, but ${result.totalFailed || 0} failed.`);
       }
     } catch (error) {
       console.error('Error uploading to S3:', error);
