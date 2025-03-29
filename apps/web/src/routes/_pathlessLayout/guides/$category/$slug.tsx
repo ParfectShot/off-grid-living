@@ -3,12 +3,9 @@ import { Link, useParams, createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
 import { api } from "~/convex/_generated/api"
 import {
-  ArrowRight,
   BookOpen,
-  Download,
   Share2,
   Printer,
-  Bookmark,
   ChevronRight,
   ChevronLeft,
   Copy,
@@ -44,19 +41,19 @@ const imageCredits = {
     sourceName: "Unsplash",
     sourceUrl: "https://unsplash.com/photos/a-house-with-a-solar-panel-on-the-roof-XVwYGihplmY?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
   },
-  'key-considerations-for-off-grid-living': {
+  'key-considerations': {
     authorName: "VD Photography",
     authorUrl: "https://unsplash.com/@vdphotography?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
     sourceName: "Unsplash",
     sourceUrl: "https://unsplash.com/photos/an-aerial-view-of-a-house-with-a-solar-panel-on-the-roof-tC4tHCeoO44?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
   },
-  'step-by-step-approach-to-off-grid-living': {
+  'step-by-step-approach': {
     authorName: "Sumit Mangela",
     authorUrl: "https://unsplash.com/@sumitmangela?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
     sourceName: "Unsplash",
     sourceUrl: "https://unsplash.com/photos/a-very-large-building-that-has-a-bunch-of-stairs-in-it-ASM0H3ul2yo?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
   },
-  'common-questions-about-off-grid-living': {
+  'common-questions': {
     authorName: "Rakshit Yadav",
     authorUrl: "https://unsplash.com/@rakshityadav190?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
     sourceName: "Unsplash",
@@ -393,7 +390,7 @@ function GuideDetailPage() {
                       <img 
                         src={guide.image} 
                         alt={guide.title}
-                        className="w-full h-auto rounded-lg object-cover"
+                        className="w-full h-auto rounded-lg object-cover aspect-video"
                       />
                       {imageCredit && (
                         <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 rounded-b-lg">

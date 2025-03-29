@@ -46,14 +46,6 @@ export const StepByStepApproachContent = () => {
           practical considerations. Each step builds on the previous ones, creating a roadmap for 
           your journey to off-grid living.
         </p>
-        
-        <div className="relative aspect-video overflow-hidden rounded-lg mb-6">
-          <img
-            src="/assets/guides/getting-started/step-by-step-approach.jpg"
-            alt="Planning an off-grid lifestyle"
-            className="object-cover w-full h-full"
-          />
-        </div>
       </div>
 
       <div id="step-1" className="scroll-mt-20 space-y-4 py-4 border-t">
