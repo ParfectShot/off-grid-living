@@ -25,13 +25,6 @@ export const WhatIsOffGridLivingContent = () => {
           connection with nature. This guide provides an introduction to the concept, benefits, and challenges
           of living off the grid, and explores why more people are choosing this lifestyle.
         </p>
-        <div className="relative aspect-video overflow-hidden rounded-lg mb-6">
-          <img
-            src="/assets/guides/getting-started/off-grid-cabin.jpg"
-            alt="Off-grid cabin in nature"
-            className="object-cover w-full h-full"
-          />
-        </div>
       </div>
 
       {/* What Does Off-Grid Mean? */}

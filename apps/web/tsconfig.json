@@ -17,6 +17,7 @@
     "paths": {
       "~/*": ["./src/*"],
       "~/convex/*": ["./convex/*"],
+      "~/data/*": ["./data/*"]
     },
     "noEmit": true,
     "useDefineForClassFields": true,

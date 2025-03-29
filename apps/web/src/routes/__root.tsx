@@ -14,7 +14,6 @@ import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import appCss from '~/styles/app.css?url'
 import { ThemeProvider } from '~/components/theme-provider'
-import { RootLayout } from '~/layouts/RootLayout'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -66,10 +65,7 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
 })
 
-function RootComponent(props: any) {
-  console.log(process.env.NODE_ENV)
-
-  console.log(Route)
+function RootComponent() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="ui-theme">
       <RootDocument>

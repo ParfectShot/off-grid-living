@@ -5,16 +5,16 @@ import { ensureDirectory, saveServerFile, processServerImage } from '~/lib/serve
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
 import { uploadFilesToS3, listS3Buckets, listS3Folders, listS3Images } from '~/lib/s3-client';
 import { Search } from 'lucide-react';
-import { ProcessedImage, S3Image, FolderInfo } from '../../types/s3-types';
+import { ProcessedImage, S3Image, FolderInfo } from '~/types/s3-types';
 import { 
   UploadTab, 
   ProcessedImagesTab,
   ImageVariantModal,
-} from '~/components/image-processor';
-import { S3BrowserView } from '~/components/s3-browser/S3BrowserView';
-import { S3ConfigDialog } from '~/components/s3-browser/S3ConfigDialog';
+} from '~/features/images/components';
+import { S3BrowserView } from '~/features/images/components/S3BrowserView';
+import { S3ConfigDialog } from '~/features/images/components/S3ConfigDialog';
 
-export const Route = createFileRoute('/dashboard/images')({
+export const Route = createFileRoute('/dashboard/images/')({
   component: ImagesPage,
 });
 

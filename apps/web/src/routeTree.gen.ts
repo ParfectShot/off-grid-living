@@ -17,6 +17,8 @@ import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as PathlessLayoutIndexImport } from './routes/_pathlessLayout/index'
 import { Route as DashboardSettingsImport } from './routes/dashboard/settings'
 import { Route as DashboardImagesImport } from './routes/dashboard/images'
+import { Route as DashboardImagesIndexImport } from './routes/dashboard/images/index'
+import { Route as DashboardGuidesIndexImport } from './routes/dashboard/guides/index'
 import { Route as PathlessLayoutGuidesIndexImport } from './routes/_pathlessLayout/guides/index'
 import { Route as PathlessLayoutCalculatorsIndexImport } from './routes/_pathlessLayout/calculators/index'
 import { Route as PathlessLayoutBlogsIndexImport } from './routes/_pathlessLayout/blogs/index'
@@ -60,6 +62,18 @@ const DashboardSettingsRoute = DashboardSettingsImport.update({
 const DashboardImagesRoute = DashboardImagesImport.update({
   id: '/images',
   path: '/images',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const DashboardImagesIndexRoute = DashboardImagesIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardImagesRoute,
+} as any)
+
+const DashboardGuidesIndexRoute = DashboardGuidesIndexImport.update({
+  id: '/guides/',
+  path: '/guides/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
@@ -190,6 +204,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PathlessLayoutGuidesIndexImport
       parentRoute: typeof PathlessLayoutRouteImport
     }
+    '/dashboard/guides/': {
+      id: '/dashboard/guides/'
+      path: '/guides'
+      fullPath: '/dashboard/guides'
+      preLoaderRoute: typeof DashboardGuidesIndexImport
+      parentRoute: typeof DashboardRouteImport
+    }
+    '/dashboard/images/': {
+      id: '/dashboard/images/'
+      path: '/'
+      fullPath: '/dashboard/images/'
+      preLoaderRoute: typeof DashboardImagesIndexImport
+      parentRoute: typeof DashboardImagesImport
+    }
     '/_pathlessLayout/guides/$category/$slug': {
       id: '/_pathlessLayout/guides/$category/$slug'
       path: '/guides/$category/$slug'
@@ -253,16 +281,30 @@ const PathlessLayoutRouteRouteChildren: PathlessLayoutRouteRouteChildren = {
 const PathlessLayoutRouteRouteWithChildren =
   PathlessLayoutRouteRoute._addFileChildren(PathlessLayoutRouteRouteChildren)
 
+interface DashboardImagesRouteChildren {
+  DashboardImagesIndexRoute: typeof DashboardImagesIndexRoute
+}
+
+const DashboardImagesRouteChildren: DashboardImagesRouteChildren = {
+  DashboardImagesIndexRoute: DashboardImagesIndexRoute,
+}
+
+const DashboardImagesRouteWithChildren = DashboardImagesRoute._addFileChildren(
+  DashboardImagesRouteChildren,
+)
+
 interface DashboardRouteRouteChildren {
-  DashboardImagesRoute: typeof DashboardImagesRoute
+  DashboardImagesRoute: typeof DashboardImagesRouteWithChildren
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardGuidesIndexRoute: typeof DashboardGuidesIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardImagesRoute: DashboardImagesRoute,
+  DashboardImagesRoute: DashboardImagesRouteWithChildren,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardGuidesIndexRoute: DashboardGuidesIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
@@ -272,7 +314,7 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '': typeof PathlessLayoutRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/dashboard/images': typeof DashboardImagesRoute
+  '/dashboard/images': typeof DashboardImagesRouteWithChildren
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/': typeof PathlessLayoutIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -280,6 +322,8 @@ export interface FileRoutesByFullPath {
   '/blogs': typeof PathlessLayoutBlogsIndexRoute
   '/calculators': typeof PathlessLayoutCalculatorsIndexRoute
   '/guides': typeof PathlessLayoutGuidesIndexRoute
+  '/dashboard/guides': typeof DashboardGuidesIndexRoute
+  '/dashboard/images/': typeof DashboardImagesIndexRoute
   '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/calculators/solar-system': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
@@ -287,7 +331,6 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
-  '/dashboard/images': typeof DashboardImagesRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/': typeof PathlessLayoutIndexRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -295,6 +338,8 @@ export interface FileRoutesByTo {
   '/blogs': typeof PathlessLayoutBlogsIndexRoute
   '/calculators': typeof PathlessLayoutCalculatorsIndexRoute
   '/guides': typeof PathlessLayoutGuidesIndexRoute
+  '/dashboard/guides': typeof DashboardGuidesIndexRoute
+  '/dashboard/images': typeof DashboardImagesIndexRoute
   '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/calculators/solar-system': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
@@ -305,7 +350,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_pathlessLayout': typeof PathlessLayoutRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/dashboard/images': typeof DashboardImagesRoute
+  '/dashboard/images': typeof DashboardImagesRouteWithChildren
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/_pathlessLayout/': typeof PathlessLayoutIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -313,6 +358,8 @@ export interface FileRoutesById {
   '/_pathlessLayout/blogs/': typeof PathlessLayoutBlogsIndexRoute
   '/_pathlessLayout/calculators/': typeof PathlessLayoutCalculatorsIndexRoute
   '/_pathlessLayout/guides/': typeof PathlessLayoutGuidesIndexRoute
+  '/dashboard/guides/': typeof DashboardGuidesIndexRoute
+  '/dashboard/images/': typeof DashboardImagesIndexRoute
   '/_pathlessLayout/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/_pathlessLayout/calculators/home-load/': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/_pathlessLayout/calculators/solar-system/': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
@@ -332,13 +379,14 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/calculators'
     | '/guides'
+    | '/dashboard/guides'
+    | '/dashboard/images/'
     | '/guides/$category/$slug'
     | '/calculators/home-load'
     | '/calculators/solar-system'
     | '/guides/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/dashboard/images'
     | '/dashboard/settings'
     | '/'
     | '/dashboard'
@@ -346,6 +394,8 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/calculators'
     | '/guides'
+    | '/dashboard/guides'
+    | '/dashboard/images'
     | '/guides/$category/$slug'
     | '/calculators/home-load'
     | '/calculators/solar-system'
@@ -362,6 +412,8 @@ export interface FileRouteTypes {
     | '/_pathlessLayout/blogs/'
     | '/_pathlessLayout/calculators/'
     | '/_pathlessLayout/guides/'
+    | '/dashboard/guides/'
+    | '/dashboard/images/'
     | '/_pathlessLayout/guides/$category/$slug'
     | '/_pathlessLayout/calculators/home-load/'
     | '/_pathlessLayout/calculators/solar-system/'
@@ -412,12 +464,16 @@ export const routeTree = rootRoute
       "children": [
         "/dashboard/images",
         "/dashboard/settings",
-        "/dashboard/"
+        "/dashboard/",
+        "/dashboard/guides/"
       ]
     },
     "/dashboard/images": {
       "filePath": "dashboard/images.tsx",
-      "parent": "/dashboard"
+      "parent": "/dashboard",
+      "children": [
+        "/dashboard/images/"
+      ]
     },
     "/dashboard/settings": {
       "filePath": "dashboard/settings.tsx",
@@ -446,6 +502,14 @@ export const routeTree = rootRoute
     "/_pathlessLayout/guides/": {
       "filePath": "_pathlessLayout/guides/index.tsx",
       "parent": "/_pathlessLayout"
+    },
+    "/dashboard/guides/": {
+      "filePath": "dashboard/guides/index.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/images/": {
+      "filePath": "dashboard/images/index.tsx",
+      "parent": "/dashboard/images"
     },
     "/_pathlessLayout/guides/$category/$slug": {
       "filePath": "_pathlessLayout/guides/$category/$slug.tsx",

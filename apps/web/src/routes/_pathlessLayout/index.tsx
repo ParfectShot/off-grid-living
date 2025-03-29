@@ -6,58 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { HeroSection } from "~/components/shared/HeroSection"
 import { SectionHeader } from "~/components/shared/SectionHeader"
 import { Newsletter } from "~/components/shared/Newsletter"
-import { ImageCredit } from "~/components/guides/ImageCredit"
-
-// Import featured guides from guides page
-import { featuredGuides } from '~/data/guides'
-
-// Image credits for guide sections
-const imageCredits = {
-  whatIsOffGridLiving: {
-    authorName: "Eugene Chystiakov",
-    authorUrl: "https://unsplash.com/@eugenechystiakov?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-    sourceName: "Unsplash",
-    sourceUrl: "https://unsplash.com/photos/a-house-with-a-solar-panel-on-the-roof-XVwYGihplmY?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
-  },
-  keyConsiderations: {
-    authorName: "VD Photography",
-    authorUrl: "https://unsplash.com/@vdphotography?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-    sourceName: "Unsplash",
-    sourceUrl: "https://unsplash.com/photos/an-aerial-view-of-a-house-with-a-solar-panel-on-the-roof-tC4tHCeoO44?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
-  },
-  stepByStepApproach: {
-    authorName: "Sumit Mangela",
-    authorUrl: "https://unsplash.com/@sumitmangela?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-    sourceName: "Unsplash",
-    sourceUrl: "https://unsplash.com/photos/a-very-large-building-that-has-a-bunch-of-stairs-in-it-ASM0H3ul2yo?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
-  },
-  commonQuestions: {
-    authorName: "Rakshit Yadav",
-    authorUrl: "https://unsplash.com/@rakshityadav190?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-    sourceName: "Unsplash",
-    sourceUrl: "https://unsplash.com/photos/a-monkey-sitting-on-top-of-a-solar-panel-mIa5hPkh42w?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
-  }
-};
-
-// Enhanced featured guides with image credits
-const enhancedFeaturedGuides = featuredGuides.map(guide => {
-  // Assign image credits based on guide slug
-  let imageCredit;
-  if (guide.slug === 'what-is-off-grid-living') {
-    imageCredit = imageCredits.whatIsOffGridLiving;
-  } else if (guide.slug === 'key-considerations-for-off-grid-living') {
-    imageCredit = imageCredits.keyConsiderations;
-  } else if (guide.slug === 'step-by-step-approach-to-off-grid-living') {
-    imageCredit = imageCredits.stepByStepApproach;
-  } else if (guide.slug === 'common-questions-about-off-grid-living') {
-    imageCredit = imageCredits.commonQuestions;
-  }
-  
-  return {
-    ...guide,
-    imageCredit
-  };
-});
+import { useQuery } from 'convex/react';
+import { api } from '~/convex/_generated/api';
+import { FeaturedGuideCard, LoadingGuideCard } from '~/features/guides';
 
 export const Route = createFileRoute('/_pathlessLayout/')({
   component: LandingPage,
@@ -74,6 +25,11 @@ export const Route = createFileRoute('/_pathlessLayout/')({
 })
 
 function LandingPage() {
+
+  const enhancedFeaturedGuides = useQuery(api.guides.getFeaturedGuides)
+
+  const isLoading = !enhancedFeaturedGuides;
+
   return (
 
     <div className="flex min-h-screen flex-col">
@@ -208,42 +164,14 @@ function LandingPage() {
             />
 
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-              {enhancedFeaturedGuides.map((guide, index) => (
-                <div key={index} className="flex flex-col overflow-hidden rounded-lg border shadow-sm h-full">
-                  <div className="aspect-video relative">
-                    <img
-                      src={guide.image || "/images/placeholder.jpg"}
-                      alt={guide.title}
-                      className="object-cover w-full h-full"
-                    />
-                    <div className="absolute top-2 right-2">
-                      <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white">
-                        {guide.level}
-                      </span>
-                    </div>
-                    {guide.imageCredit && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-1">
-                        <ImageCredit credit={guide.imageCredit} className="text-white/90" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col p-4">
-                    <h3 className="text-xl font-bold">{guide.title}</h3>
-                    <div className="mt-1 flex items-center text-sm text-muted-foreground">
-                      <Home className="mr-1 h-4 w-4" />
-                      <span>{guide.readTime}</span>
-                    </div>
-                    <p className="mt-2 flex-1 text-muted-foreground">
-                      {guide.description}
-                    </p>
-                    <div className="mt-4 flex items-center justify-end">
-                      <Link to={`/guides/${guide.categorySlug}/${guide.slug}`} className="text-sm font-medium text-green-600 hover:underline">
-                        Read Guide
-                        <ArrowRight className="ml-1 inline h-4 w-4" />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+              {isLoading && (
+                <LoadingGuideCard />
+              )}
+              {!isLoading && enhancedFeaturedGuides?.map((guide, index) => (
+                <FeaturedGuideCard 
+                  key={index}
+                  guide={guide}
+                />
               ))}
             </div>
             <div className="flex justify-center">
