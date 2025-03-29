@@ -273,4 +273,162 @@ export const listS3Folders = createServerFn({ method: 'GET' })
         folders: []
       };
     }
+  });
+
+// Add a new function to list images in an S3 bucket
+export const listS3Images = createServerFn({ method: 'GET' })
+  .validator((data: { bucket: string, prefix?: string, region?: string }) => data)
+  .handler(async ({ data }) => {
+    const { bucket, prefix = '', region = 'us-east-1' } = data;
+    
+    try {
+      if (!bucket) {
+        return {
+          success: false,
+          error: 'Bucket name is required',
+          folders: [],
+          images: []
+        };
+      }
+      
+      const s3Client = getS3Client(region);
+      const command = new ListObjectsV2Command({
+        Bucket: bucket,
+        Delimiter: '/',
+        Prefix: prefix ? `${prefix}/` : ''
+      });
+      
+      const response = await s3Client.send(command);
+      
+      // Extract folders (CommonPrefixes)
+      const folders: FolderInfo[] = response.CommonPrefixes?.map(prefix => {
+        const prefixPath = prefix.Prefix || '';
+        // Remove trailing slash and get folder name
+        const folderName = prefixPath.replace(/\/$/, '').split('/').pop() || '';
+        return {
+          name: folderName,
+          prefix: prefixPath,
+          path: prefixPath
+        };
+      }) || [];
+      
+      // Add option to go up one level if we're in a subfolder
+      if (prefix) {
+        const parentPrefix = prefix.split('/').slice(0, -1).join('/');
+        folders.unshift({
+          name: '.. (Parent directory)',
+          prefix: parentPrefix,
+          path: parentPrefix
+        });
+      }
+
+      // Extract images (Contents) - only process files with image extensions
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
+      const images = response.Contents?.filter(item => {
+        if (!item.Key) return false;
+        
+        // Skip folders - they appear as both CommonPrefixes and Contents with trailing slashes
+        if (item.Key.endsWith('/')) return false;
+        
+        // Check if it's an image file
+        const extension = item.Key.toLowerCase().split('.').pop();
+        return extension && imageExtensions.includes(`.${extension}`);
+      }).map(item => {
+        const key = item.Key || '';
+        const name = key.split('/').pop() || '';
+        const size = item.Size || 0;
+        const lastModified = item.LastModified;
+        const url = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
+        
+        return {
+          key,
+          name,
+          size,
+          lastModified,
+          url
+        };
+      }) || [];
+
+      // Group images by their pattern to find variants
+      const groupedImages: Record<string, any[]> = {};
+      
+      images.forEach(image => {
+        // Try to extract base filename (without size suffix)
+        const match = image.name.match(/^(.+?)(?:_\d+)?(\.[^.]+)$/);
+        
+        if (match) {
+          const [, baseName, extension] = match;
+          const groupKey = `${baseName}${extension}`;
+          
+          if (!groupedImages[groupKey]) {
+            groupedImages[groupKey] = [];
+          }
+          
+          groupedImages[groupKey].push(image);
+        } else {
+          // If no pattern match, use the full name as key
+          if (!groupedImages[image.name]) {
+            groupedImages[image.name] = [];
+          }
+          
+          groupedImages[image.name].push(image);
+        }
+      });
+      
+      // Process grouped images to find variants
+      const processedImages = Object.entries(groupedImages).map(([groupKey, variants]) => {
+        // Sort variants by size (if they have size in the filename)
+        variants.sort((a, b) => {
+          const aSize = parseInt((a.name.match(/_(\d+)\./) || [0, 0])[1]);
+          const bSize = parseInt((b.name.match(/_(\d+)\./) || [0, 0])[1]);
+          return aSize - bSize;
+        });
+        
+        // Find the original image (typically without size suffix)
+        const original = variants.find(img => !img.name.match(/_\d+\./)) || variants[0];
+        
+        // Find other variants
+        const srcset = variants
+          .filter(img => img !== original)
+          .map(img => {
+            // Extract size from filename (e.g., image_320.jpg -> 320)
+            const sizeMatch = img.name.match(/_(\d+)\./);
+            const width = sizeMatch ? parseInt(sizeMatch[1]) : 0;
+            
+            return {
+              width,
+              url: img.url,
+              key: img.key,
+              size: img.size
+            };
+          });
+        
+        return {
+          id: original.key.replace(/\//g, '-'),
+          key: original.key,
+          originalName: original.name,
+          originalSize: original.size,
+          originalUrl: original.url,
+          lastModified: original.lastModified,
+          srcset,
+          folder: prefix,
+          variants: variants.length
+        };
+      });
+      
+      return {
+        success: true,
+        folders,
+        images: processedImages,
+        prefix
+      };
+    } catch (error) {
+      console.error('Error listing S3 images:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        folders: [],
+        images: []
+      };
+    }
   }); 

@@ -26,7 +26,7 @@ import Image from '~/components/ui/image'
 import { BlogCard } from '~/components/blog/BlogCard'
 import { blogPosts } from '~/data/blogPosts'
 
-export const Route = createFileRoute('/blogs/$id')({
+export const Route = createFileRoute('/_pathlessLayout/blogs/$id')({
   component: BlogPostPage,
   head: () => {
     return {

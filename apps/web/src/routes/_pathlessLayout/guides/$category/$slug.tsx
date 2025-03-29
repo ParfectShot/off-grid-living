@@ -64,7 +64,7 @@ const imageCredits = {
   }
 };
 
-export const Route = createFileRoute('/guides/$category/$slug')({
+export const Route = createFileRoute('/_pathlessLayout/guides/$category/$slug')({
   component: GuideDetailPage,
   head: (props: any) => {
     const {params} = props;

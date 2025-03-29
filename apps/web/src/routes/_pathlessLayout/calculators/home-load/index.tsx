@@ -97,7 +97,7 @@ const defaultAppliances = [
 // Common wattage chips for quick selection
 const wattageChips = [5, 10, 15, 50, 100, 150, 200, 500, 1000, 1500]
 
-export const Route = createFileRoute("/calculators/home-load/")({
+export const Route = createFileRoute("/_pathlessLayout/calculators/home-load/")({
   component: HomeLoadCalculatorPage,
 })
 

@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
 
-export const Route = createFileRoute("/calculators/solar-system/")({
+export const Route = createFileRoute("/_pathlessLayout/calculators/solar-system/")({
   component: SolarSystemCalculatorPage,
   head: () => {
     return {

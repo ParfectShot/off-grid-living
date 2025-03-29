@@ -66,17 +66,21 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
 })
 
-function RootComponent() {
+function RootComponent(props: any) {
+  console.log(process.env.NODE_ENV)
+
+  console.log(Route)
   return (
     <ThemeProvider defaultTheme="system" storageKey="ui-theme">
       <RootDocument>
-        <RootLayout />
+        <Outlet />
       </RootDocument>
     </ThemeProvider>
   )
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const isDevelopment = process.env.NODE_ENV === 'development'
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -102,11 +106,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             `,
           }}
         />
-        <meta name="google-site-verification" content="TT6Q0Nw9rcPnAj7v0eSZ38s6IPDZigFvz5m9Owzuq-M" />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2YSE678JXW"></script>
-        <script dangerouslySetInnerHTML={{
-          __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-2YSE678JXW');`
-        }}></script>
+        {!isDevelopment && (
+          <>
+            <meta name="google-site-verification" content="TT6Q0Nw9rcPnAj7v0eSZ38s6IPDZigFvz5m9Owzuq-M" />
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-2YSE678JXW"></script>
+            <script dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-2YSE678JXW');`
+              }}></script>
+          </>
+        )}
       </head>
       <body className="relative min-h-screen bg-background font-sans antialiased transition-colors duration-300" suppressHydrationWarning>
         {children}
@@ -114,8 +122,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <TanStackRouterDevtools position="bottom-right" />
         <ReactQueryDevtools buttonPosition="bottom-left" />
         <Scripts />
-        <SpeedInsights />
-        <Analytics mode="production" />
+        {!isDevelopment && (
+          <>  
+            <SpeedInsights />
+            <Analytics mode="production" />
+          </>
+        )}
 
       </body>
     </html>

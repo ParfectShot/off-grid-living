@@ -8,317 +8,329 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as PathlessLayoutImport } from './routes/_pathlessLayout'
-import { Route as IndexImport } from './routes/index'
-import { Route as GuidesIndexImport } from './routes/guides/index'
+import { Route as DashboardRouteImport } from './routes/dashboard/route'
+import { Route as PathlessLayoutRouteImport } from './routes/_pathlessLayout/route'
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
-import { Route as CalculatorsIndexImport } from './routes/calculators/index'
-import { Route as BlogsIndexImport } from './routes/blogs/index'
+import { Route as PathlessLayoutIndexImport } from './routes/_pathlessLayout/index'
 import { Route as DashboardSettingsImport } from './routes/dashboard/settings'
 import { Route as DashboardImagesImport } from './routes/dashboard/images'
-import { Route as DashboardLayoutImport } from './routes/dashboard/_layout'
-import { Route as BlogsIdImport } from './routes/blogs/$id'
-import { Route as GuidesCategoryIndexImport } from './routes/guides/$category/index'
-import { Route as CalculatorsSolarSystemIndexImport } from './routes/calculators/solar-system/index'
-import { Route as CalculatorsHomeLoadIndexImport } from './routes/calculators/home-load/index'
-import { Route as GuidesCategorySlugImport } from './routes/guides/$category/$slug'
-
-// Create Virtual Routes
-
-const DashboardImport = createFileRoute('/dashboard')()
+import { Route as PathlessLayoutGuidesIndexImport } from './routes/_pathlessLayout/guides/index'
+import { Route as PathlessLayoutCalculatorsIndexImport } from './routes/_pathlessLayout/calculators/index'
+import { Route as PathlessLayoutBlogsIndexImport } from './routes/_pathlessLayout/blogs/index'
+import { Route as PathlessLayoutBlogsIdImport } from './routes/_pathlessLayout/blogs/$id'
+import { Route as PathlessLayoutGuidesCategoryIndexImport } from './routes/_pathlessLayout/guides/$category/index'
+import { Route as PathlessLayoutCalculatorsSolarSystemIndexImport } from './routes/_pathlessLayout/calculators/solar-system/index'
+import { Route as PathlessLayoutCalculatorsHomeLoadIndexImport } from './routes/_pathlessLayout/calculators/home-load/index'
+import { Route as PathlessLayoutGuidesCategorySlugImport } from './routes/_pathlessLayout/guides/$category/$slug'
 
 // Create/Update Routes
 
-const DashboardRoute = DashboardImport.update({
+const DashboardRouteRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
-const PathlessLayoutRoute = PathlessLayoutImport.update({
+const PathlessLayoutRouteRoute = PathlessLayoutRouteImport.update({
   id: '/_pathlessLayout',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const GuidesIndexRoute = GuidesIndexImport.update({
-  id: '/guides/',
-  path: '/guides/',
   getParentRoute: () => rootRoute,
 } as any)
 
 const DashboardIndexRoute = DashboardIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
-const CalculatorsIndexRoute = CalculatorsIndexImport.update({
-  id: '/calculators/',
-  path: '/calculators/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const BlogsIndexRoute = BlogsIndexImport.update({
-  id: '/blogs/',
-  path: '/blogs/',
-  getParentRoute: () => rootRoute,
+const PathlessLayoutIndexRoute = PathlessLayoutIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PathlessLayoutRouteRoute,
 } as any)
 
 const DashboardSettingsRoute = DashboardSettingsImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
 const DashboardImagesRoute = DashboardImagesImport.update({
   id: '/images',
   path: '/images',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
-const DashboardLayoutRoute = DashboardLayoutImport.update({
-  id: '/_layout',
-  getParentRoute: () => DashboardRoute,
+const PathlessLayoutGuidesIndexRoute = PathlessLayoutGuidesIndexImport.update({
+  id: '/guides/',
+  path: '/guides/',
+  getParentRoute: () => PathlessLayoutRouteRoute,
 } as any)
 
-const BlogsIdRoute = BlogsIdImport.update({
-  id: '/blogs/$id',
-  path: '/blogs/$id',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const GuidesCategoryIndexRoute = GuidesCategoryIndexImport.update({
-  id: '/guides/$category/',
-  path: '/guides/$category/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const CalculatorsSolarSystemIndexRoute =
-  CalculatorsSolarSystemIndexImport.update({
-    id: '/calculators/solar-system/',
-    path: '/calculators/solar-system/',
-    getParentRoute: () => rootRoute,
+const PathlessLayoutCalculatorsIndexRoute =
+  PathlessLayoutCalculatorsIndexImport.update({
+    id: '/calculators/',
+    path: '/calculators/',
+    getParentRoute: () => PathlessLayoutRouteRoute,
   } as any)
 
-const CalculatorsHomeLoadIndexRoute = CalculatorsHomeLoadIndexImport.update({
-  id: '/calculators/home-load/',
-  path: '/calculators/home-load/',
-  getParentRoute: () => rootRoute,
+const PathlessLayoutBlogsIndexRoute = PathlessLayoutBlogsIndexImport.update({
+  id: '/blogs/',
+  path: '/blogs/',
+  getParentRoute: () => PathlessLayoutRouteRoute,
 } as any)
 
-const GuidesCategorySlugRoute = GuidesCategorySlugImport.update({
-  id: '/guides/$category/$slug',
-  path: '/guides/$category/$slug',
-  getParentRoute: () => rootRoute,
+const PathlessLayoutBlogsIdRoute = PathlessLayoutBlogsIdImport.update({
+  id: '/blogs/$id',
+  path: '/blogs/$id',
+  getParentRoute: () => PathlessLayoutRouteRoute,
 } as any)
+
+const PathlessLayoutGuidesCategoryIndexRoute =
+  PathlessLayoutGuidesCategoryIndexImport.update({
+    id: '/guides/$category/',
+    path: '/guides/$category/',
+    getParentRoute: () => PathlessLayoutRouteRoute,
+  } as any)
+
+const PathlessLayoutCalculatorsSolarSystemIndexRoute =
+  PathlessLayoutCalculatorsSolarSystemIndexImport.update({
+    id: '/calculators/solar-system/',
+    path: '/calculators/solar-system/',
+    getParentRoute: () => PathlessLayoutRouteRoute,
+  } as any)
+
+const PathlessLayoutCalculatorsHomeLoadIndexRoute =
+  PathlessLayoutCalculatorsHomeLoadIndexImport.update({
+    id: '/calculators/home-load/',
+    path: '/calculators/home-load/',
+    getParentRoute: () => PathlessLayoutRouteRoute,
+  } as any)
+
+const PathlessLayoutGuidesCategorySlugRoute =
+  PathlessLayoutGuidesCategorySlugImport.update({
+    id: '/guides/$category/$slug',
+    path: '/guides/$category/$slug',
+    getParentRoute: () => PathlessLayoutRouteRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
     '/_pathlessLayout': {
       id: '/_pathlessLayout'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof PathlessLayoutImport
-      parentRoute: typeof rootRoute
-    }
-    '/blogs/$id': {
-      id: '/blogs/$id'
-      path: '/blogs/$id'
-      fullPath: '/blogs/$id'
-      preLoaderRoute: typeof BlogsIdImport
+      preLoaderRoute: typeof PathlessLayoutRouteImport
       parentRoute: typeof rootRoute
     }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardImport
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
-    }
-    '/dashboard/_layout': {
-      id: '/dashboard/_layout'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardLayoutImport
-      parentRoute: typeof DashboardRoute
     }
     '/dashboard/images': {
       id: '/dashboard/images'
       path: '/images'
       fullPath: '/dashboard/images'
       preLoaderRoute: typeof DashboardImagesImport
-      parentRoute: typeof DashboardImport
+      parentRoute: typeof DashboardRouteImport
     }
     '/dashboard/settings': {
       id: '/dashboard/settings'
       path: '/settings'
       fullPath: '/dashboard/settings'
       preLoaderRoute: typeof DashboardSettingsImport
-      parentRoute: typeof DashboardImport
+      parentRoute: typeof DashboardRouteImport
     }
-    '/blogs/': {
-      id: '/blogs/'
-      path: '/blogs'
-      fullPath: '/blogs'
-      preLoaderRoute: typeof BlogsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/calculators/': {
-      id: '/calculators/'
-      path: '/calculators'
-      fullPath: '/calculators'
-      preLoaderRoute: typeof CalculatorsIndexImport
-      parentRoute: typeof rootRoute
+    '/_pathlessLayout/': {
+      id: '/_pathlessLayout/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof PathlessLayoutIndexImport
+      parentRoute: typeof PathlessLayoutRouteImport
     }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexImport
-      parentRoute: typeof DashboardImport
+      parentRoute: typeof DashboardRouteImport
     }
-    '/guides/': {
-      id: '/guides/'
+    '/_pathlessLayout/blogs/$id': {
+      id: '/_pathlessLayout/blogs/$id'
+      path: '/blogs/$id'
+      fullPath: '/blogs/$id'
+      preLoaderRoute: typeof PathlessLayoutBlogsIdImport
+      parentRoute: typeof PathlessLayoutRouteImport
+    }
+    '/_pathlessLayout/blogs/': {
+      id: '/_pathlessLayout/blogs/'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof PathlessLayoutBlogsIndexImport
+      parentRoute: typeof PathlessLayoutRouteImport
+    }
+    '/_pathlessLayout/calculators/': {
+      id: '/_pathlessLayout/calculators/'
+      path: '/calculators'
+      fullPath: '/calculators'
+      preLoaderRoute: typeof PathlessLayoutCalculatorsIndexImport
+      parentRoute: typeof PathlessLayoutRouteImport
+    }
+    '/_pathlessLayout/guides/': {
+      id: '/_pathlessLayout/guides/'
       path: '/guides'
       fullPath: '/guides'
-      preLoaderRoute: typeof GuidesIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof PathlessLayoutGuidesIndexImport
+      parentRoute: typeof PathlessLayoutRouteImport
     }
-    '/guides/$category/$slug': {
-      id: '/guides/$category/$slug'
+    '/_pathlessLayout/guides/$category/$slug': {
+      id: '/_pathlessLayout/guides/$category/$slug'
       path: '/guides/$category/$slug'
       fullPath: '/guides/$category/$slug'
-      preLoaderRoute: typeof GuidesCategorySlugImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof PathlessLayoutGuidesCategorySlugImport
+      parentRoute: typeof PathlessLayoutRouteImport
     }
-    '/calculators/home-load/': {
-      id: '/calculators/home-load/'
+    '/_pathlessLayout/calculators/home-load/': {
+      id: '/_pathlessLayout/calculators/home-load/'
       path: '/calculators/home-load'
       fullPath: '/calculators/home-load'
-      preLoaderRoute: typeof CalculatorsHomeLoadIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof PathlessLayoutCalculatorsHomeLoadIndexImport
+      parentRoute: typeof PathlessLayoutRouteImport
     }
-    '/calculators/solar-system/': {
-      id: '/calculators/solar-system/'
+    '/_pathlessLayout/calculators/solar-system/': {
+      id: '/_pathlessLayout/calculators/solar-system/'
       path: '/calculators/solar-system'
       fullPath: '/calculators/solar-system'
-      preLoaderRoute: typeof CalculatorsSolarSystemIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof PathlessLayoutCalculatorsSolarSystemIndexImport
+      parentRoute: typeof PathlessLayoutRouteImport
     }
-    '/guides/$category/': {
-      id: '/guides/$category/'
+    '/_pathlessLayout/guides/$category/': {
+      id: '/_pathlessLayout/guides/$category/'
       path: '/guides/$category'
       fullPath: '/guides/$category'
-      preLoaderRoute: typeof GuidesCategoryIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof PathlessLayoutGuidesCategoryIndexImport
+      parentRoute: typeof PathlessLayoutRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface DashboardRouteChildren {
-  DashboardLayoutRoute: typeof DashboardLayoutRoute
+interface PathlessLayoutRouteRouteChildren {
+  PathlessLayoutIndexRoute: typeof PathlessLayoutIndexRoute
+  PathlessLayoutBlogsIdRoute: typeof PathlessLayoutBlogsIdRoute
+  PathlessLayoutBlogsIndexRoute: typeof PathlessLayoutBlogsIndexRoute
+  PathlessLayoutCalculatorsIndexRoute: typeof PathlessLayoutCalculatorsIndexRoute
+  PathlessLayoutGuidesIndexRoute: typeof PathlessLayoutGuidesIndexRoute
+  PathlessLayoutGuidesCategorySlugRoute: typeof PathlessLayoutGuidesCategorySlugRoute
+  PathlessLayoutCalculatorsHomeLoadIndexRoute: typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
+  PathlessLayoutCalculatorsSolarSystemIndexRoute: typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
+  PathlessLayoutGuidesCategoryIndexRoute: typeof PathlessLayoutGuidesCategoryIndexRoute
+}
+
+const PathlessLayoutRouteRouteChildren: PathlessLayoutRouteRouteChildren = {
+  PathlessLayoutIndexRoute: PathlessLayoutIndexRoute,
+  PathlessLayoutBlogsIdRoute: PathlessLayoutBlogsIdRoute,
+  PathlessLayoutBlogsIndexRoute: PathlessLayoutBlogsIndexRoute,
+  PathlessLayoutCalculatorsIndexRoute: PathlessLayoutCalculatorsIndexRoute,
+  PathlessLayoutGuidesIndexRoute: PathlessLayoutGuidesIndexRoute,
+  PathlessLayoutGuidesCategorySlugRoute: PathlessLayoutGuidesCategorySlugRoute,
+  PathlessLayoutCalculatorsHomeLoadIndexRoute:
+    PathlessLayoutCalculatorsHomeLoadIndexRoute,
+  PathlessLayoutCalculatorsSolarSystemIndexRoute:
+    PathlessLayoutCalculatorsSolarSystemIndexRoute,
+  PathlessLayoutGuidesCategoryIndexRoute:
+    PathlessLayoutGuidesCategoryIndexRoute,
+}
+
+const PathlessLayoutRouteRouteWithChildren =
+  PathlessLayoutRouteRoute._addFileChildren(PathlessLayoutRouteRouteChildren)
+
+interface DashboardRouteRouteChildren {
   DashboardImagesRoute: typeof DashboardImagesRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardLayoutRoute: DashboardLayoutRoute,
+const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardImagesRoute: DashboardImagesRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
+const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
+  DashboardRouteRouteChildren,
 )
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '': typeof PathlessLayoutRoute
-  '/blogs/$id': typeof BlogsIdRoute
-  '/dashboard': typeof DashboardLayoutRoute
+  '': typeof PathlessLayoutRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/dashboard/images': typeof DashboardImagesRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
-  '/blogs': typeof BlogsIndexRoute
-  '/calculators': typeof CalculatorsIndexRoute
+  '/': typeof PathlessLayoutIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/guides': typeof GuidesIndexRoute
-  '/guides/$category/$slug': typeof GuidesCategorySlugRoute
-  '/calculators/home-load': typeof CalculatorsHomeLoadIndexRoute
-  '/calculators/solar-system': typeof CalculatorsSolarSystemIndexRoute
-  '/guides/$category': typeof GuidesCategoryIndexRoute
+  '/blogs/$id': typeof PathlessLayoutBlogsIdRoute
+  '/blogs': typeof PathlessLayoutBlogsIndexRoute
+  '/calculators': typeof PathlessLayoutCalculatorsIndexRoute
+  '/guides': typeof PathlessLayoutGuidesIndexRoute
+  '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
+  '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
+  '/calculators/solar-system': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
+  '/guides/$category': typeof PathlessLayoutGuidesCategoryIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '': typeof PathlessLayoutRoute
-  '/blogs/$id': typeof BlogsIdRoute
-  '/dashboard': typeof DashboardIndexRoute
   '/dashboard/images': typeof DashboardImagesRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
-  '/blogs': typeof BlogsIndexRoute
-  '/calculators': typeof CalculatorsIndexRoute
-  '/guides': typeof GuidesIndexRoute
-  '/guides/$category/$slug': typeof GuidesCategorySlugRoute
-  '/calculators/home-load': typeof CalculatorsHomeLoadIndexRoute
-  '/calculators/solar-system': typeof CalculatorsSolarSystemIndexRoute
-  '/guides/$category': typeof GuidesCategoryIndexRoute
+  '/': typeof PathlessLayoutIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/blogs/$id': typeof PathlessLayoutBlogsIdRoute
+  '/blogs': typeof PathlessLayoutBlogsIndexRoute
+  '/calculators': typeof PathlessLayoutCalculatorsIndexRoute
+  '/guides': typeof PathlessLayoutGuidesIndexRoute
+  '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
+  '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
+  '/calculators/solar-system': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
+  '/guides/$category': typeof PathlessLayoutGuidesCategoryIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/_pathlessLayout': typeof PathlessLayoutRoute
-  '/blogs/$id': typeof BlogsIdRoute
-  '/dashboard': typeof DashboardRouteWithChildren
-  '/dashboard/_layout': typeof DashboardLayoutRoute
+  '/_pathlessLayout': typeof PathlessLayoutRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/dashboard/images': typeof DashboardImagesRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
-  '/blogs/': typeof BlogsIndexRoute
-  '/calculators/': typeof CalculatorsIndexRoute
+  '/_pathlessLayout/': typeof PathlessLayoutIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/guides/': typeof GuidesIndexRoute
-  '/guides/$category/$slug': typeof GuidesCategorySlugRoute
-  '/calculators/home-load/': typeof CalculatorsHomeLoadIndexRoute
-  '/calculators/solar-system/': typeof CalculatorsSolarSystemIndexRoute
-  '/guides/$category/': typeof GuidesCategoryIndexRoute
+  '/_pathlessLayout/blogs/$id': typeof PathlessLayoutBlogsIdRoute
+  '/_pathlessLayout/blogs/': typeof PathlessLayoutBlogsIndexRoute
+  '/_pathlessLayout/calculators/': typeof PathlessLayoutCalculatorsIndexRoute
+  '/_pathlessLayout/guides/': typeof PathlessLayoutGuidesIndexRoute
+  '/_pathlessLayout/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
+  '/_pathlessLayout/calculators/home-load/': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
+  '/_pathlessLayout/calculators/solar-system/': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
+  '/_pathlessLayout/guides/$category/': typeof PathlessLayoutGuidesCategoryIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | ''
-    | '/blogs/$id'
     | '/dashboard'
     | '/dashboard/images'
     | '/dashboard/settings'
+    | '/'
+    | '/dashboard/'
+    | '/blogs/$id'
     | '/blogs'
     | '/calculators'
-    | '/dashboard/'
     | '/guides'
     | '/guides/$category/$slug'
     | '/calculators/home-load'
@@ -326,12 +338,11 @@ export interface FileRouteTypes {
     | '/guides/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | ''
-    | '/blogs/$id'
-    | '/dashboard'
     | '/dashboard/images'
     | '/dashboard/settings'
+    | '/'
+    | '/dashboard'
+    | '/blogs/$id'
     | '/blogs'
     | '/calculators'
     | '/guides'
@@ -341,50 +352,31 @@ export interface FileRouteTypes {
     | '/guides/$category'
   id:
     | '__root__'
-    | '/'
     | '/_pathlessLayout'
-    | '/blogs/$id'
     | '/dashboard'
-    | '/dashboard/_layout'
     | '/dashboard/images'
     | '/dashboard/settings'
-    | '/blogs/'
-    | '/calculators/'
+    | '/_pathlessLayout/'
     | '/dashboard/'
-    | '/guides/'
-    | '/guides/$category/$slug'
-    | '/calculators/home-load/'
-    | '/calculators/solar-system/'
-    | '/guides/$category/'
+    | '/_pathlessLayout/blogs/$id'
+    | '/_pathlessLayout/blogs/'
+    | '/_pathlessLayout/calculators/'
+    | '/_pathlessLayout/guides/'
+    | '/_pathlessLayout/guides/$category/$slug'
+    | '/_pathlessLayout/calculators/home-load/'
+    | '/_pathlessLayout/calculators/solar-system/'
+    | '/_pathlessLayout/guides/$category/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  PathlessLayoutRoute: typeof PathlessLayoutRoute
-  BlogsIdRoute: typeof BlogsIdRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
-  BlogsIndexRoute: typeof BlogsIndexRoute
-  CalculatorsIndexRoute: typeof CalculatorsIndexRoute
-  GuidesIndexRoute: typeof GuidesIndexRoute
-  GuidesCategorySlugRoute: typeof GuidesCategorySlugRoute
-  CalculatorsHomeLoadIndexRoute: typeof CalculatorsHomeLoadIndexRoute
-  CalculatorsSolarSystemIndexRoute: typeof CalculatorsSolarSystemIndexRoute
-  GuidesCategoryIndexRoute: typeof GuidesCategoryIndexRoute
+  PathlessLayoutRouteRoute: typeof PathlessLayoutRouteRouteWithChildren
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  PathlessLayoutRoute: PathlessLayoutRoute,
-  BlogsIdRoute: BlogsIdRoute,
-  DashboardRoute: DashboardRouteWithChildren,
-  BlogsIndexRoute: BlogsIndexRoute,
-  CalculatorsIndexRoute: CalculatorsIndexRoute,
-  GuidesIndexRoute: GuidesIndexRoute,
-  GuidesCategorySlugRoute: GuidesCategorySlugRoute,
-  CalculatorsHomeLoadIndexRoute: CalculatorsHomeLoadIndexRoute,
-  CalculatorsSolarSystemIndexRoute: CalculatorsSolarSystemIndexRoute,
-  GuidesCategoryIndexRoute: GuidesCategoryIndexRoute,
+  PathlessLayoutRouteRoute: PathlessLayoutRouteRouteWithChildren,
+  DashboardRouteRoute: DashboardRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -397,40 +389,31 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
         "/_pathlessLayout",
-        "/blogs/$id",
-        "/dashboard",
-        "/blogs/",
-        "/calculators/",
-        "/guides/",
-        "/guides/$category/$slug",
-        "/calculators/home-load/",
-        "/calculators/solar-system/",
-        "/guides/$category/"
+        "/dashboard"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
-    },
     "/_pathlessLayout": {
-      "filePath": "_pathlessLayout.tsx"
-    },
-    "/blogs/$id": {
-      "filePath": "blogs/$id.tsx"
+      "filePath": "_pathlessLayout/route.tsx",
+      "children": [
+        "/_pathlessLayout/",
+        "/_pathlessLayout/blogs/$id",
+        "/_pathlessLayout/blogs/",
+        "/_pathlessLayout/calculators/",
+        "/_pathlessLayout/guides/",
+        "/_pathlessLayout/guides/$category/$slug",
+        "/_pathlessLayout/calculators/home-load/",
+        "/_pathlessLayout/calculators/solar-system/",
+        "/_pathlessLayout/guides/$category/"
+      ]
     },
     "/dashboard": {
-      "filePath": "dashboard",
+      "filePath": "dashboard/route.tsx",
       "children": [
-        "/dashboard/_layout",
         "/dashboard/images",
         "/dashboard/settings",
         "/dashboard/"
       ]
-    },
-    "/dashboard/_layout": {
-      "filePath": "dashboard/_layout.tsx",
-      "parent": "/dashboard"
     },
     "/dashboard/images": {
       "filePath": "dashboard/images.tsx",
@@ -440,30 +423,45 @@ export const routeTree = rootRoute
       "filePath": "dashboard/settings.tsx",
       "parent": "/dashboard"
     },
-    "/blogs/": {
-      "filePath": "blogs/index.tsx"
-    },
-    "/calculators/": {
-      "filePath": "calculators/index.tsx"
+    "/_pathlessLayout/": {
+      "filePath": "_pathlessLayout/index.tsx",
+      "parent": "/_pathlessLayout"
     },
     "/dashboard/": {
       "filePath": "dashboard/index.tsx",
       "parent": "/dashboard"
     },
-    "/guides/": {
-      "filePath": "guides/index.tsx"
+    "/_pathlessLayout/blogs/$id": {
+      "filePath": "_pathlessLayout/blogs/$id.tsx",
+      "parent": "/_pathlessLayout"
     },
-    "/guides/$category/$slug": {
-      "filePath": "guides/$category/$slug.tsx"
+    "/_pathlessLayout/blogs/": {
+      "filePath": "_pathlessLayout/blogs/index.tsx",
+      "parent": "/_pathlessLayout"
     },
-    "/calculators/home-load/": {
-      "filePath": "calculators/home-load/index.tsx"
+    "/_pathlessLayout/calculators/": {
+      "filePath": "_pathlessLayout/calculators/index.tsx",
+      "parent": "/_pathlessLayout"
     },
-    "/calculators/solar-system/": {
-      "filePath": "calculators/solar-system/index.tsx"
+    "/_pathlessLayout/guides/": {
+      "filePath": "_pathlessLayout/guides/index.tsx",
+      "parent": "/_pathlessLayout"
     },
-    "/guides/$category/": {
-      "filePath": "guides/$category/index.tsx"
+    "/_pathlessLayout/guides/$category/$slug": {
+      "filePath": "_pathlessLayout/guides/$category/$slug.tsx",
+      "parent": "/_pathlessLayout"
+    },
+    "/_pathlessLayout/calculators/home-load/": {
+      "filePath": "_pathlessLayout/calculators/home-load/index.tsx",
+      "parent": "/_pathlessLayout"
+    },
+    "/_pathlessLayout/calculators/solar-system/": {
+      "filePath": "_pathlessLayout/calculators/solar-system/index.tsx",
+      "parent": "/_pathlessLayout"
+    },
+    "/_pathlessLayout/guides/$category/": {
+      "filePath": "_pathlessLayout/guides/$category/index.tsx",
+      "parent": "/_pathlessLayout"
     }
   }
 }

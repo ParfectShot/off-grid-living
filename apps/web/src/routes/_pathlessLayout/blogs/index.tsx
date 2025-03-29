@@ -6,7 +6,7 @@ import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { blogPosts } from '~/data/blogPosts'
 
-export const Route = createFileRoute('/blogs/')({
+export const Route = createFileRoute('/_pathlessLayout/blogs/')({
   component: BlogsPage,
   head: () => {
     return {

@@ -96,10 +96,9 @@ export function ImageProcessor() {
   };
 
   // Handle deleting a processed image (placeholder)
-  const handleDeleteImage = async (imageId: string) => {
+  const handleDeleteImage = async (imageId: string): Promise<void> => {
     // In a real implementation, you would call a server function to delete the image
     setProcessedImages(prev => prev.filter(img => img._id !== imageId));
-    return "Deleted";
   };
 
   return (

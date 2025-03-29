@@ -12,7 +12,7 @@ import { LoadingGuideCard } from "~/components/guides/LoadingGuideCard"
 import { seoDataMap as seoDataMapGuideCategories } from "~/data/seo/guides/categories"
 import { seo } from "~/utils/seo"
 
-export const Route = createFileRoute('/guides/$category/')({
+export const Route = createFileRoute('/_pathlessLayout/guides/$category/')({
   component: GuideCategoryPage,
   head: (props: any) => {
     const { params } = props;

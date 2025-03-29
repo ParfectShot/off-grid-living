@@ -18,7 +18,7 @@ import { Newsletter } from "~/components/shared/Newsletter"
 import { LoadingGuideCard } from "~/components/guides/LoadingGuideCard"
 import { Id } from "~/convex/_generated/dataModel"
 
-export const Route = createFileRoute("/guides/")({
+export const Route = createFileRoute("/_pathlessLayout/guides/")({
   component: GuidesPage,
   head: () => ({
     meta: [

@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { Outlet } from "@tanstack/react-router";
 import { DashboardNav } from "~/components/layout/dashboard-nav";
 import { ModeToggle } from "~/components/layout/mode-toggle";
 import { Button } from "~/components/ui/button";
@@ -7,11 +7,7 @@ import { Home, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/dashboard/_layout")({
-  component: DashboardLayout,
-});
-
-function DashboardLayout() {
+export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
