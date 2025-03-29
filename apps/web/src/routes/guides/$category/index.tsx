@@ -1,13 +1,14 @@
-import { Link, useParams, createFileRoute } from "@tanstack/react-router"
-import { ArrowRight, BookOpen, ChevronRight } from "lucide-react"
+import { createFileRoute } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
 import { useQuery } from "convex/react"
 import { api } from "~/convex/_generated/api"
 
-import { Button } from "~/components/ui/button"
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
-import { Badge } from "~/components/ui/badge"
-import { GuideIcon } from "~/components/guide-icon"
-import { Skeleton } from "~/components/ui/skeleton"
+import { BreadcrumbNav } from "~/components/shared/BreadcrumbNav"
+import { SectionHeader } from "~/components/shared/SectionHeader"
+import { CategoryHero } from "~/components/guides/CategoryHero"
+import { GuideCard } from "~/components/guides/GuideCard"
+import { CategoryCard } from "~/components/guides/CategoryCard"
+import { LoadingGuideCard } from "~/components/guides/LoadingGuideCard"
 import { seoDataMap as seoDataMapGuideCategories } from "~/data/seo/guides/categories"
 import { seo } from "~/utils/seo"
 
@@ -47,7 +48,16 @@ function GuideCategoryPage() {
   const isLoading = !categoryData || !guides || !otherCategories
   
   // Filter out the current category from other categories
-  const filteredOtherCategories = otherCategories.filter(cat => cat.slug !== category)
+  const filteredOtherCategories = isLoading ? [] : otherCategories.filter(cat => cat.slug !== category)
+  // Get first guide slug for the "Start with" button
+  const firstGuideSlug = !isLoading && guides.length > 0 ? guides[0].slug : undefined
+
+  // Prepare category data for the CategoryHero component
+  const categoryHeroData = categoryData ? {
+    title: categoryData.title,
+    description: categoryData.description,
+    icon: categoryData.icon
+  } : undefined
 
   if (!isLoading && !categoryData) {
     return (
@@ -55,9 +65,9 @@ function GuideCategoryPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Category Not Found</h1>
           <p className="text-muted-foreground mb-6">The guide category you're looking for doesn't seem to exist.</p>
-          <Link to="/guides">
-            <Button>Back to Guides</Button>
-          </Link>
+          <a href="/guides" className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+            Back to Guides
+          </a>
         </div>
       </div>
     )
@@ -65,62 +75,27 @@ function GuideCategoryPage() {
 
   return (
     <main className="flex-1">
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-green-50 dark:bg-green-950/30">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            {isLoading ? (
-              // Loading state for category header
-              <>
-                <Skeleton className="h-12 w-12 rounded-full mb-4" />
-                <div className="space-y-2">
-                  <Skeleton className="h-10 w-64 mx-auto" />
-                  <Skeleton className="h-5 w-full max-w-[700px] mx-auto" />
-                  <Skeleton className="h-5 w-3/4 max-w-[600px] mx-auto" />
-                </div>
-                <Skeleton className="h-10 w-40 mt-4" />
-              </>
-            ) : (
-              <>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="rounded-full bg-green-100 dark:bg-green-900 p-3">
-                    <GuideIcon name={categoryData?.icon || "BookOpen"} />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">{categoryData.title} Guides</h1>
-                  <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                    {categoryData.description}
-                  </p>
-                </div>
-                {guides.length > 0 && (
-                  <Link to={`/guides/${category}/${guides[0].slug}`}>
-                    <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 hover:bg-green-700 h-10 px-4 py-2 text-white">
-                      Start with {guides[0].title}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </section>
+      {/* Hero section */}
+      <CategoryHero 
+        category={categoryHeroData} 
+        firstGuideSlug={firstGuideSlug}
+        categorySlug={category}
+        isLoading={isLoading}
+      />
 
       {/* Breadcrumb navigation */}
       <div className="container px-4 md:px-6 mt-8">
-        <div className="flex items-center gap-1 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-foreground">
-            Home
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <Link to="/guides" className="hover:text-foreground">
-            Guides
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground font-medium">
-            {isLoading ? <Skeleton className="h-4 w-20 inline-block" /> : categoryData.title}
-          </span>
-        </div>
+        <BreadcrumbNav 
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Guides", href: "/guides" },
+            { 
+              label: isLoading ? undefined : categoryData.title, 
+              isLoading: isLoading
+            }
+          ]}
+          className="mb-6"
+        />
       </div>
 
       {/* Guides listing */}
@@ -130,40 +105,15 @@ function GuideCategoryPage() {
             {isLoading ? (
               // Loading skeletons for guides
               Array(6).fill(0).map((_, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <Skeleton className="h-4 w-20 mb-2" />
-                    <Skeleton className="h-5 w-full mb-2" />
-                    <Skeleton className="h-4 w-full" />
-                  </CardHeader>
-                  <CardFooter>
-                    <Skeleton className="h-9 w-full" />
-                  </CardFooter>
-                </Card>
+                <LoadingGuideCard key={index} />
               ))
             ) : (
               guides.map((guide) => (
-                <Card key={guide._id} className="hover:shadow-md transition-shadow">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                      <Badge variant="outline">{guide.level}</Badge>
-                      <span className="flex items-center">
-                        <BookOpen className="h-3 w-3 mr-1" />
-                        {guide.readTime}
-                      </span>
-                    </div>
-                    <CardTitle className="text-lg">{guide.title}</CardTitle>
-                    <CardDescription>{guide.description}</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="pt-2">
-                    <Link to={`/guides/${category}/${guide.slug}`} className="w-full">
-                      <Button className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
-                        Read Guide
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
+                <GuideCard 
+                  key={guide._id} 
+                  guide={guide} 
+                  categorySlug={category} 
+                />
               ))
             )}
           </div>
@@ -173,47 +123,21 @@ function GuideCategoryPage() {
       {/* Other categories */}
       <section className="w-full py-12 bg-muted">
         <div className="container px-4 md:px-6">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold tracking-tight mb-2">Other Guide Categories</h2>
-            <p className="text-muted-foreground">Explore our other comprehensive guide collections</p>
-          </div>
+          <SectionHeader 
+            title="Other Guide Categories"
+            description="Explore our other comprehensive guide collections"
+            className="mb-8"
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isLoading ? (
               // Loading skeletons for other categories
               Array(3).fill(0).map((_, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <Skeleton className="h-8 w-8 rounded-full mb-2" />
-                    <Skeleton className="h-5 w-full mb-2" />
-                    <Skeleton className="h-4 w-full" />
-                  </CardHeader>
-                  <CardFooter>
-                    <Skeleton className="h-9 w-full" />
-                  </CardFooter>
-                </Card>
+                <LoadingGuideCard key={index} />
               ))
             ) : (
               filteredOtherCategories.map((cat) => (
-                <Card key={cat._id} className="hover:shadow-md transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="rounded-full bg-green-100 dark:bg-green-900 p-2">
-                        <GuideIcon name={cat.icon} />
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg">{cat.title}</CardTitle>
-                    <CardDescription>{cat.description}</CardDescription>
-                  </CardHeader>
-                  <CardFooter>
-                    <Link to={`/guides/${cat.slug}`} className="w-full">
-                      <Button variant="outline" className="w-full">
-                        Browse {cat.title} Guides
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
+                <CategoryCard key={cat._id} category={cat} />
               ))
             )}
           </div>

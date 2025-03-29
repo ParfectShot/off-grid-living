@@ -57,7 +57,7 @@ export const guideCategories: GuideCategory[] = [
         readTime: "10 min read",
         level: "Beginner",
         lastUpdated: "March 15, 2023",
-        image: "/assets/guides/getting-started/off-grid-cabin.jpeg",
+        image: "/assets/guides/getting-started/off-grid-cabin.jpg",
         sections: [
           { id: "introduction", title: "Introduction", order: 0 },
           { id: "definition", title: "What Does Off-Grid Mean?", order: 1 },
@@ -75,7 +75,7 @@ export const guideCategories: GuideCategory[] = [
         category: "Getting Started",
         readTime: "8 min read",
         level: "Beginner",
-        image: "/assets/guides/getting-started/off-grid-essentials.jpeg",
+        image: "/assets/guides/getting-started/off-grid-essentials.jpg",
       },
       {
         title: "Step-by-Step Approach",
@@ -85,7 +85,7 @@ export const guideCategories: GuideCategory[] = [
         category: "Getting Started",
         readTime: "12 min read",
         level: "Intermediate",
-        image: "/assets/guides/getting-started/step-by-step-approach.jpeg",
+        image: "/assets/guides/getting-started/step-by-step-approach.jpg",
       },
       {
         title: "Common Questions About Off-Grid Living",
@@ -96,7 +96,7 @@ export const guideCategories: GuideCategory[] = [
         readTime: "15 min read",
         level: "Beginner",
         lastUpdated: "April 10, 2023",
-        image: "/assets/guides/getting-started/common-questions.jpeg",
+        image: "/assets/guides/getting-started/common-questions.jpg",
         sections: [
           { id: "introduction", title: "Introduction" },
           { id: "finding-land", title: "Finding Suitable Land" },

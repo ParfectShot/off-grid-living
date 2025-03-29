@@ -1,0 +1,1 @@
+// Solar system calculator configuration 

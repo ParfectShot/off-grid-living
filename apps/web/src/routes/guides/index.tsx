@@ -7,9 +7,15 @@ import { api } from "~/convex/_generated/api"
 import { Button } from "~/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
 import { Badge } from "~/components/ui/badge"
-import { GuideIcon } from "~/components/guide-icon"
-import { seo } from '~/utils/seo'
+import { GuideIcon } from "~/components/guides/guide-icon"
 import { Skeleton } from "~/components/ui/skeleton"
+import { seo } from '~/utils/seo'
+import { HeroSection } from "~/components/shared/HeroSection"
+import { SectionHeader } from "~/components/shared/SectionHeader"
+import { FeaturedGuideCard } from "~/components/guides/FeaturedGuideCard"
+import { GuideCard } from "~/components/guides/GuideCard"
+import { Newsletter } from "~/components/shared/Newsletter"
+import { LoadingGuideCard } from "~/components/guides/LoadingGuideCard"
 import { Id } from "~/convex/_generated/dataModel"
 
 export const Route = createFileRoute("/guides/")({
@@ -17,7 +23,7 @@ export const Route = createFileRoute("/guides/")({
   head: () => ({
     meta: [
       ...seo({
-        title: 'Off-Grid Guides: Cabins, Renewable Energy & Self-Sufficiency | Off Grid Collective',
+        title: 'Off-Grid Guides: Cabins, Solar Power & Self-Sufficiency | Off Grid Collective',
         description: 'Find comprehensive guides on off-grid living at the Off Grid Collective. Explore our featured sections and categories covering DIY solar installations, water system upgrades, cabin building, and solutions for common challenges like proving residence without bills',
       }),
     ],
@@ -34,41 +40,31 @@ function GuidesPage() {
   
   // Loading states
   const isLoading = !categories || !featuredGuides
+
+  console.log(categories)
   
   return (
     <main className="flex-1">
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-green-50 dark:bg-green-950/30">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Off-Grid Living Guides</h1>
-              <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                Comprehensive resources to help you navigate every aspect of self-sufficient, sustainable living.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/guides/getting-started/what-is-off-grid-living">
-                <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 hover:bg-green-700 h-10 px-4 py-2 text-white">
-                  Start with the Basics
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link to="#guide-categories">
-                <Button variant="outline">Browse All Guides</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero section */}
+      <HeroSection
+        title="Off-Grid Living Guides"
+        description="Comprehensive resources to help you navigate every aspect of self-sufficient, sustainable living."
+        backgroundImage="/images/hero-bg.jpg"
+        primaryButtonText="Start with the Basics"
+        primaryButtonLink="/guides/getting-started/what-is-off-grid-living"
+        secondaryButtonText="Browse All Guides"
+        secondaryButtonLink="#guide-categories"
+        className="bg-green-50 dark:bg-green-950/30"
+      />
 
       {/* Featured guides section */}
       <section className="w-full py-12 md:py-16">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:items-center mb-8">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">Featured Guides</h2>
-              <p className="text-muted-foreground">Comprehensive resources for your off-grid journey</p>
-            </div>
+            <SectionHeader
+              title="Featured Guides"
+              description="Comprehensive resources for your off-grid journey"
+            />
             <Link to="#guide-categories">
               <Button variant="ghost" className="gap-1">
                 View all guides
@@ -81,54 +77,14 @@ function GuidesPage() {
             {isLoading ? (
               // Loading skeleton UI
               Array(3).fill(0).map((_, index) => (
-                <Card key={index} className="overflow-hidden flex flex-col">
-                  <div className="aspect-video relative">
-                    <Skeleton className="h-full w-full" />
-                  </div>
-                  <CardHeader className="pb-2">
-                    <Skeleton className="h-4 w-20 mb-2" />
-                    <Skeleton className="h-5 w-full mb-2" />
-                    <Skeleton className="h-4 w-full" />
-                  </CardHeader>
-                  <CardFooter className="mt-auto pt-2">
-                    <Skeleton className="h-9 w-full" />
-                  </CardFooter>
-                </Card>
+                <LoadingGuideCard key={index} variant="featured" />
               ))
             ) : (
               featuredGuides.map((guide) => (
-                <Card key={guide._id} className="overflow-hidden flex flex-col pt-0">
-                  <div className="aspect-video relative overflow-hidden">
-                    <img
-                      src={guide.image || "/images/placeholder.jpg"}
-                      alt={guide.title}
-                      className="w-full h-full object-cover transition-transform hover:scale-105"
-                    />
-                    <div className="absolute top-2 right-2">
-                      <Badge className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white">Featured</Badge>
-                    </div>
-                  </div>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                      <Badge variant="outline">{guide.level}</Badge>
-                      <span className="flex items-center">
-                        <BookOpen className="h-3 w-3 mr-1" />
-                        {guide.readTime}
-                      </span>
-                    </div>
-                    <CardTitle>{guide.title}</CardTitle>
-                    <CardDescription>{guide.description}</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="mt-auto pt-2">
-                    {/* We'll need to fetch the primary category for each guide */}
-                    <Link to={`/guides/getting-started/${guide.slug}`} className="w-full">
-                      <Button className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
-                        Read Guide
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
+                <FeaturedGuideCard 
+                  key={guide._id} 
+                  guide={guide} 
+                />
               ))
             )}
           </div>
@@ -138,38 +94,17 @@ function GuidesPage() {
       {/* Guide categories section */}
       <section id="guide-categories" className="w-full py-12 md:py-16 bg-muted">
         <div className="container px-4 md:px-6">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold tracking-tight mb-2">Guide Categories</h2>
-            <p className="text-muted-foreground">Browse our comprehensive collection of guides organized by topic</p>
-          </div>
+          <SectionHeader
+            title="Guide Categories"
+            description="Browse our comprehensive collection of guides organized by topic"
+            className="mb-8"
+          />
 
           <div className="space-y-12">
             {isLoading ? (
               // Loading skeletons for categories
               Array(3).fill(0).map((_, index) => (
-                <div key={index}>
-                  <div className="flex items-center gap-2 mb-6">
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                    <div className="w-full">
-                      <Skeleton className="h-6 w-48 mb-2" />
-                      <Skeleton className="h-4 w-full" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Array(3).fill(0).map((_, guideIndex) => (
-                      <Card key={guideIndex}>
-                        <CardHeader>
-                          <Skeleton className="h-4 w-20 mb-2" />
-                          <Skeleton className="h-5 w-full mb-2" />
-                          <Skeleton className="h-4 w-full" />
-                        </CardHeader>
-                        <CardFooter>
-                          <Skeleton className="h-9 w-full" />
-                        </CardFooter>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
+                <CategoryLoader key={index} />
               ))
             ) : (
               categories.map((category) => (
@@ -196,12 +131,11 @@ function GuidesPage() {
       {/* Downloadable resources section */}
       <section className="w-full py-12 md:py-16">
         <div className="container px-4 md:px-6">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold tracking-tight mb-2">Downloadable Resources</h2>
-            <p className="text-muted-foreground">
-              Printable guides, checklists, and worksheets to help with your off-grid planning
-            </p>
-          </div>
+          <SectionHeader
+            title="Downloadable Resources"
+            description="Printable guides, checklists, and worksheets to help with your off-grid planning"
+            className="mb-8"
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -246,48 +180,28 @@ function GuidesPage() {
       </section>
 
       {/* Newsletter section */}
-      <section className="w-full py-12 md:py-24 bg-green-50 dark:bg-green-950/30">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                Stay Updated with Our Newsletter
-              </h2>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Get the latest guides, tips, and resources for off-grid living delivered straight to your inbox.
-              </p>
-            </div>
-            <div className="flex flex-col space-y-4">
-              <form className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-                <div className="flex-1">
-                  <label htmlFor="email" className="sr-only">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    placeholder="Enter your email"
-                    type="email"
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </div>
-                <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">Subscribe</Button>
-              </form>
-              <p className="text-xs text-muted-foreground">
-                By subscribing, you agree to our{" "}
-                <Link to="/terms" className="underline underline-offset-2">
-                  Terms & Conditions
-                </Link>{" "}
-                and{" "}
-                <Link to="/privacy" className="underline underline-offset-2">
-                  Privacy Policy
-                </Link>
-                .
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Newsletter />
     </main>
+  )
+}
+
+// Helper component for loading state of a category section
+function CategoryLoader() {
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-6">
+        <Skeleton className="h-10 w-10 rounded-full" />
+        <div className="w-full">
+          <Skeleton className="h-6 w-48 mb-2" />
+          <Skeleton className="h-4 w-full" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array(3).fill(0).map((_, guideIndex) => (
+          <LoadingGuideCard key={guideIndex} />
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -295,21 +209,14 @@ function GuidesPage() {
 function CategoryGuides({ categoryId, categorySlug }: { categoryId: Id<"guideCategories">; categorySlug: string }) {
   const guides = useQuery(api.guides.getGuidesByCategory, { categoryId })
   const isLoading = !guides
+
+  console.log(guides, categorySlug)
   
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Array(3).fill(0).map((_, index) => (
-          <Card key={index}>
-            <CardHeader>
-              <Skeleton className="h-4 w-20 mb-2" />
-              <Skeleton className="h-5 w-full mb-2" />
-              <Skeleton className="h-4 w-full" />
-            </CardHeader>
-            <CardFooter>
-              <Skeleton className="h-9 w-full" />
-            </CardFooter>
-          </Card>
+          <LoadingGuideCard key={index} />
         ))}
       </div>
     )
@@ -318,27 +225,12 @@ function CategoryGuides({ categoryId, categorySlug }: { categoryId: Id<"guideCat
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {guides.map((guide) => (
-        <Card key={guide._id} className="hover:shadow-md transition-shadow">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-              <Badge variant="outline">{guide.level}</Badge>
-              <span className="flex items-center">
-                <BookOpen className="h-3 w-3 mr-1" />
-                {guide.readTime}
-              </span>
-            </div>
-            <CardTitle className="text-lg">{guide.title}</CardTitle>
-            <CardDescription>{guide.description}</CardDescription>
-          </CardHeader>
-          <CardFooter className="pt-2">
-            <Link to={`/guides/${categorySlug}/${guide.slug}`} className="w-full">
-              <Button variant="outline" className="w-full">
-                Read Guide
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
+        <GuideCard 
+          key={guide._id} 
+          guide={guide} 
+          categorySlug={categorySlug}
+          buttonVariant="outline"
+        />
       ))}
     </div>
   )

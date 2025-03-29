@@ -27,7 +27,7 @@ export const WhatIsOffGridLivingContent = () => {
         </p>
         <div className="relative aspect-video overflow-hidden rounded-lg mb-6">
           <img
-            src="/assets/guides/getting-started/off-grid-cabin.jpeg"
+            src="/assets/guides/getting-started/off-grid-cabin.jpg"
             alt="Off-grid cabin in nature"
             className="object-cover w-full h-full"
           />

@@ -12,6 +12,7 @@ import { guideCategories } from "./schema/guideCategories";
 import { guideToCategory } from "./schema/guideToCategory";
 import { authors } from "./schema/authors";
 import { guideToAuthor } from "./schema/guideToAuthor";
+import { images } from "./schema/images";
 
 export default defineSchema({
   brands,
@@ -27,4 +28,5 @@ export default defineSchema({
   guideToCategory,
   authors,
   guideToAuthor,
+  images,
 });

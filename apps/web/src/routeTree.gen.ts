@@ -8,21 +8,37 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as PathlessLayoutImport } from './routes/_pathlessLayout'
 import { Route as IndexImport } from './routes/index'
 import { Route as GuidesIndexImport } from './routes/guides/index'
+import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as CalculatorsIndexImport } from './routes/calculators/index'
 import { Route as BlogsIndexImport } from './routes/blogs/index'
+import { Route as DashboardSettingsImport } from './routes/dashboard/settings'
+import { Route as DashboardImagesImport } from './routes/dashboard/images'
+import { Route as DashboardLayoutImport } from './routes/dashboard/_layout'
 import { Route as BlogsIdImport } from './routes/blogs/$id'
 import { Route as GuidesCategoryIndexImport } from './routes/guides/$category/index'
 import { Route as CalculatorsSolarSystemIndexImport } from './routes/calculators/solar-system/index'
 import { Route as CalculatorsHomeLoadIndexImport } from './routes/calculators/home-load/index'
 import { Route as GuidesCategorySlugImport } from './routes/guides/$category/$slug'
 
+// Create Virtual Routes
+
+const DashboardImport = createFileRoute('/dashboard')()
+
 // Create/Update Routes
+
+const DashboardRoute = DashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const PathlessLayoutRoute = PathlessLayoutImport.update({
   id: '/_pathlessLayout',
@@ -41,6 +57,12 @@ const GuidesIndexRoute = GuidesIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardIndexRoute = DashboardIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
 const CalculatorsIndexRoute = CalculatorsIndexImport.update({
   id: '/calculators/',
   path: '/calculators/',
@@ -51,6 +73,23 @@ const BlogsIndexRoute = BlogsIndexImport.update({
   id: '/blogs/',
   path: '/blogs/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardSettingsRoute = DashboardSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
+const DashboardImagesRoute = DashboardImagesImport.update({
+  id: '/images',
+  path: '/images',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
+const DashboardLayoutRoute = DashboardLayoutImport.update({
+  id: '/_layout',
+  getParentRoute: () => DashboardRoute,
 } as any)
 
 const BlogsIdRoute = BlogsIdImport.update({
@@ -109,6 +148,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogsIdImport
       parentRoute: typeof rootRoute
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/dashboard/_layout': {
+      id: '/dashboard/_layout'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardLayoutImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/images': {
+      id: '/dashboard/images'
+      path: '/images'
+      fullPath: '/dashboard/images'
+      preLoaderRoute: typeof DashboardImagesImport
+      parentRoute: typeof DashboardImport
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsImport
+      parentRoute: typeof DashboardImport
+    }
     '/blogs/': {
       id: '/blogs/'
       path: '/blogs'
@@ -122,6 +189,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/calculators'
       preLoaderRoute: typeof CalculatorsIndexImport
       parentRoute: typeof rootRoute
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexImport
+      parentRoute: typeof DashboardImport
     }
     '/guides/': {
       id: '/guides/'
@@ -163,12 +237,34 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface DashboardRouteChildren {
+  DashboardLayoutRoute: typeof DashboardLayoutRoute
+  DashboardImagesRoute: typeof DashboardImagesRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardLayoutRoute: DashboardLayoutRoute,
+  DashboardImagesRoute: DashboardImagesRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof PathlessLayoutRoute
   '/blogs/$id': typeof BlogsIdRoute
+  '/dashboard': typeof DashboardLayoutRoute
+  '/dashboard/images': typeof DashboardImagesRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
   '/blogs': typeof BlogsIndexRoute
   '/calculators': typeof CalculatorsIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/guides': typeof GuidesIndexRoute
   '/guides/$category/$slug': typeof GuidesCategorySlugRoute
   '/calculators/home-load': typeof CalculatorsHomeLoadIndexRoute
@@ -180,6 +276,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof PathlessLayoutRoute
   '/blogs/$id': typeof BlogsIdRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/images': typeof DashboardImagesRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
   '/blogs': typeof BlogsIndexRoute
   '/calculators': typeof CalculatorsIndexRoute
   '/guides': typeof GuidesIndexRoute
@@ -194,8 +293,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_pathlessLayout': typeof PathlessLayoutRoute
   '/blogs/$id': typeof BlogsIdRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/_layout': typeof DashboardLayoutRoute
+  '/dashboard/images': typeof DashboardImagesRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
   '/blogs/': typeof BlogsIndexRoute
   '/calculators/': typeof CalculatorsIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/guides/': typeof GuidesIndexRoute
   '/guides/$category/$slug': typeof GuidesCategorySlugRoute
   '/calculators/home-load/': typeof CalculatorsHomeLoadIndexRoute
@@ -209,8 +313,12 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/blogs/$id'
+    | '/dashboard'
+    | '/dashboard/images'
+    | '/dashboard/settings'
     | '/blogs'
     | '/calculators'
+    | '/dashboard/'
     | '/guides'
     | '/guides/$category/$slug'
     | '/calculators/home-load'
@@ -221,6 +329,9 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/blogs/$id'
+    | '/dashboard'
+    | '/dashboard/images'
+    | '/dashboard/settings'
     | '/blogs'
     | '/calculators'
     | '/guides'
@@ -233,8 +344,13 @@ export interface FileRouteTypes {
     | '/'
     | '/_pathlessLayout'
     | '/blogs/$id'
+    | '/dashboard'
+    | '/dashboard/_layout'
+    | '/dashboard/images'
+    | '/dashboard/settings'
     | '/blogs/'
     | '/calculators/'
+    | '/dashboard/'
     | '/guides/'
     | '/guides/$category/$slug'
     | '/calculators/home-load/'
@@ -247,6 +363,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PathlessLayoutRoute: typeof PathlessLayoutRoute
   BlogsIdRoute: typeof BlogsIdRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   BlogsIndexRoute: typeof BlogsIndexRoute
   CalculatorsIndexRoute: typeof CalculatorsIndexRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
@@ -260,6 +377,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PathlessLayoutRoute: PathlessLayoutRoute,
   BlogsIdRoute: BlogsIdRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   BlogsIndexRoute: BlogsIndexRoute,
   CalculatorsIndexRoute: CalculatorsIndexRoute,
   GuidesIndexRoute: GuidesIndexRoute,
@@ -282,6 +400,7 @@ export const routeTree = rootRoute
         "/",
         "/_pathlessLayout",
         "/blogs/$id",
+        "/dashboard",
         "/blogs/",
         "/calculators/",
         "/guides/",
@@ -300,11 +419,36 @@ export const routeTree = rootRoute
     "/blogs/$id": {
       "filePath": "blogs/$id.tsx"
     },
+    "/dashboard": {
+      "filePath": "dashboard",
+      "children": [
+        "/dashboard/_layout",
+        "/dashboard/images",
+        "/dashboard/settings",
+        "/dashboard/"
+      ]
+    },
+    "/dashboard/_layout": {
+      "filePath": "dashboard/_layout.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/images": {
+      "filePath": "dashboard/images.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/settings": {
+      "filePath": "dashboard/settings.tsx",
+      "parent": "/dashboard"
+    },
     "/blogs/": {
       "filePath": "blogs/index.tsx"
     },
     "/calculators/": {
       "filePath": "calculators/index.tsx"
+    },
+    "/dashboard/": {
+      "filePath": "dashboard/index.tsx",
+      "parent": "/dashboard"
     },
     "/guides/": {
       "filePath": "guides/index.tsx"

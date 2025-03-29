@@ -21,6 +21,7 @@ import { Skeleton } from "~/components/ui/skeleton"
 import { getGuideContent } from "~/data/guide-registry"
 import { seoDataMap } from "~/data/seo/guides/guides"
 import { seo } from "~/utils/seo"
+import { ImageCredit } from "~/components/guides/ImageCredit"
 import { 
   Accordion, 
   AccordionContent, 
@@ -34,6 +35,34 @@ import {
 } from "~/components/ui/popover"
 import { Input } from "~/components/ui/input"
 import { toast } from "sonner"
+
+// Image credits mapping based on guide slugs
+const imageCredits = {
+  'what-is-off-grid-living': {
+    authorName: "Eugene Chystiakov",
+    authorUrl: "https://unsplash.com/@eugenechystiakov?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    sourceName: "Unsplash",
+    sourceUrl: "https://unsplash.com/photos/a-house-with-a-solar-panel-on-the-roof-XVwYGihplmY?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+  },
+  'key-considerations-for-off-grid-living': {
+    authorName: "VD Photography",
+    authorUrl: "https://unsplash.com/@vdphotography?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    sourceName: "Unsplash",
+    sourceUrl: "https://unsplash.com/photos/an-aerial-view-of-a-house-with-a-solar-panel-on-the-roof-tC4tHCeoO44?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+  },
+  'step-by-step-approach-to-off-grid-living': {
+    authorName: "Sumit Mangela",
+    authorUrl: "https://unsplash.com/@sumitmangela?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    sourceName: "Unsplash",
+    sourceUrl: "https://unsplash.com/photos/a-very-large-building-that-has-a-bunch-of-stairs-in-it-ASM0H3ul2yo?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+  },
+  'common-questions-about-off-grid-living': {
+    authorName: "Rakshit Yadav",
+    authorUrl: "https://unsplash.com/@rakshityadav190?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    sourceName: "Unsplash",
+    sourceUrl: "https://unsplash.com/photos/a-monkey-sitting-on-top-of-a-solar-panel-mIa5hPkh42w?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+  }
+};
 
 export const Route = createFileRoute('/guides/$category/$slug')({
   component: GuideDetailPage,
@@ -78,6 +107,9 @@ function GuideDetailPage() {
   const [isShareOpen, setIsShareOpen] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
 
+  // Get image credit based on slug
+  const imageCredit = slug ? imageCredits[slug as keyof typeof imageCredits] : undefined;
+
   // Fetch guide data from Convex
   const guide = useQuery(api.guides.getGuideBySlug, { slug }) 
   const categoryData = useQuery(api.guides.getGuideCategoryBySlug, { slug: category })
@@ -103,11 +135,6 @@ function GuideDetailPage() {
   const nextItem = currentIndex >= 0 && guideNavigation[currentIndex].next
     ? guideNavigation.find(item => item.slug === guideNavigation[currentIndex].next)
     : null
-  
-  // Get related guides (simplified version)
-  const relatedGuides = !isLoading 
-    ? guidesInCategory.filter(g => g.slug !== slug).slice(0, 3)
-    : []
   
   // Dynamic content loading based on slug
   const GuideContent = slug ? getGuideContent(slug) : null;
@@ -316,46 +343,6 @@ function GuideDetailPage() {
                     </PopoverContent>
                   </Popover>
                 </div>
-
-                {/* Related resources
-                {isLoading ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-6 w-40 mb-3" />
-                    {Array(3).fill(0).map((_, i) => (
-                      <Skeleton key={i} className="h-8 w-full mb-2" />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <h2 className="text-lg font-semibold">Related Resources</h2>
-                    <div className="space-y-2">
-                      <Link
-                        to="/calculators/home-load"
-                        className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
-                      >
-                        <ArrowRight className="h-4 w-4 mr-2 text-green-600" />
-                        Home Load Calculator
-                      </Link>
-                      <Link
-                        to="/calculators/solar-system"
-                        className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
-                      >
-                        <ArrowRight className="h-4 w-4 mr-2 text-green-600" />
-                        Solar System Calculator
-                      </Link>
-                      {relatedGuides.map((related, index) => (
-                        <Link 
-                          key={index}
-                          to={`/guides/${category}/${related.slug}`} 
-                          className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
-                        >
-                          <BookOpen className="h-4 w-4 mr-2 text-green-600" />
-                          {related.title}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )} */}
               </div>
             </div>
 
@@ -399,6 +386,22 @@ function GuideDetailPage() {
                   <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-6">
                     {guide.title}
                   </h1>
+                  
+                  {/* Guide image with credit */}
+                  {guide.image && (
+                    <div className="mb-8 relative">
+                      <img 
+                        src={guide.image} 
+                        alt={guide.title}
+                        className="w-full h-auto rounded-lg object-cover"
+                      />
+                      {imageCredit && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 rounded-b-lg">
+                          <ImageCredit credit={imageCredit} className="text-white/90" />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
 

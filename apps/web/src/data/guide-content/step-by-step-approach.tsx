@@ -49,7 +49,7 @@ export const StepByStepApproachContent = () => {
         
         <div className="relative aspect-video overflow-hidden rounded-lg mb-6">
           <img
-            src="/assets/guides/getting-started/step-by-step-approach.jpeg"
+            src="/assets/guides/getting-started/step-by-step-approach.jpg"
             alt="Planning an off-grid lifestyle"
             className="object-cover w-full h-full"
           />
@@ -358,27 +358,27 @@ export const StepByStepApproachContent = () => {
             <CardContent className="space-y-3">
               <div>
                 <h4 className="font-medium">Land Acquisition</h4>
-                <p className="text-sm">$5,000 - $100,000+ depending on location, size, and features</p>
+                <p className="text-sm">₹1.6L – ₹41.5L+ depending on location, size, and features</p>
               </div>
               <div>
                 <h4 className="font-medium">Shelter/Dwelling</h4>
-                <p className="text-sm">$5,000 (DIY tiny home) - $200,000+ (larger custom build)</p>
+                <p className="text-sm">₹2.25L (DIY tiny home) – ₹25L+ (larger custom build)</p>
               </div>
               <div>
                 <h4 className="font-medium">Power System</h4>
-                <p className="text-sm">$3,000 (basic) - $30,000+ (comprehensive system)</p>
+                <p className="text-sm">₹83k (basic) – ₹12.5L+ (comprehensive system)</p>
               </div>
               <div>
                 <h4 className="font-medium">Water System</h4>
-                <p className="text-sm">$500 (rainwater basic) - $20,000+ (well drilling & system)</p>
+                <p className="text-sm">₹16k (rainwater basic) – ₹8.3L+ (well drilling & system)</p>
               </div>
               <div>
                 <h4 className="font-medium">Waste Management</h4>
-                <p className="text-sm">$100 (DIY composting toilet) - $15,000+ (septic system)</p>
+                <p className="text-sm">₹4k (DIY composting toilet) – ₹4.1L+ (septic system)</p>
               </div>
               <div>
                 <h4 className="font-medium">Tools and Equipment</h4>
-                <p className="text-sm">$2,000 - $10,000+ depending on your needs</p>
+                <p className="text-sm">₹41k – ₹4.1L+ depending on your needs</p>
               </div>
               <div>
                 <h4 className="font-medium">Contingency Fund</h4>
