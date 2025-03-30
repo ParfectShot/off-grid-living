@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
-import { useQuery } from "convex/react";
 import { api } from "~/convex/_generated/api";
 
 import { BreadcrumbNav } from "~/components/shared/BreadcrumbNav";
@@ -13,6 +12,8 @@ import {
 } from "~/features/guides/components";
 import { seoDataMapCategory } from "~/features/guides/seo";
 import { seo } from "~/utils/seo";
+import { convexQuery } from "@convex-dev/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_pathlessLayout/guides/$category/")({
   component: GuideCategoryPage,
@@ -43,22 +44,23 @@ export const Route = createFileRoute("/_pathlessLayout/guides/$category/")({
       ],
     };
   },
+  loader: async (opts) => {
+    await opts.context.queryClient.ensureQueryData(convexQuery(api.guides.getGuideCategoryBySlug, { slug: opts.params.category }))
+    await opts.context.queryClient.ensureQueryData(convexQuery(api.guides.getGuideByCategorySlug, { categorySlug: opts.params.category }))
+    await opts.context.queryClient.ensureQueryData(convexQuery(api.guides.getGuideCategories, {}))
+  }
 });
 
 function GuideCategoryPage() {
   const { category } = useParams({ strict: false });
 
   // Fetch category data from Convex
-  const categoryData = useQuery(api.guides.getGuideCategoryBySlug, {
-    slug: category,
-  });
-  const guides = useQuery(api.guides.getGuideByCategorySlug, {
-    categorySlug: category,
-  });
-  const otherCategories = useQuery(api.guides.getGuideCategories) || [];
+  const { data: categoryData, isLoading: categoryDataLoading } = useSuspenseQuery(convexQuery(api.guides.getGuideCategoryBySlug, { slug: category }))
+  const { data: guides, isLoading: guidesLoading } = useSuspenseQuery(convexQuery(api.guides.getGuideByCategorySlug, { categorySlug: category }))
+  const { data: otherCategories, isLoading: otherCategoriesLoading } = useSuspenseQuery(convexQuery(api.guides.getGuideCategories, {}))
 
   // Loading states
-  const isLoading = !categoryData || !guides || !otherCategories;
+  const isLoading = categoryDataLoading || guidesLoading || otherCategoriesLoading;
 
   // Filter out the current category from other categories
   const filteredOtherCategories = isLoading
@@ -77,7 +79,7 @@ function GuideCategoryPage() {
       }
     : undefined;
 
-  if (!isLoading && !categoryData) {
+  if (!categoryData) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
@@ -113,8 +115,8 @@ function GuideCategoryPage() {
             { label: "Home", href: "/" },
             { label: "Guides", href: "/guides" },
             {
-              label: isLoading ? undefined : categoryData.title,
-              isLoading: isLoading,
+              label: categoryData.title,
+              isLoading: categoryDataLoading,
             },
           ]}
           className="mb-6"
@@ -125,9 +127,8 @@ function GuideCategoryPage() {
       <section className="w-full py-12">
         <div className="container px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {isLoading
-              ? // Loading skeletons for guides
-                Array(6)
+            {guidesLoading
+              ? Array(6)
                   .fill(0)
                   .map((_, index) => <LoadingGuideCard key={index} />)
               : guides.map((guide) => (
@@ -151,9 +152,8 @@ function GuideCategoryPage() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {isLoading
-              ? // Loading skeletons for other categories
-                Array(3)
+            {otherCategoriesLoading
+              ? Array(3)
                   .fill(0)
                   .map((_, index) => <LoadingGuideCard key={index} />)
               : filteredOtherCategories.map((cat) => (

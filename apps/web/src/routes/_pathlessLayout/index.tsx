@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { HeroSection } from "~/components/shared/HeroSection"
 import { SectionHeader } from "~/components/shared/SectionHeader"
 import { Newsletter } from "~/components/shared/Newsletter"
-import { useQuery } from 'convex/react';
 import { api } from '~/convex/_generated/api';
 import { FeaturedGuideCard, LoadingGuideCard } from '~/features/guides';
+import { convexQuery } from '@convex-dev/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/_pathlessLayout/')({
   component: LandingPage,
@@ -21,14 +22,15 @@ export const Route = createFileRoute('/_pathlessLayout/')({
         }),
       ]
     }
+  },
+  loader: async (opts) => {
+    await opts.context.queryClient.ensureQueryData(convexQuery(api.guides.getFeaturedGuides, {}))
   }
 })
 
 function LandingPage() {
 
-  const enhancedFeaturedGuides = useQuery(api.guides.getFeaturedGuides)
-
-  const isLoading = !enhancedFeaturedGuides;
+  const { data: enhancedFeaturedGuides, isLoading } = useSuspenseQuery(convexQuery(api.guides.getFeaturedGuides, {}))
 
   return (
 

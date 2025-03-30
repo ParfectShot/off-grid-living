@@ -31,6 +31,8 @@ import { HeroSection } from "~/components/shared/HeroSection";
 import { SectionHeader } from "~/components/shared/SectionHeader";
 import { Newsletter } from "~/components/shared/Newsletter";
 import { Id } from "~/convex/_generated/dataModel";
+import { convexQuery } from "@convex-dev/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_pathlessLayout/guides/")({
   component: GuidesPage,
@@ -45,15 +47,19 @@ export const Route = createFileRoute("/_pathlessLayout/guides/")({
     ],
     links: [{ rel: "canonical", href: `https://offgridcollective.co/guides` }],
   }),
+  loader: async (opts) => {
+    await opts.context.queryClient.ensureQueryData(convexQuery(api.guides.getGuideCategories, {}))
+    await opts.context.queryClient.ensureQueryData(convexQuery(api.guides.getFeaturedGuides, {}))
+  }
 });
 
 function GuidesPage() {
   // Fetch guide categories and featured guides from Convex
-  const categories = useQuery(api.guides.getGuideCategories);
-  const featuredGuides = useQuery(api.guides.getFeaturedGuides);
+  const { data: categories, isLoading: categoriesLoading } = useSuspenseQuery(convexQuery(api.guides.getGuideCategories, {}))
+  const { data: featuredGuides, isLoading: featuredGuidesLoading } = useSuspenseQuery(convexQuery(api.guides.getFeaturedGuides, {}))
 
   // Loading states
-  const isLoading = !categories || !featuredGuides;
+  const isLoading = categoriesLoading || featuredGuidesLoading;
 
   console.log(categories);
 
