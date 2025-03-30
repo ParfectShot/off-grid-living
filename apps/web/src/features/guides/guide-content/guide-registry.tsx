@@ -1,14 +1,14 @@
 import { lazy } from 'react';
-import { Guide } from './guides';
+import { Guide } from '~/features/guides/types';
 
 // Create a type for the guide content component
 export type GuideContentComponent = React.ComponentType;
 
 // Lazy load guide content components to improve performance
-const WhatIsOffGridLivingContent = lazy(() => import('../data/guide-content/what-is-off-grid-living').then(module => ({ default: module.WhatIsOffGridLivingContent })));
-const KeyConsiderationsContent = lazy(() => import('../data/guide-content/key-considerations').then(module => ({ default: module.KeyConsiderationsContent })));
-const StepByStepApproachContent = lazy(() => import('../data/guide-content/step-by-step-approach').then(module => ({ default: module.StepByStepApproachContent })));
-const CommonQuestionsContent = lazy(() => import('../data/guide-content/common-questions').then(module => ({ default: module.CommonQuestionsContent })));
+const WhatIsOffGridLivingContent = lazy(() => import('./what-is-off-grid-living').then(module => ({ default: module.WhatIsOffGridLivingContent })));
+const KeyConsiderationsContent = lazy(() => import('./key-considerations').then(module => ({ default: module.KeyConsiderationsContent })));
+const StepByStepApproachContent = lazy(() => import('./step-by-step-approach').then(module => ({ default: module.StepByStepApproachContent })));
+const CommonQuestionsContent = lazy(() => import('./common-questions').then(module => ({ default: module.CommonQuestionsContent })));
 
 // Registry mapping slugs to their content components
 export const guideContentRegistry: Record<string, GuideContentComponent> = {

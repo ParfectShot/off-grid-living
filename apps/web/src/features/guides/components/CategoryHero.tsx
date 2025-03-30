@@ -1,9 +1,8 @@
-import React from 'react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Skeleton } from '~/components/ui/skeleton'
-import { GuideIcon } from '~/components/guides/guide-icon'
+import { GuideIcon } from './GuideIcon'
 
 interface CategoryHeroProps {
   category?: {

@@ -1,48 +1,62 @@
-import { Link } from "@tanstack/react-router"
-import { createFileRoute } from "@tanstack/react-router"
-import { ArrowRight, BookOpen, Download, FileText, Battery, Droplets } from "lucide-react"
-import { useQuery } from "convex/react"
-import { api } from "~/convex/_generated/api"
+import { Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import {
+  ArrowRight,
+  Download,
+  FileText,
+  Battery,
+  Droplets,
+} from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "~/convex/_generated/api";
 
-import { Button } from "~/components/ui/button"
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
-import { Badge } from "~/components/ui/badge"
-import { GuideIcon } from "~/components/guides/guide-icon"
-import { Skeleton } from "~/components/ui/skeleton"
-import { seo } from '~/utils/seo'
-import { HeroSection } from "~/components/shared/HeroSection"
-import { SectionHeader } from "~/components/shared/SectionHeader"
-import { FeaturedGuideCard } from "~/components/guides/FeaturedGuideCard"
-import { GuideCard } from "~/components/guides/GuideCard"
-import { Newsletter } from "~/components/shared/Newsletter"
-import { LoadingGuideCard } from "~/components/guides/LoadingGuideCard"
-import { Id } from "~/convex/_generated/dataModel"
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
+import {
+  GuideIcon,
+  FeaturedGuideCard,
+  GuideCard,
+  LoadingGuideCard,
+} from "~/features/guides/components";
+import { Skeleton } from "~/components/ui/skeleton";
+import { seo } from "~/utils/seo";
+import { HeroSection } from "~/components/shared/HeroSection";
+import { SectionHeader } from "~/components/shared/SectionHeader";
+import { Newsletter } from "~/components/shared/Newsletter";
+import { Id } from "~/convex/_generated/dataModel";
 
 export const Route = createFileRoute("/_pathlessLayout/guides/")({
   component: GuidesPage,
   head: () => ({
     meta: [
       ...seo({
-        title: 'Off-Grid Guides: Cabins, Solar Power & Self-Sufficiency | Off Grid Collective',
-        description: 'Find comprehensive guides on off-grid living at the Off Grid Collective. Explore our featured sections and categories covering DIY solar installations, water system upgrades, cabin building, and solutions for common challenges like proving residence without bills',
+        title:
+          "Off-Grid Guides: Cabins, Solar Power & Self-Sufficiency | Off Grid Collective",
+        description:
+          "Find comprehensive guides on off-grid living at the Off Grid Collective. Explore our featured sections and categories covering DIY solar installations, water system upgrades, cabin building, and solutions for common challenges like proving residence without bills",
       }),
     ],
-    links: [
-      {rel: 'canonical', href: `https://offgridcollective.co/guides`}
-    ]
-  })
-})
+    links: [{ rel: "canonical", href: `https://offgridcollective.co/guides` }],
+  }),
+});
 
 function GuidesPage() {
   // Fetch guide categories and featured guides from Convex
-  const categories = useQuery(api.guides.getGuideCategories)
-  const featuredGuides = useQuery(api.guides.getFeaturedGuides)
-  
-  // Loading states
-  const isLoading = !categories || !featuredGuides
+  const categories = useQuery(api.guides.getGuideCategories);
+  const featuredGuides = useQuery(api.guides.getFeaturedGuides);
 
-  console.log(categories)
-  
+  // Loading states
+  const isLoading = !categories || !featuredGuides;
+
+  console.log(categories);
+
   return (
     <main className="flex-1">
       {/* Hero section */}
@@ -74,19 +88,16 @@ function GuidesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {isLoading ? (
-              // Loading skeleton UI
-              Array(3).fill(0).map((_, index) => (
-                <LoadingGuideCard key={index} variant="featured" />
-              ))
-            ) : (
-              featuredGuides.map((guide) => (
-                <FeaturedGuideCard 
-                  key={guide._id} 
-                  guide={guide} 
-                />
-              ))
-            )}
+            {isLoading
+              ? // Loading skeleton UI
+                Array(3)
+                  .fill(0)
+                  .map((_, index) => (
+                    <LoadingGuideCard key={index} variant="featured" />
+                  ))
+              : featuredGuides.map((guide) => (
+                  <FeaturedGuideCard key={guide._id} guide={guide} />
+                ))}
           </div>
         </div>
       </section>
@@ -101,29 +112,32 @@ function GuidesPage() {
           />
 
           <div className="space-y-12">
-            {isLoading ? (
-              // Loading skeletons for categories
-              Array(3).fill(0).map((_, index) => (
-                <CategoryLoader key={index} />
-              ))
-            ) : (
-              categories.map((category) => (
-                <div key={category._id}>
-                  <div className="flex items-center gap-2 mb-6">
-                    <div className="rounded-full bg-green-100 dark:bg-green-900 p-2">
-                      <GuideIcon name={category.icon} />
+            {isLoading
+              ? // Loading skeletons for categories
+                Array(3)
+                  .fill(0)
+                  .map((_, index) => <CategoryLoader key={index} />)
+              : categories.map((category) => (
+                  <div key={category._id}>
+                    <div className="flex items-center gap-2 mb-6">
+                      <div className="rounded-full bg-green-100 dark:bg-green-900 p-2">
+                        <GuideIcon name={category.icon} />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold">{category.title}</h3>
+                        <p className="text-muted-foreground">
+                          {category.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold">{category.title}</h3>
-                      <p className="text-muted-foreground">{category.description}</p>
-                    </div>
-                  </div>
 
-                  {/* For each category, we need to fetch its guides */}
-                  <CategoryGuides categoryId={category._id} categorySlug={category.slug} />
-                </div>
-              ))
-            )}
+                    {/* For each category, we need to fetch its guides */}
+                    <CategoryGuides
+                      categoryId={category._id}
+                      categorySlug={category.slug}
+                    />
+                  </div>
+                ))}
           </div>
         </div>
       </section>
@@ -141,27 +155,38 @@ function GuidesPage() {
             {[
               {
                 title: "Off-Grid Living Checklist",
-                description: "A comprehensive checklist to help you prepare for the transition to off-grid living",
-                icon: <FileText className="h-6 w-6 text-green-600 dark:text-green-400" />,
+                description:
+                  "A comprehensive checklist to help you prepare for the transition to off-grid living",
+                icon: (
+                  <FileText className="h-6 w-6 text-green-600 dark:text-green-400" />
+                ),
                 fileType: "PDF",
               },
               {
                 title: "Solar System Sizing Worksheet",
-                description: "Calculate your energy needs and design an appropriate solar power system",
-                icon: <Battery className="h-6 w-6 text-green-600 dark:text-green-400" />,
+                description:
+                  "Calculate your energy needs and design an appropriate solar power system",
+                icon: (
+                  <Battery className="h-6 w-6 text-green-600 dark:text-green-400" />
+                ),
                 fileType: "PDF",
               },
               {
                 title: "Water System Planning Guide",
-                description: "Design your rainwater harvesting and water management systems",
-                icon: <Droplets className="h-6 w-6 text-green-600 dark:text-green-400" />,
+                description:
+                  "Design your rainwater harvesting and water management systems",
+                icon: (
+                  <Droplets className="h-6 w-6 text-green-600 dark:text-green-400" />
+                ),
                 fileType: "PDF",
               },
             ].map((resource, index) => (
               <Card key={index} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="rounded-full bg-green-100 dark:bg-green-900 p-2">{resource.icon}</div>
+                    <div className="rounded-full bg-green-100 dark:bg-green-900 p-2">
+                      {resource.icon}
+                    </div>
                     <Badge>{resource.fileType}</Badge>
                   </div>
                   <CardTitle className="text-lg">{resource.title}</CardTitle>
@@ -182,7 +207,7 @@ function GuidesPage() {
       {/* Newsletter section */}
       <Newsletter />
     </main>
-  )
+  );
 }
 
 // Helper component for loading state of a category section
@@ -197,41 +222,51 @@ function CategoryLoader() {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Array(3).fill(0).map((_, guideIndex) => (
-          <LoadingGuideCard key={guideIndex} />
-        ))}
+        {Array(3)
+          .fill(0)
+          .map((_, guideIndex) => (
+            <LoadingGuideCard key={guideIndex} />
+          ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Helper component to fetch and display guides for a category
-function CategoryGuides({ categoryId, categorySlug }: { categoryId: Id<"guideCategories">; categorySlug: string }) {
-  const guides = useQuery(api.guides.getGuidesByCategory, { categoryId })
-  const isLoading = !guides
+function CategoryGuides({
+  categoryId,
+  categorySlug,
+}: {
+  categoryId: Id<"guideCategories">;
+  categorySlug: string;
+}) {
+  const guides = useQuery(api.guides.getGuidesByCategory, { categoryId });
+  const isLoading = !guides;
 
-  console.log(guides, categorySlug)
-  
+  console.log(guides, categorySlug);
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Array(3).fill(0).map((_, index) => (
-          <LoadingGuideCard key={index} />
-        ))}
+        {Array(3)
+          .fill(0)
+          .map((_, index) => (
+            <LoadingGuideCard key={index} />
+          ))}
       </div>
-    )
+    );
   }
-  
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {guides.map((guide) => (
-        <GuideCard 
-          key={guide._id} 
-          guide={guide} 
+        <GuideCard
+          key={guide._id}
+          guide={guide}
           categorySlug={categorySlug}
           buttonVariant="outline"
         />
       ))}
     </div>
-  )
+  );
 }

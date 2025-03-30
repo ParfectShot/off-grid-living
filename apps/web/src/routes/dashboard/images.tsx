@@ -10,9 +10,9 @@ import {
   UploadTab, 
   ProcessedImagesTab,
   ImageVariantModal,
-} from '~/components/image-processor';
-import { S3BrowserView } from '~/components/s3-browser/S3BrowserView';
-import { S3ConfigDialog } from '~/components/s3-browser/S3ConfigDialog';
+  S3BrowserView,
+  S3ConfigDialog
+} from '~/features/images/components';
 
 export const Route = createFileRoute('/dashboard/images')({
   component: ImagesPage,

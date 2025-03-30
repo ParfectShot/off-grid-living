@@ -1,7 +1,7 @@
-import { useState, useEffect, Suspense } from "react"
-import { Link, useParams, createFileRoute } from "@tanstack/react-router"
-import { useQuery } from "convex/react"
-import { api } from "~/convex/_generated/api"
+import { useState, useEffect, Suspense } from "react";
+import { Link, useParams, createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "convex/react";
+import { api } from "~/convex/_generated/api";
 import {
   BookOpen,
   Share2,
@@ -10,173 +10,223 @@ import {
   ChevronLeft,
   Copy,
   Check,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Button } from "~/components/ui/button"
-import { Badge } from "~/components/ui/badge"
-import { Skeleton } from "~/components/ui/skeleton"
-import { getGuideContent } from "~/data/guide-registry"
-import { seoDataMap } from "~/data/seo/guides/guides"
-import { seo } from "~/utils/seo"
-import { ImageCredit } from "~/components/guides/ImageCredit"
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
-} from "~/components/ui/accordion"
+import { Button } from "~/components/ui/button";
+import { Badge } from "~/components/ui/badge";
+import { Skeleton } from "~/components/ui/skeleton";
+import { getGuideContent } from "~/features/guides/guide-content/guide-registry";
+import { seoDataMapGuide } from "~/features/guides/seo";
+import { seo } from "~/utils/seo";
+import { ImageCredit } from "~/features/guides";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover"
-import { Input } from "~/components/ui/input"
-import { toast } from "sonner"
+} from "~/components/ui/popover";
+import { Input } from "~/components/ui/input";
+import { toast } from "sonner";
 
 // Image credits mapping based on guide slugs
 const imageCredits = {
-  'what-is-off-grid-living': {
+  "what-is-off-grid-living": {
     authorName: "Eugene Chystiakov",
-    authorUrl: "https://unsplash.com/@eugenechystiakov?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    authorUrl:
+      "https://unsplash.com/@eugenechystiakov?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
     sourceName: "Unsplash",
-    sourceUrl: "https://unsplash.com/photos/a-house-with-a-solar-panel-on-the-roof-XVwYGihplmY?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+    sourceUrl:
+      "https://unsplash.com/photos/a-house-with-a-solar-panel-on-the-roof-XVwYGihplmY?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
   },
-  'key-considerations': {
+  "key-considerations": {
     authorName: "VD Photography",
-    authorUrl: "https://unsplash.com/@vdphotography?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    authorUrl:
+      "https://unsplash.com/@vdphotography?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
     sourceName: "Unsplash",
-    sourceUrl: "https://unsplash.com/photos/an-aerial-view-of-a-house-with-a-solar-panel-on-the-roof-tC4tHCeoO44?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+    sourceUrl:
+      "https://unsplash.com/photos/an-aerial-view-of-a-house-with-a-solar-panel-on-the-roof-tC4tHCeoO44?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
   },
-  'step-by-step-approach': {
+  "step-by-step-approach": {
     authorName: "Sumit Mangela",
-    authorUrl: "https://unsplash.com/@sumitmangela?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    authorUrl:
+      "https://unsplash.com/@sumitmangela?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
     sourceName: "Unsplash",
-    sourceUrl: "https://unsplash.com/photos/a-very-large-building-that-has-a-bunch-of-stairs-in-it-ASM0H3ul2yo?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+    sourceUrl:
+      "https://unsplash.com/photos/a-very-large-building-that-has-a-bunch-of-stairs-in-it-ASM0H3ul2yo?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
   },
-  'common-questions': {
+  "common-questions": {
     authorName: "Rakshit Yadav",
-    authorUrl: "https://unsplash.com/@rakshityadav190?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    authorUrl:
+      "https://unsplash.com/@rakshityadav190?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
     sourceName: "Unsplash",
-    sourceUrl: "https://unsplash.com/photos/a-monkey-sitting-on-top-of-a-solar-panel-mIa5hPkh42w?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
-  }
+    sourceUrl:
+      "https://unsplash.com/photos/a-monkey-sitting-on-top-of-a-solar-panel-mIa5hPkh42w?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+  },
 };
 
-export const Route = createFileRoute('/_pathlessLayout/guides/$category/$slug')({
-  component: GuideDetailPage,
-  head: (props: any) => {
-    const {params} = props;
-    const { category, slug } = params;
+export const Route = createFileRoute("/_pathlessLayout/guides/$category/$slug")(
+  {
+    component: GuideDetailPage,
+    head: (props: any) => {
+      const { params } = props;
+      const { category, slug } = params;
 
-    // Type-safe way to access nested properties
-    let seoInfo = {
-      title: 'Off Grid Collective: Guide', // Default title
-      description: 'Explore our comprehensive guides on off-grid living.', // Default description
-    };
+      // Type-safe way to access nested properties
+      let seoInfo = {
+        title: "Off Grid Collective: Guide", // Default title
+        description: "Explore our comprehensive guides on off-grid living.", // Default description
+      };
 
-    // Check if category exists in seoDataMap
-    if (category && typeof category === 'string' && category in seoDataMap) {
-      const categoryData = seoDataMap[category as keyof typeof seoDataMap];
-      
-      // Check if slug exists in the category data
-      if (slug && typeof slug === 'string' && slug in categoryData) {
-        seoInfo = categoryData[slug as keyof typeof categoryData];
+      // Check if category exists in seoDataMap
+      if (
+        category &&
+        typeof category === "string" &&
+        category in seoDataMapGuide
+      ) {
+        const categoryData =
+          seoDataMapGuide[category as keyof typeof seoDataMapGuide];
+
+        // Check if slug exists in the category data
+        if (slug && typeof slug === "string" && slug in categoryData) {
+          seoInfo = categoryData[slug as keyof typeof categoryData];
+        }
       }
-    }
 
-    return {
-      meta: [
-        ...seo({
-          title: seoInfo.title,
-          description: seoInfo.description,
-        }),
-      ],
-      links: [
-        { rel: 'canonical', href: `https://offgridcollective.co/guides/${category}/${slug}` },
-      ],
-    };
-  },
-})
+      return {
+        meta: [
+          ...seo({
+            title: seoInfo.title,
+            description: seoInfo.description,
+          }),
+        ],
+        links: [
+          {
+            rel: "canonical",
+            href: `https://offgridcollective.co/guides/${category}/${slug}`,
+          },
+        ],
+      };
+    },
+  }
+);
 
 function GuideDetailPage() {
-  const { category, slug } = useParams({ strict: false })
-  const [progress, setProgress] = useState(0)
-  const [activeSection, setActiveSection] = useState("")
-  const [isShareOpen, setIsShareOpen] = useState(false)
-  const [isCopied, setIsCopied] = useState(false)
+  const { category, slug } = useParams({ strict: false });
+  const [progress, setProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState("");
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   // Get image credit based on slug
-  const imageCredit = slug ? imageCredits[slug as keyof typeof imageCredits] : undefined;
+  const imageCredit = slug
+    ? imageCredits[slug as keyof typeof imageCredits]
+    : undefined;
 
   // Fetch guide data from Convex
-  const guide = useQuery(api.guides.getGuideBySlug, { slug }) 
-  const categoryData = useQuery(api.guides.getGuideCategoryBySlug, { slug: category })
-  const guidesInCategory = useQuery(api.guides.getGuideByCategorySlug, { categorySlug: category })
-  
+  const guide = useQuery(api.guides.getGuideBySlug, { slug });
+  const categoryData = useQuery(api.guides.getGuideCategoryBySlug, {
+    slug: category,
+  });
+  const guidesInCategory = useQuery(api.guides.getGuideByCategorySlug, {
+    categorySlug: category,
+  });
+
   // Loading states
-  const isLoading = !guide || !categoryData || !guidesInCategory
-  
+  const isLoading = !guide || !categoryData || !guidesInCategory;
+
   // Generate guide navigation data
-  const guideNavigation = !isLoading ? guidesInCategory.map((g, index) => {
-    const nextGuide = guidesInCategory[index + 1];
-    return {
-      title: g.title,
-      slug: g.slug,
-      current: g.slug === slug,
-      ...(nextGuide ? { next: nextGuide.slug } : {})
-    };
-  }) : []
-  
+  const guideNavigation = !isLoading
+    ? guidesInCategory.map((g, index) => {
+        const nextGuide = guidesInCategory[index + 1];
+        return {
+          title: g.title,
+          slug: g.slug,
+          current: g.slug === slug,
+          ...(nextGuide ? { next: nextGuide.slug } : {}),
+        };
+      })
+    : [];
+
   // Get adjacent guides for navigation
-  const currentIndex = guideNavigation.findIndex(item => item.slug === slug)
-  const prevItem = currentIndex > 0 ? guideNavigation[currentIndex - 1] : null
-  const nextItem = currentIndex >= 0 && guideNavigation[currentIndex].next
-    ? guideNavigation.find(item => item.slug === guideNavigation[currentIndex].next)
-    : null
-  
+  const currentIndex = guideNavigation.findIndex((item) => item.slug === slug);
+  const prevItem = currentIndex > 0 ? guideNavigation[currentIndex - 1] : null;
+  const nextItem =
+    currentIndex >= 0 && guideNavigation[currentIndex].next
+      ? guideNavigation.find(
+          (item) => item.slug === guideNavigation[currentIndex].next
+        )
+      : null;
+
   // Dynamic content loading based on slug
   const GuideContent = slug ? getGuideContent(slug) : null;
-  
+
   // Track reading progress
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY
-      const docHeight = document.body.offsetHeight
-      const winHeight = window.innerHeight
-      const scrollPercent = scrollTop / (docHeight - winHeight)
-      setProgress(scrollPercent * 100)
-    }
+    let ticking = false;
+    let animationFrameId: number;
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    const handleScroll = () => {
+      if (!ticking) {
+        animationFrameId = window.requestAnimationFrame(() => {
+          const scrollTop = window.scrollY;
+          const winHeight = window.innerHeight;
+          const docHeight = document.documentElement.scrollHeight;
+          const totalScroll = docHeight - winHeight;
+          const scrollPercent =
+            totalScroll > 0 ? (scrollTop / totalScroll) * 100 : 0;
+
+          setProgress(Math.min(100, Math.max(0, scrollPercent)));
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, []);
 
   // Set initial active section
   useEffect(() => {
     if (!guide) return;
     if (guide.sections.length) {
-      setActiveSection(guide.sections[0].sectionId)
+      setActiveSection(guide.sections[0].sectionId);
     }
-  }, [guide])
+  }, [guide]);
 
   // Handle section visibility tracking
   useEffect(() => {
     if (!guide) return;
 
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setActiveSection(entry.target.id)
+          setActiveSection(entry.target.id);
         }
-      })
+      });
     };
 
     const observerOptions = {
-      rootMargin: "-100px 0px -70% 0px"
+      rootMargin: "-100px 0px -70% 0px",
     };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    
-    guide.sections.forEach(section => {
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
+
+    guide.sections.forEach((section) => {
       const element = document.getElementById(section.sectionId);
       if (element) observer.observe(element);
     });
@@ -186,52 +236,56 @@ function GuideDetailPage() {
 
   // Handle print functionality
   const handlePrint = () => {
-    window.print()
-  }
+    window.print();
+  };
 
   // Handle share functionality
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
-  
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(currentUrl)
-      setIsCopied(true)
-      toast.success("Link copied to clipboard!")
-      
+      await navigator.clipboard.writeText(currentUrl);
+      setIsCopied(true);
+      toast.success("Link copied to clipboard!");
+
       // Reset the copied state after 2 seconds
       setTimeout(() => {
-        setIsCopied(false)
-      }, 2000)
+        setIsCopied(false);
+      }, 2000);
     } catch (err) {
-      toast.error("Failed to copy link")
+      toast.error("Failed to copy link");
     }
-  }
-  
+  };
+
   // Auto-copy to clipboard when popover opens
   useEffect(() => {
     if (isShareOpen) {
-      copyToClipboard()
+      copyToClipboard();
     }
-  }, [isShareOpen])
+  }, [isShareOpen]);
 
   if (!isLoading && !guide) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Guide Not Found</h1>
-          <p className="text-muted-foreground mb-6">The guide you're looking for doesn't seem to exist.</p>
+          <p className="text-muted-foreground mb-6">
+            The guide you're looking for doesn't seem to exist.
+          </p>
           <Link to="/guides">
             <Button>Back to Guides</Button>
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   // Find the primary category
-  const primaryCategory = !isLoading && guide && guide.categories 
-    ? guide.categories.find(cat => cat.isPrimary)?.title || categoryData.title
-    : categoryData?.title;
+  const primaryCategory =
+    !isLoading && guide && guide.categories
+      ? guide.categories.find((cat) => cat.isPrimary)?.title ||
+        categoryData.title
+      : categoryData?.title;
 
   return (
     <>
@@ -257,11 +311,19 @@ function GuideDetailPage() {
             </Link>
             <ChevronRight className="h-4 w-4" />
             <Link to={`/guides/${category}`} className="hover:text-foreground">
-              {isLoading ? <Skeleton className="h-4 w-20 inline-block" /> : categoryData.title}
+              {isLoading ? (
+                <Skeleton className="h-4 w-20 inline-block" />
+              ) : (
+                categoryData.title
+              )}
             </Link>
             <ChevronRight className="h-4 w-4" />
             <span className="text-foreground font-medium">
-              {isLoading ? <Skeleton className="h-4 w-32 inline-block" /> : guide.title}
+              {isLoading ? (
+                <Skeleton className="h-4 w-32 inline-block" />
+              ) : (
+                guide.title
+              )}
             </span>
           </div>
 
@@ -273,23 +335,31 @@ function GuideDetailPage() {
                   {isLoading ? (
                     <>
                       <Skeleton className="h-6 w-40 mb-4" />
-                      {Array(5).fill(0).map((_, i) => (
-                        <Skeleton key={i} className="h-8 w-full mb-2" />
-                      ))}
+                      {Array(5)
+                        .fill(0)
+                        .map((_, i) => (
+                          <Skeleton key={i} className="h-8 w-full mb-2" />
+                        ))}
                     </>
                   ) : (
                     <>
-                      <h2 className="text-lg font-semibold">{primaryCategory} Guide</h2>
+                      <h2 className="text-lg font-semibold">
+                        {primaryCategory} Guide
+                      </h2>
                       <div className="space-y-1">
                         {guideNavigation.map((item, index) => (
                           <Link
                             key={index}
                             to={`/guides/${category}/${item.slug}`}
                             className={`flex items-center p-2 rounded-md text-sm ${
-                              item.current ? "bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 font-medium" : "hover:bg-muted"
+                              item.current
+                                ? "bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 font-medium"
+                                : "hover:bg-muted"
                             }`}
                           >
-                            {item.current && <ChevronRight className="h-4 w-4 mr-1" />}
+                            {item.current && (
+                              <ChevronRight className="h-4 w-4 mr-1" />
+                            )}
                             {item.title}
                           </Link>
                         ))}
@@ -300,31 +370,44 @@ function GuideDetailPage() {
 
                 {/* Guide actions */}
                 <div className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start gap-2" onClick={handlePrint}>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                    onClick={handlePrint}
+                  >
                     <Printer className="h-4 w-4" />
                     Print Guide
                   </Button>
-                  
+
                   {/* Share Guide button with popover */}
                   <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start gap-2">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start gap-2"
+                      >
                         <Share2 className="h-4 w-4" />
                         Share Guide
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-80" align="start" sideOffset={5}>
+                    <PopoverContent
+                      className="w-80"
+                      align="start"
+                      sideOffset={5}
+                    >
                       <div className="space-y-4">
                         <h3 className="font-medium">Share this guide</h3>
                         <div className="flex space-x-2">
-                          <Input 
-                            value={currentUrl} 
+                          <Input
+                            value={currentUrl}
                             readOnly
                             className="flex-1 text-sm"
-                            onClick={(e) => (e.target as HTMLInputElement).select()}
+                            onClick={(e) =>
+                              (e.target as HTMLInputElement).select()
+                            }
                           />
-                          <Button 
-                            size="icon" 
+                          <Button
+                            size="icon"
                             variant="outline"
                             onClick={copyToClipboard}
                             className="shrink-0"
@@ -383,18 +466,21 @@ function GuideDetailPage() {
                   <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-6">
                     {guide.title}
                   </h1>
-                  
+
                   {/* Guide image with credit */}
                   {guide.image && (
                     <div className="mb-8 relative">
-                      <img 
-                        src={guide.image} 
+                      <img
+                        src={guide.image}
                         alt={guide.title}
                         className="w-full h-auto rounded-lg object-cover aspect-video"
                       />
                       {imageCredit && (
                         <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 rounded-b-lg">
-                          <ImageCredit credit={imageCredit} className="text-white/90" />
+                          <ImageCredit
+                            credit={imageCredit}
+                            className="text-white/90"
+                          />
                         </div>
                       )}
                     </div>
@@ -405,7 +491,11 @@ function GuideDetailPage() {
               {/* Section navigation accordion - NEW */}
               {!isLoading && guide.sections && (
                 <div className="mb-8 print:hidden">
-                  <Accordion type="single" collapsible className="bg-muted/50 rounded-md p-2">
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="bg-muted/50 rounded-md p-2"
+                  >
                     <AccordionItem value="sections">
                       <AccordionTrigger className="text-sm font-medium px-2">
                         Quick Navigation
@@ -418,9 +508,11 @@ function GuideDetailPage() {
                               href={`#${section.sectionId}`}
                               className="flex items-center p-2 rounded-md text-sm hover:bg-muted"
                               onClick={(e) => {
-                                e.preventDefault()
-                                document.getElementById(section.sectionId)?.scrollIntoView({ behavior: "smooth" })
-                                setActiveSection(section.sectionId)
+                                e.preventDefault();
+                                document
+                                  .getElementById(section.sectionId)
+                                  ?.scrollIntoView({ behavior: "smooth" });
+                                setActiveSection(section.sectionId);
                               }}
                             >
                               <ChevronRight className="h-3 w-3 mr-1 text-green-600" />
@@ -435,18 +527,26 @@ function GuideDetailPage() {
               )}
 
               {/* Guide content */}
-              <Suspense fallback={<div className="p-4 text-center">Loading guide content...</div>}>
+              <Suspense
+                fallback={
+                  <div className="p-4 text-center">
+                    Loading guide content...
+                  </div>
+                }
+              >
                 {isLoading ? (
                   <div className="space-y-4 mt-8">
-                    {Array(6).fill(0).map((_, i) => (
-                      <div key={i} className="mb-8">
-                        <Skeleton className="h-8 w-64 mb-4" />
-                        <Skeleton className="h-4 w-full mb-2" />
-                        <Skeleton className="h-4 w-full mb-2" />
-                        <Skeleton className="h-4 w-3/4 mb-2" />
-                        <Skeleton className="h-4 w-5/6" />
-                      </div>
-                    ))}
+                    {Array(6)
+                      .fill(0)
+                      .map((_, i) => (
+                        <div key={i} className="mb-8">
+                          <Skeleton className="h-8 w-64 mb-4" />
+                          <Skeleton className="h-4 w-full mb-2" />
+                          <Skeleton className="h-4 w-full mb-2" />
+                          <Skeleton className="h-4 w-3/4 mb-2" />
+                          <Skeleton className="h-4 w-5/6" />
+                        </div>
+                      ))}
                   </div>
                 ) : GuideContent ? (
                   <GuideContent />
@@ -456,7 +556,9 @@ function GuideDetailPage() {
                       {guide.description}
                     </p>
                     <div className="my-8 p-4 bg-muted rounded-md">
-                      <p className="text-center">This guide is coming soon. Please check back later.</p>
+                      <p className="text-center">
+                        This guide is coming soon. Please check back later.
+                      </p>
                     </div>
                   </div>
                 )}
@@ -472,40 +574,76 @@ function GuideDetailPage() {
                 ) : (
                   <>
                     {prevItem ? (
-                      <Link to={`/guides/${category}/${prevItem.slug}`} className="flex-1">
-                        <Button variant="outline" className="w-full justify-start gap-2 py-8">
+                      <Link
+                        to={`/guides/${category}/${prevItem.slug}`}
+                        className="flex-1"
+                      >
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start gap-2 py-8"
+                        >
                           <ChevronLeft className="h-4 w-4" />
                           <div className="text-left">
-                            <div className="text-xs text-muted-foreground">Previous</div>
-                            <div className="text-sm font-medium truncate">{prevItem.title}</div>
+                            <div className="text-xs text-muted-foreground">
+                              Previous
+                            </div>
+                            <div className="text-sm font-medium truncate">
+                              {prevItem.title}
+                            </div>
                           </div>
                         </Button>
                       </Link>
                     ) : (
-                      <Button variant="outline" className="flex-1 justify-start gap-2" disabled>
+                      <Button
+                        variant="outline"
+                        className="flex-1 justify-start gap-2"
+                        disabled
+                      >
                         <ChevronLeft className="h-4 w-4" />
                         <div className="text-left">
-                          <div className="text-xs text-muted-foreground">Previous</div>
-                          <div className="text-sm font-medium truncate">No previous guide</div>
+                          <div className="text-xs text-muted-foreground">
+                            Previous
+                          </div>
+                          <div className="text-sm font-medium truncate">
+                            No previous guide
+                          </div>
                         </div>
                       </Button>
                     )}
-                    
+
                     {nextItem ? (
-                      <Link to={`/guides/${category}/${nextItem.slug}`} className="flex-1">
-                        <Button variant="outline" className="w-full justify-end gap-2 py-8">
+                      <Link
+                        to={`/guides/${category}/${nextItem.slug}`}
+                        className="flex-1"
+                      >
+                        <Button
+                          variant="outline"
+                          className="w-full justify-end gap-2 py-8"
+                        >
                           <div className="text-right">
-                            <div className="text-xs text-muted-foreground">Next</div>
-                            <div className="text-sm font-medium truncate">{nextItem.title}</div>
+                            <div className="text-xs text-muted-foreground">
+                              Next
+                            </div>
+                            <div className="text-sm font-medium truncate">
+                              {nextItem.title}
+                            </div>
                           </div>
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                       </Link>
                     ) : (
-                      <Button variant="outline" className="flex-1 justify-end gap-2" disabled>
+                      <Button
+                        variant="outline"
+                        className="flex-1 justify-end gap-2"
+                        disabled
+                      >
                         <div className="text-right">
-                          <div className="text-xs text-muted-foreground">Next</div>
-                          <div className="text-sm font-medium truncate">No next guide</div>
+                          <div className="text-xs text-muted-foreground">
+                            Next
+                          </div>
+                          <div className="text-sm font-medium truncate">
+                            No next guide
+                          </div>
                         </div>
                         <ChevronRight className="h-4 w-4" />
                       </Button>
@@ -514,41 +652,49 @@ function GuideDetailPage() {
                 )}
               </div>
             </div>
-            
+
             {/* Right sidebar - NEW - for "ON THIS PAGE" section */}
             <div className="hidden lg:block lg:col-span-1 print:hidden">
               <div className="sticky top-24 space-y-6">
                 {isLoading ? (
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-24 mb-3" />
-                    {Array(4).fill(0).map((_, i) => (
-                      <Skeleton key={i} className="h-8 w-full mb-2" />
-                    ))}
-                  </div>
-                ) : guide.sections && (
-                  <div className="space-y-2">
-                    <h2 className="text-sm font-semibold text-muted-foreground">ON THIS PAGE</h2>
-                    <div className="space-y-1">
-                      {guide.sections.map((section) => (
-                        <a
-                          key={section.sectionId}
-                          href={`#${section.sectionId}`}
-                          className={`flex items-center p-2 rounded-md text-sm ${
-                            activeSection === section.sectionId
-                              ? "bg-muted text-foreground font-medium"
-                              : "text-muted-foreground hover:text-foreground"
-                          }`}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            document.getElementById(section.sectionId)?.scrollIntoView({ behavior: "smooth" })
-                            setActiveSection(section.sectionId)
-                          }}
-                        >
-                          {section.title}
-                        </a>
+                    {Array(4)
+                      .fill(0)
+                      .map((_, i) => (
+                        <Skeleton key={i} className="h-8 w-full mb-2" />
                       ))}
-                    </div>
                   </div>
+                ) : (
+                  guide.sections && (
+                    <div className="space-y-2">
+                      <h2 className="text-sm font-semibold text-muted-foreground">
+                        ON THIS PAGE
+                      </h2>
+                      <div className="space-y-1">
+                        {guide.sections.map((section) => (
+                          <a
+                            key={section.sectionId}
+                            href={`#${section.sectionId}`}
+                            className={`flex items-center p-2 rounded-md text-sm ${
+                              activeSection === section.sectionId
+                                ? "bg-muted text-foreground font-medium"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              document
+                                .getElementById(section.sectionId)
+                                ?.scrollIntoView({ behavior: "smooth" });
+                              setActiveSection(section.sectionId);
+                            }}
+                          >
+                            {section.title}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )
                 )}
               </div>
             </div>
@@ -556,5 +702,5 @@ function GuideDetailPage() {
         </div>
       </main>
     </>
-  )
+  );
 }

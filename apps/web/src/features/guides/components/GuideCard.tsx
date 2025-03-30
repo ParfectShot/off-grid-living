@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle, CardContent } from "~/components/ui/card"
 import { Badge } from "~/components/ui/badge"
 import { ImageCredit } from "./ImageCredit"
+import clsx from "clsx"
 
 // Image credits mapping based on guide slugs
 const imageCredits = {
@@ -70,14 +71,18 @@ export function GuideCard({
   const imageCredit = guide.imageCredit || (guide.slug ? imageCredits[guide.slug as keyof typeof imageCredits] : undefined);
 
   return (
-    <Card className="hover:shadow-md transition-shadow flex flex-col h-full">
+    <Card className={
+      clsx(
+        "hover:shadow-md transition-shadow flex flex-col h-full",
+        guide.image && "pt-0 overflow-hidden" 
+      )}>
       {guide.image && (
         <div className="relative">
           <div className="aspect-video overflow-hidden">
             <img 
               src={guide.image}
               alt={guide.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform hover:scale-105"
             />
             <div className="absolute top-2 right-2">
               <Badge variant="outline" className="bg-white/80 text-black">{guide.level}</Badge>

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router"
 import { ArrowRight } from "lucide-react"
 import { Button } from "~/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card"
-import { GuideIcon } from "~/components/guides/guide-icon"
+import { GuideIcon } from "./GuideIcon"
 
 interface CategoryCardProps {
   category: {

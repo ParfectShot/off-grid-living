@@ -1,5 +1,5 @@
-export const seoDataMap: Record<string, Record<string, { title: string; description: string }>> = {
-    "getting-started": { // Replace "getting-started" with your actual category
+export const seoDataMapGuide: Record<string, Record<string, { title: string; description: string }>> = {
+    "getting-started": {
       "what-is-off-grid-living": {
         title: "Off Grid Collective: Guide to What is Off-Grid Living?",
         description:
@@ -23,3 +23,21 @@ export const seoDataMap: Record<string, Record<string, { title: string; descript
     },
     // Add more categories and their respective slugs here
   };
+
+export const seoDataMapCategory: Record<string, { title: string; description: string }> = {
+  "getting-started": {
+      title: "Off Grid Collective: Getting Started - Your Guide to Off-Grid Living",
+      description:
+        "New to the off-grid lifestyle? The Off Grid Collective's Getting Started section offers essential guides and information on planning your move, understanding basic self-sufficiency, and taking the first steps towards living independently.",
+    },
+    "power-systems": {
+      title: "Off Grid Collective: Power Systems - Solar, Wind & Hydro Guides",
+      description:
+        "Explore our in-depth guides on Off Grid Collective's Power Systems category. Learn about solar power, wind energy, micro hydro, and generator setups for your off-grid home. Understand inverters, charge controllers and creating a reliable and sustainable power solution.",
+    },
+  "water-systems": {
+      title: "Off Grid Collective: Water Systems - Off-Grid Water Solutions",
+      description:
+        "Discover the best water systems for off-grid living with the Off Grid Collective. Our guides cover rainwater harvesting, well drilling, filtration, and purification methods to ensure you have a reliable and clean water supply.",
+    },
+}
