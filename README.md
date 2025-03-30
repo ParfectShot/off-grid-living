@@ -1,86 +1,72 @@
-# Off-Grid Living Application
+# Welcome to TanStack.com!
 
-A comprehensive platform for off-grid living resources, calculators, and information.
+This site is built with TanStack Router!
 
-## Monorepo Structure
+- [TanStack Router Docs](https://tanstack.com/router)
 
-This project uses Turborepo to manage the monorepo structure with two main applications:
+It's deployed automagically with Netlify!
 
-- **Frontend**: React application with TanStack Router and React Query
-- **Backend**: NestJS API server
+- [Netlify](https://netlify.com/)
 
-## Getting Started
+## Development
 
-### Prerequisites
+From your terminal:
 
-- Node.js (v18+)
-- npm or yarn or bun
-
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
-
-```bash
-bun install
+```sh
+pnpm install
+pnpm dev
 ```
 
-### Development
+This starts your app in development mode, rebuilding assets on file changes.
 
-Run both frontend and backend in development mode:
+## Editing and previewing the docs of TanStack projects locally
 
-```bash
-bun dev
+The documentations for all TanStack projects except for `React Charts` are hosted on [https://tanstack.com](https://tanstack.com), powered by this TanStack Router app.
+In production, the markdown doc pages are fetched from the GitHub repos of the projects, but in development they are read from the local file system.
+
+Follow these steps if you want to edit the doc pages of a project (in these steps we'll assume it's [`TanStack/form`](https://github.com/tanstack/form)) and preview them locally :
+
+1. Create a new directory called `tanstack`.
+
+```sh
+mkdir tanstack
 ```
 
-Or run specific applications:
+2. Enter the directory and clone this repo and the repo of the project there.
 
-```bash
-# Frontend only
-bun dev --filter=web
-
-# Backend only
-bun dev --filter=api
+```sh
+cd tanstack
+git clone git@github.com:TanStack/tanstack.com.git
+git clone git@github.com:TanStack/form.git
 ```
 
-### Building
+> [!NOTE]
+> Your `tanstack` directory should look like this:
+>
+> ```
+> tanstack/
+>    |
+>    +-- form/
+>    |
+>    +-- tanstack.com/
+> ```
 
-Build all applications:
+> [!WARNING]
+> Make sure the name of the directory in your local file system matches the name of the project's repo. For example, `tanstack/form` must be cloned into `form` (this is the default) instead of `some-other-name`, because that way, the doc pages won't be found.
 
-```bash
-bun build
+3. Enter the `tanstack/tanstack.com` directory, install the dependencies and run the app in dev mode:
+
+```sh
+cd tanstack.com
+pnpm i
+# The app will run on https://localhost:3000 by default
+pnpm dev
 ```
 
-### Running Production
+4. Now you can visit http://localhost:3000/form/latest/docs/overview in the browser and see the changes you make in `tanstack/form/docs`.
 
-Start all applications in production mode:
+> [!NOTE]
+> The updated pages need to be manually reloaded in the browser.
 
-```bash
-bun start
-```
-
-## Technologies Used
-
-### Frontend
-- React
-- TypeScript
-- TanStack Router
-- React Query
-- Tailwind CSS
-- shadcn/ui components
-
-### Backend
-- NestJS
-- TypeScript
-- Express
-
-## Project Structure
-
-```
-apps/
-├── web/         # React frontend application
-│   └── src/          # Frontend source code
-├── api/          # NestJS backend application
-│   └── src/          # Backend source code
-packages/             # Shared packages (future use)
-```
+> [!WARNING]
+> You will need to update the `docs/config.json` file (in the project's repo) if you add a new doc page!
