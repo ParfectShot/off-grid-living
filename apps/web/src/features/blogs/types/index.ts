@@ -14,3 +14,18 @@ export interface BlogPost {
   };
   tags?: string[];
 } 
+
+
+export interface BlogPostSummary {
+  id: number | string
+  title: string
+  excerpt: string
+  date: string
+  category: string
+  readTime: string
+  tags: string[]
+  featured?: boolean
+  imageUrl?: string
+  featuredImage: string
+  images?: string[]
+}

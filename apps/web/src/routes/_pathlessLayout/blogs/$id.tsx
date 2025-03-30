@@ -23,8 +23,8 @@ import { Badge } from '~/components/ui/badge'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import Image from '~/components/ui/image'
-import { BlogCard } from '~/components/blog/BlogCard'
-import { blogPosts } from '~/data/blogPosts'
+import { BlogCard, BlogPostSummary } from '~/features/blogs'
+// import { blogPosts } from '~/data/blogPosts'
 
 export const Route = createFileRoute('/_pathlessLayout/blogs/$id')({
   component: BlogPostPage,
@@ -40,6 +40,7 @@ export const Route = createFileRoute('/_pathlessLayout/blogs/$id')({
   }
 })
 
+const blogPosts: BlogPostSummary[] = []
 // Mock data for a single blog post
 const getBlogPost = (id: string) => {
   // First try to find the post in our blogPosts array

@@ -1,4 +1,4 @@
-import { BlogPostSummary } from '~/components/blog/BlogCard'
+import { BlogPostSummary } from '~/features/blogs'
 
 // Blog posts data
 export const blogPosts: BlogPostSummary[] = [
