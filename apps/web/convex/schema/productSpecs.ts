@@ -2,10 +2,10 @@ import { defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export const productSpecs = defineTable({
-  category: v.string(),
-  displayOrder: v.float64(),
-  name: v.string(),
-  product: v.id("products"),
-  unit: v.optional(v.string()),
-  value: v.string(),
-});
+  productId: v.id("products"),
+  category: v.optional(v.string()), // e.g., "physical", "electrical", "warranty"
+  name: v.string(),               // e.g., "weight", "voltage", "warranty_period"
+  value: v.string(),              // e.g., "225 KGS", "12V", "30 Years Power Output"
+  displayOrder: v.optional(v.number()), // For controlling display order
+})
+.index("by_product", ["productId"]);

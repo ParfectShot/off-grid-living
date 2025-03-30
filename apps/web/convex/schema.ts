@@ -1,6 +1,5 @@
 import { defineSchema } from "convex/server";
 import { brands } from "./schema/brands";
-import { categories } from "./schema/categories";
 import { productAttributes } from "./schema/productAttributes";
 import { productImages } from "./schema/productImages";
 import { products } from "./schema/products";
@@ -13,10 +12,11 @@ import { guideToCategory } from "./schema/guideToCategory";
 import { authors } from "./schema/authors";
 import { guideToAuthor } from "./schema/guideToAuthor";
 import { images } from "./schema/images";
+import { productCategories } from "./schema/productCategories";
 
 export default defineSchema({
   brands,
-  categories,
+  productCategories,
   productAttributes,
   productImages,
   products,

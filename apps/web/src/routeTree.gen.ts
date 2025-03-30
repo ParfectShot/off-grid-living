@@ -19,9 +19,11 @@ import { Route as DashboardSettingsImport } from './routes/dashboard/settings'
 import { Route as DashboardImagesImport } from './routes/dashboard/images'
 import { Route as DashboardImagesIndexImport } from './routes/dashboard/images/index'
 import { Route as DashboardGuidesIndexImport } from './routes/dashboard/guides/index'
+import { Route as PathlessLayoutProductReviewsIndexImport } from './routes/_pathlessLayout/product-reviews/index'
 import { Route as PathlessLayoutGuidesIndexImport } from './routes/_pathlessLayout/guides/index'
 import { Route as PathlessLayoutCalculatorsIndexImport } from './routes/_pathlessLayout/calculators/index'
 import { Route as PathlessLayoutBlogsIndexImport } from './routes/_pathlessLayout/blogs/index'
+import { Route as PathlessLayoutProductReviewsReviewIdImport } from './routes/_pathlessLayout/product-reviews/$reviewId'
 import { Route as PathlessLayoutBlogsIdImport } from './routes/_pathlessLayout/blogs/$id'
 import { Route as PathlessLayoutGuidesCategoryIndexImport } from './routes/_pathlessLayout/guides/$category/index'
 import { Route as PathlessLayoutCalculatorsSolarSystemIndexImport } from './routes/_pathlessLayout/calculators/solar-system/index'
@@ -77,6 +79,13 @@ const DashboardGuidesIndexRoute = DashboardGuidesIndexImport.update({
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
+const PathlessLayoutProductReviewsIndexRoute =
+  PathlessLayoutProductReviewsIndexImport.update({
+    id: '/product-reviews/',
+    path: '/product-reviews/',
+    getParentRoute: () => PathlessLayoutRouteRoute,
+  } as any)
+
 const PathlessLayoutGuidesIndexRoute = PathlessLayoutGuidesIndexImport.update({
   id: '/guides/',
   path: '/guides/',
@@ -95,6 +104,13 @@ const PathlessLayoutBlogsIndexRoute = PathlessLayoutBlogsIndexImport.update({
   path: '/blogs/',
   getParentRoute: () => PathlessLayoutRouteRoute,
 } as any)
+
+const PathlessLayoutProductReviewsReviewIdRoute =
+  PathlessLayoutProductReviewsReviewIdImport.update({
+    id: '/product-reviews/$reviewId',
+    path: '/product-reviews/$reviewId',
+    getParentRoute: () => PathlessLayoutRouteRoute,
+  } as any)
 
 const PathlessLayoutBlogsIdRoute = PathlessLayoutBlogsIdImport.update({
   id: '/blogs/$id',
@@ -183,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PathlessLayoutBlogsIdImport
       parentRoute: typeof PathlessLayoutRouteImport
     }
+    '/_pathlessLayout/product-reviews/$reviewId': {
+      id: '/_pathlessLayout/product-reviews/$reviewId'
+      path: '/product-reviews/$reviewId'
+      fullPath: '/product-reviews/$reviewId'
+      preLoaderRoute: typeof PathlessLayoutProductReviewsReviewIdImport
+      parentRoute: typeof PathlessLayoutRouteImport
+    }
     '/_pathlessLayout/blogs/': {
       id: '/_pathlessLayout/blogs/'
       path: '/blogs'
@@ -202,6 +225,13 @@ declare module '@tanstack/react-router' {
       path: '/guides'
       fullPath: '/guides'
       preLoaderRoute: typeof PathlessLayoutGuidesIndexImport
+      parentRoute: typeof PathlessLayoutRouteImport
+    }
+    '/_pathlessLayout/product-reviews/': {
+      id: '/_pathlessLayout/product-reviews/'
+      path: '/product-reviews'
+      fullPath: '/product-reviews'
+      preLoaderRoute: typeof PathlessLayoutProductReviewsIndexImport
       parentRoute: typeof PathlessLayoutRouteImport
     }
     '/dashboard/guides/': {
@@ -254,9 +284,11 @@ declare module '@tanstack/react-router' {
 interface PathlessLayoutRouteRouteChildren {
   PathlessLayoutIndexRoute: typeof PathlessLayoutIndexRoute
   PathlessLayoutBlogsIdRoute: typeof PathlessLayoutBlogsIdRoute
+  PathlessLayoutProductReviewsReviewIdRoute: typeof PathlessLayoutProductReviewsReviewIdRoute
   PathlessLayoutBlogsIndexRoute: typeof PathlessLayoutBlogsIndexRoute
   PathlessLayoutCalculatorsIndexRoute: typeof PathlessLayoutCalculatorsIndexRoute
   PathlessLayoutGuidesIndexRoute: typeof PathlessLayoutGuidesIndexRoute
+  PathlessLayoutProductReviewsIndexRoute: typeof PathlessLayoutProductReviewsIndexRoute
   PathlessLayoutGuidesCategorySlugRoute: typeof PathlessLayoutGuidesCategorySlugRoute
   PathlessLayoutCalculatorsHomeLoadIndexRoute: typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   PathlessLayoutCalculatorsSolarSystemIndexRoute: typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
@@ -266,9 +298,13 @@ interface PathlessLayoutRouteRouteChildren {
 const PathlessLayoutRouteRouteChildren: PathlessLayoutRouteRouteChildren = {
   PathlessLayoutIndexRoute: PathlessLayoutIndexRoute,
   PathlessLayoutBlogsIdRoute: PathlessLayoutBlogsIdRoute,
+  PathlessLayoutProductReviewsReviewIdRoute:
+    PathlessLayoutProductReviewsReviewIdRoute,
   PathlessLayoutBlogsIndexRoute: PathlessLayoutBlogsIndexRoute,
   PathlessLayoutCalculatorsIndexRoute: PathlessLayoutCalculatorsIndexRoute,
   PathlessLayoutGuidesIndexRoute: PathlessLayoutGuidesIndexRoute,
+  PathlessLayoutProductReviewsIndexRoute:
+    PathlessLayoutProductReviewsIndexRoute,
   PathlessLayoutGuidesCategorySlugRoute: PathlessLayoutGuidesCategorySlugRoute,
   PathlessLayoutCalculatorsHomeLoadIndexRoute:
     PathlessLayoutCalculatorsHomeLoadIndexRoute,
@@ -319,9 +355,11 @@ export interface FileRoutesByFullPath {
   '/': typeof PathlessLayoutIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/blogs/$id': typeof PathlessLayoutBlogsIdRoute
+  '/product-reviews/$reviewId': typeof PathlessLayoutProductReviewsReviewIdRoute
   '/blogs': typeof PathlessLayoutBlogsIndexRoute
   '/calculators': typeof PathlessLayoutCalculatorsIndexRoute
   '/guides': typeof PathlessLayoutGuidesIndexRoute
+  '/product-reviews': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides': typeof DashboardGuidesIndexRoute
   '/dashboard/images/': typeof DashboardImagesIndexRoute
   '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
@@ -335,9 +373,11 @@ export interface FileRoutesByTo {
   '/': typeof PathlessLayoutIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/blogs/$id': typeof PathlessLayoutBlogsIdRoute
+  '/product-reviews/$reviewId': typeof PathlessLayoutProductReviewsReviewIdRoute
   '/blogs': typeof PathlessLayoutBlogsIndexRoute
   '/calculators': typeof PathlessLayoutCalculatorsIndexRoute
   '/guides': typeof PathlessLayoutGuidesIndexRoute
+  '/product-reviews': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides': typeof DashboardGuidesIndexRoute
   '/dashboard/images': typeof DashboardImagesIndexRoute
   '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
@@ -355,9 +395,11 @@ export interface FileRoutesById {
   '/_pathlessLayout/': typeof PathlessLayoutIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/_pathlessLayout/blogs/$id': typeof PathlessLayoutBlogsIdRoute
+  '/_pathlessLayout/product-reviews/$reviewId': typeof PathlessLayoutProductReviewsReviewIdRoute
   '/_pathlessLayout/blogs/': typeof PathlessLayoutBlogsIndexRoute
   '/_pathlessLayout/calculators/': typeof PathlessLayoutCalculatorsIndexRoute
   '/_pathlessLayout/guides/': typeof PathlessLayoutGuidesIndexRoute
+  '/_pathlessLayout/product-reviews/': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides/': typeof DashboardGuidesIndexRoute
   '/dashboard/images/': typeof DashboardImagesIndexRoute
   '/_pathlessLayout/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
@@ -376,9 +418,11 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard/'
     | '/blogs/$id'
+    | '/product-reviews/$reviewId'
     | '/blogs'
     | '/calculators'
     | '/guides'
+    | '/product-reviews'
     | '/dashboard/guides'
     | '/dashboard/images/'
     | '/guides/$category/$slug'
@@ -391,9 +435,11 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/blogs/$id'
+    | '/product-reviews/$reviewId'
     | '/blogs'
     | '/calculators'
     | '/guides'
+    | '/product-reviews'
     | '/dashboard/guides'
     | '/dashboard/images'
     | '/guides/$category/$slug'
@@ -409,9 +455,11 @@ export interface FileRouteTypes {
     | '/_pathlessLayout/'
     | '/dashboard/'
     | '/_pathlessLayout/blogs/$id'
+    | '/_pathlessLayout/product-reviews/$reviewId'
     | '/_pathlessLayout/blogs/'
     | '/_pathlessLayout/calculators/'
     | '/_pathlessLayout/guides/'
+    | '/_pathlessLayout/product-reviews/'
     | '/dashboard/guides/'
     | '/dashboard/images/'
     | '/_pathlessLayout/guides/$category/$slug'
@@ -450,9 +498,11 @@ export const routeTree = rootRoute
       "children": [
         "/_pathlessLayout/",
         "/_pathlessLayout/blogs/$id",
+        "/_pathlessLayout/product-reviews/$reviewId",
         "/_pathlessLayout/blogs/",
         "/_pathlessLayout/calculators/",
         "/_pathlessLayout/guides/",
+        "/_pathlessLayout/product-reviews/",
         "/_pathlessLayout/guides/$category/$slug",
         "/_pathlessLayout/calculators/home-load/",
         "/_pathlessLayout/calculators/solar-system/",
@@ -491,6 +541,10 @@ export const routeTree = rootRoute
       "filePath": "_pathlessLayout/blogs/$id.tsx",
       "parent": "/_pathlessLayout"
     },
+    "/_pathlessLayout/product-reviews/$reviewId": {
+      "filePath": "_pathlessLayout/product-reviews/$reviewId.tsx",
+      "parent": "/_pathlessLayout"
+    },
     "/_pathlessLayout/blogs/": {
       "filePath": "_pathlessLayout/blogs/index.tsx",
       "parent": "/_pathlessLayout"
@@ -501,6 +555,10 @@ export const routeTree = rootRoute
     },
     "/_pathlessLayout/guides/": {
       "filePath": "_pathlessLayout/guides/index.tsx",
+      "parent": "/_pathlessLayout"
+    },
+    "/_pathlessLayout/product-reviews/": {
+      "filePath": "_pathlessLayout/product-reviews/index.tsx",
       "parent": "/_pathlessLayout"
     },
     "/dashboard/guides/": {
