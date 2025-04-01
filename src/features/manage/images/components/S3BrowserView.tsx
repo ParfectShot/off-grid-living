@@ -6,7 +6,8 @@ import {
   FolderOpen, FileImage, Calendar, FileBox, Eye, 
   ExternalLink 
 } from "lucide-react";
-import { FolderInfo, S3Image } from "../../types/s3-types";
+import { S3Image } from "~/types/s3-types";
+import { FolderInfo } from "~/types/s3-types";
 
 interface S3BrowserViewProps {
   s3Bucket: string;

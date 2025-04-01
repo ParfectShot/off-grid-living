@@ -60,12 +60,12 @@ export function DashboardNav({ className }: DashboardNavProps) {
         <span>Analytics</span>
       </Link>
       <Link
-        to="/dashboard/images"
+        to="/dashboard/process-images"
         className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary data-[status=active]:bg-muted data-[status=active]:text-primary"
         activeProps={{ className: 'bg-muted text-primary' }}
       >
         <Image className="h-4 w-4" />
-        <span>Images</span>
+        <span>Process Images</span>
       </Link>
       <Link
         to="/dashboard/users"

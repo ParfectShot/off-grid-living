@@ -1,14 +1,17 @@
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
-import { ProcessedImage } from "~/types/s3-types";
+import { ProcessedImage, S3Image } from "~/types/s3-types";
 import { Maximize, X, Check } from "lucide-react";
 
 interface ProcessedImagesTabProps {
   processedImages: ProcessedImage[];
-  handleViewVariants: (image: ProcessedImage) => void;
+  handleViewVariants: (image: ProcessedImage | S3Image) => void;
   handleUploadToS3: () => void;
   handleDeleteImage: (imageId: string) => void;
   isUploading: boolean;
+  isStoring?: boolean;
+  storeError?: string | null;
+  readOnly?: boolean;
 }
 
 export function ProcessedImagesTab({
@@ -16,7 +19,10 @@ export function ProcessedImagesTab({
   handleViewVariants,
   handleUploadToS3,
   handleDeleteImage,
-  isUploading
+  isUploading,
+  isStoring,
+  storeError,
+  readOnly = false
 }: ProcessedImagesTabProps) {
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
@@ -36,19 +42,24 @@ export function ProcessedImagesTab({
 
   return (
     <Card className="p-6">
-      <div className="flex justify-between items-center mb-4">
+      <div className={`flex justify-between items-center mb-4 ${readOnly ? 'justify-center' : 'justify-between'}`}>
         <h2 className="text-2xl font-bold">Processed Images</h2>
         
-        {/* S3 Upload button */}
-        <Button 
-          onClick={handleUploadToS3} 
-          disabled={isUploading}
-          className="flex items-center gap-2"
-        >
-          {isUploading ? 'Uploading to S3...' : 'Upload to S3'}
-        </Button>
+        {!readOnly && (
+          <Button 
+            onClick={handleUploadToS3} 
+            disabled={isUploading || isStoring}
+            className="flex items-center gap-2"
+          >
+            {isUploading ? 'Uploading...' : (isStoring ? 'Storing...' : 'Upload to S3')}
+          </Button>
+        )}
       </div>
       
+      {!readOnly && storeError && (
+        <div className="text-red-500 mb-4">Error storing metadata: {storeError}</div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {processedImages.map((image) => (
           <div key={image.id} className="border rounded p-4">
@@ -87,15 +98,17 @@ export function ProcessedImagesTab({
                 <Maximize className="h-3 w-3" />
                 View Variants
               </Button>
-              <Button 
-                variant="destructive" 
-                size="sm"
-                onClick={() => handleDeleteImage(image.id)}
-                className="flex items-center gap-1"
-              >
-                <X className="h-3 w-3" />
-                Delete
-              </Button>
+              {!readOnly && (
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={() => handleDeleteImage(image.id)}
+                  className="flex items-center gap-1"
+                >
+                  <X className="h-3 w-3" />
+                  Delete
+                </Button>
+              )}
             </div>
           </div>
         ))}

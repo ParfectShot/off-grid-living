@@ -1,10 +1,11 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 
 interface UploadTabProps {
   selectedFiles: File[];
-  setSelectedFiles: (files: File[]) => void;
+  setSelectedFiles: Dispatch<SetStateAction<File[]>>;
+  onFilesSelected: (event: ChangeEvent<HTMLInputElement>) => void;
   handleProcessImages: () => void;
   isProcessing: boolean;
   uploadProgress: number;
@@ -14,18 +15,12 @@ interface UploadTabProps {
 export function UploadTab({
   selectedFiles,
   setSelectedFiles,
+  onFilesSelected,
   handleProcessImages,
   isProcessing,
   uploadProgress,
   uploadError
 }: UploadTabProps) {
-  const handleFilesSelected = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setSelectedFiles(Array.from(files));
-    }
-  };
-
   return (
     <Card className="p-6">
       <h2 className="text-2xl font-bold mb-4">Upload Images</h2>
@@ -36,7 +31,7 @@ export function UploadTab({
           type="file"
           accept="image/*"
           multiple
-          onChange={handleFilesSelected}
+          onChange={onFilesSelected}
           className="block w-full text-sm text-gray-500
             file:mr-4 file:py-2 file:px-4
             file:rounded-md file:border-0

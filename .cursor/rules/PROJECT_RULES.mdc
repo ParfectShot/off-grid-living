@@ -1,15 +1,20 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
 # Project Rules
 
 This document outlines the specific rules and conventions for the off-grid-living project.
 
 ## Technology Stack & Key Libraries
 
-- **Framework:** [TanStack Start (React)](https://tanstack.com/start/latest) - The foundation of the application.
-- **Routing:** [TanStack React Router](https://tanstack.com/router/latest) - Used for managing application routes (file-based).
-- **UI Components:** [shadcn/ui](https://ui.shadcn.com/) - Our component library. Components are located in `~/components/ui/`.
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/) - Used for utility-first CSS styling.
-- **Database/Backend:** [Convex](https://convex.dev/) - Used for the backend, database, and real-time data synchronization.
-- **Icons:** [Lucide React](https://lucide.dev/) - Used for icons throughout the application.
+- **Framework:** [TanStack Start (React)](mdc:https:/tanstack.com/start/latest) - The foundation of the application.
+- **Routing:** [TanStack React Router](mdc:https:/tanstack.com/router/latest) - Used for managing application routes (file-based).
+- **UI Components:** [shadcn/ui](mdc:https:/ui.shadcn.com) - Our component library. Components are located in `~/components/ui/`.
+- **Styling:** [Tailwind CSS](mdc:https:/tailwindcss.com) - Used for utility-first CSS styling.
+- **Database/Backend:** [Convex](mdc:https:/convex.dev) - Used for the backend, database, and real-time data synchronization.
+- **Icons:** [Lucide React](mdc:https:/lucide.dev) - Used for icons throughout the application.
 
 ## Conventions & Practices
 

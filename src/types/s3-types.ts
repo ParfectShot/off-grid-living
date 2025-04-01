@@ -11,9 +11,9 @@ export interface S3Image {
   originalSize: number;
   originalUrl: string;
   lastModified?: Date;
-  srcset: Array<{ width: number; url: string; key: string; size: number }>;
+  srcset: Array<{ width: number; url: string; key?: string; size?: number }>;
   folder: string;
-  variants: number;
+  variants?: number;
 }
 
 export interface ProcessedImage {
@@ -27,10 +27,13 @@ export interface ProcessedImage {
     width: number; 
     url: string;
     filePath?: string;
+    s3Url?: string;
   }>;
   contentType: string;
   fileExtension?: string;
   s3Url?: string;
+  alt?: string;
+  credit?: string;
 }
 
 export interface FileUploadParams {
@@ -39,5 +42,28 @@ export interface FileUploadParams {
   contentType: string;
   bucket: string;
   region?: string;
-  folder?: string;
+}
+
+export interface VariantS3Result {
+  key?: string;
+  url?: string;
+  success: boolean;
+  error?: string;
+  width?: number;
+  filePath?: string;
+}
+
+export interface DeleteFilesResult {
+  success: boolean;
+  deletedCount: number;
+  error?: string;
+  errors?: { path: string; error: string }[];
+}
+
+export interface UploadFilesS3Result {
+  success: boolean;
+  results: VariantS3Result[];
+  totalUploaded: number;
+  totalFailed: number;
+  error?: string;
 } 

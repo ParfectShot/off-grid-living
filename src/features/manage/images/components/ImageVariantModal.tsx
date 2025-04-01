@@ -1,16 +1,17 @@
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "~/components/ui/tabs";
-import { Card, CardFooter } from "~/components/ui/card";
-import { ProcessedImage } from "../../types/s3-types";
+import { ProcessedImage, S3Image } from "~/types/s3-types";
+import { Copy } from "lucide-react";
 
 interface ImageVariantModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  image: ProcessedImage | null;
+  image: ProcessedImage | S3Image | null;
+  onCopyUrl: (url: string) => void;
 }
 
-export function ImageVariantModal({ open, onOpenChange, image }: ImageVariantModalProps) {
+export function ImageVariantModal({ open, onOpenChange, image, onCopyUrl }: ImageVariantModalProps) {
   if (!image) return null;
 
   return (
@@ -29,7 +30,7 @@ export function ImageVariantModal({ open, onOpenChange, image }: ImageVariantMod
             
             <TabsContent value="gallery" className="pt-4 space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {image.srcset.map((variant, index) => (
+                {image.srcset.map((variant: { width: number; url: string; s3Url?: string; filePath?: string }, index: number) => (
                   <div 
                     key={index} 
                     className="border rounded-lg overflow-hidden flex flex-col"
@@ -51,8 +52,16 @@ export function ImageVariantModal({ open, onOpenChange, image }: ImageVariantMod
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline text-sm"
                       >
-                        View Full Size
+                        {variant.url}
                       </a>
+                      <Button 
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onCopyUrl(variant.url)}
+                        className="ml-2 h-6 px-1"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -65,7 +74,7 @@ export function ImageVariantModal({ open, onOpenChange, image }: ImageVariantMod
                 <pre className="bg-gray-100 dark:bg-gray-900 p-3 rounded text-sm overflow-x-auto">
                   {`<img
   src="${image.originalUrl}"
-  srcset="${image.srcset.map(v => `${v.url} ${v.width}w`).join(', ')}"
+  srcset="${image.srcset.map((v: { url: string; width: number }) => `${v.url} ${v.width}w`).join(', ')}"
   sizes="(max-width: 768px) 100vw, 768px"
   alt="${image.originalName}"
 />`}
@@ -75,7 +84,7 @@ export function ImageVariantModal({ open, onOpenChange, image }: ImageVariantMod
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                 <h3 className="font-medium mb-2">Available Widths</h3>
                 <ul className="list-disc pl-5">
-                  {image.srcset.map((variant, index) => (
+                  {image.srcset.map((variant: { width: number; url: string }, index: number) => (
                     <li key={index}>
                       {variant.width}px - <a 
                         href={variant.url} 
@@ -85,6 +94,14 @@ export function ImageVariantModal({ open, onOpenChange, image }: ImageVariantMod
                       >
                         Direct link
                       </a>
+                      <Button 
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onCopyUrl(variant.url)}
+                        className="ml-2 h-6 px-1"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
                     </li>
                   ))}
                 </ul>

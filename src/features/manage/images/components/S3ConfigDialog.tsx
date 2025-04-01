@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog";
 import { RefreshCw, CloudUpload } from "lucide-react";
-import { FolderInfo } from "../../types/s3-types";
+import { FolderInfo } from "~/types/s3-types";
 
 interface S3ConfigDialogProps {
   open: boolean;
@@ -21,7 +21,8 @@ interface S3ConfigDialogProps {
   onFolderChange: (folder: string) => void;
   onFolderSelect: (folder: FolderInfo) => void;
   onLoadBuckets: () => void;
-  onSaveAndUpload: () => void;
+  onSetTargetFolder: () => void;
+  onSave: () => void;
 }
 
 export function S3ConfigDialog({
@@ -41,7 +42,8 @@ export function S3ConfigDialog({
   onFolderChange,
   onFolderSelect,
   onLoadBuckets,
-  onSaveAndUpload
+  onSetTargetFolder,
+  onSave
 }: S3ConfigDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -113,6 +115,15 @@ export function S3ConfigDialog({
                 <div className="text-xs text-gray-500 mb-2">
                   Current path: {currentPrefix || '/ (root)'}
                 </div>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={onSetTargetFolder}
+                  className="mb-2 text-xs h-7"
+                  disabled={!currentPrefix}
+                >
+                  Use Current Path as Target
+                </Button>
                 
                 {isLoadingFolders ? (
                   <div className="flex justify-center p-4">
@@ -156,11 +167,11 @@ export function S3ConfigDialog({
         <DialogFooter className="flex-shrink-0 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button 
-            onClick={onSaveAndUpload}
+            onClick={onSave}
             disabled={!s3Bucket || isLoadingBuckets || isLoadingFolders}
           >
             <CloudUpload className="h-4 w-4 mr-2" />
-            Save & Upload
+            Save Configuration
           </Button>
         </DialogFooter>
       </DialogContent>
