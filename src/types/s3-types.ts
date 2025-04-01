@@ -22,7 +22,12 @@ export interface ProcessedImage {
   originalSize: number;
   processedSize: number;
   originalUrl: string;
-  srcset: Array<{ width: number; url: string }>;
+  originalFilePath?: string;
+  srcset: Array<{ 
+    width: number; 
+    url: string;
+    filePath?: string;
+  }>;
   contentType: string;
   fileExtension?: string;
   s3Url?: string;

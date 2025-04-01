@@ -41,8 +41,13 @@ export async function processImage(file: File): Promise<ProcessedImage> {
   const buffer = Buffer.from(arrayBuffer);
   
   // Use Sharp to analyze the image
-  const metadata = await Sharp(buffer).metadata();
+  const sharpInstance = Sharp(buffer);
+  const metadata = await sharpInstance.metadata();
   
+  // Convert original buffer to WebP
+  const originalWebPBuffer = await sharpInstance.webp().toBuffer();
+  const originalWebPSize = originalWebPBuffer.length;
+
   // Generate responsive sizes - we'll create variants that maintain aspect ratio
   const originalWidth = metadata.width || 0;
   const variants = [320, 640, 768, 1024, 1280, 1536];
@@ -58,45 +63,51 @@ export async function processImage(file: File): Promise<ProcessedImage> {
   
   // Process each size variant
   const srcset: ImageVariant[] = [];
-  
+  let totalProcessedWebPSize = 0;
+
   for (const width of validVariants) {
     // Skip if we already have this width
     if (srcset.some(v => v.width === width)) continue;
     
-    // Resize the image maintaining aspect ratio
-    const resizedBuffer = await Sharp(buffer)
+    // Resize the image and convert to WebP
+    const resizedWebPBuffer = await Sharp(buffer) // Start from original buffer for resizing
       .resize({ width, withoutEnlargement: true })
+      .webp() // Convert to WebP
       .toBuffer();
     
-    // Create a temporary URL for client-side preview
-    const blob = new Blob([resizedBuffer], { type: file.type });
+    totalProcessedWebPSize += resizedWebPBuffer.length; // Accumulate WebP size
+
+    // Create a temporary URL for client-side preview (using WebP)
+    const blob = new Blob([resizedWebPBuffer], { type: 'image/webp' }); // Use image/webp type
     const url = URL.createObjectURL(blob);
     
     srcset.push({
       width,
-      url,
-      buffer: resizedBuffer,
-      contentType: file.type,
+      url, // Keep temp URL for preview
+      buffer: resizedWebPBuffer, // Store the WebP buffer
+      contentType: 'image/webp', // Set content type to WebP
     });
   }
   
   // Create a unique ID for this image
   const id = crypto.randomUUID();
-  const originalUrl = URL.createObjectURL(file);
+  // Create temp URL for original WebP preview
+  const originalWebPBlob = new Blob([originalWebPBuffer], { type: 'image/webp' });
+  const originalUrl = URL.createObjectURL(originalWebPBlob); // Use WebP blob for preview URL
   
-  // Get file extension
-  const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+  // Get file extension (will be overridden)
+  // const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
   
   return {
     id,
-    originalName: file.name,
-    originalSize: file.size,
-    processedSize: srcset.reduce((total, variant) => total + variant.buffer.length, 0),
-    originalUrl,
-    originalBuffer: buffer,
-    contentType: file.type,
-    fileExtension,
-    srcset,
+    originalName: file.name, // Keep original name
+    originalSize: originalWebPSize, // Use original WebP size
+    processedSize: totalProcessedWebPSize, // Use total variant WebP size
+    originalUrl, // Use WebP preview URL
+    originalBuffer: originalWebPBuffer, // Use original WebP buffer
+    contentType: 'image/webp', // Set content type to WebP
+    fileExtension: 'webp', // Set extension to webp
+    srcset, // Contains WebP variants
     uploaded: false,
   };
 }

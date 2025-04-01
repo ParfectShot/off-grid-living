@@ -124,17 +124,23 @@ export async function processImage(storageId: string, originalName: string, cont
   // Process each size variant
   const srcset = [];
   let totalProcessedSize = 0;
+  const variantFilePaths = []; // Add array to collect variant paths
   
   for (const width of validVariants) {
-    // Resize the image maintaining aspect ratio
+    // Define the new WebP filename for the variant
+    const variantFilename = `${storageId}_${width}.webp`; // Changed extension to .webp
+    const variantPath = path.join(variantsDir, variantFilename); // Use path.join for consistency
+
+    // Resize the image, convert to WebP, maintaining aspect ratio
     const resizedBuffer = await Sharp(originalBuffer)
       .resize({ width, withoutEnlargement: true })
+      .webp() // Convert to WebP format
       .toBuffer();
     
-    // Save the variant
-    const variantFilename = `${storageId}_${width}${fileExtension}`;
-    const variantPath = await saveFile(resizedBuffer, variantFilename, variantsDir);
+    // Save the variant (using variantPath directly)
+    await fs.promises.writeFile(variantPath, resizedBuffer); // Save using fs.promises.writeFile
     const variantUrl = getFileUrl(variantPath);
+    variantFilePaths.push(variantPath); // Collect variant path
     
     srcset.push({
       width,
@@ -154,8 +160,10 @@ export async function processImage(storageId: string, originalName: string, cont
     originalSize,
     processedSize: totalProcessedSize,
     originalUrl,
+    originalFilePath: filePath, // Add original file path
     srcset,
-    contentType,
-    fileExtension: fileExtension.slice(1) // Remove the dot
+    variantFilePaths, // Add variant file paths
+    contentType: 'image/webp', // Update content type
+    fileExtension: 'webp' // Update file extension
   };
 } 
