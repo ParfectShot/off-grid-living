@@ -1,0 +1,34 @@
+# Project Rules
+
+This document outlines the specific rules and conventions for the off-grid-living project.
+
+## Technology Stack & Key Libraries
+
+- **Framework:** [TanStack Start (React)](https://tanstack.com/start/latest) - The foundation of the application.
+- **Routing:** [TanStack React Router](https://tanstack.com/router/latest) - Used for managing application routes (file-based).
+- **UI Components:** [shadcn/ui](https://ui.shadcn.com/) - Our component library. Components are located in `~/components/ui/`.
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) - Used for utility-first CSS styling.
+- **Database/Backend:** [Convex](https://convex.dev/) - Used for the backend, database, and real-time data synchronization.
+- **Icons:** [Lucide React](https://lucide.dev/) - Used for icons throughout the application.
+
+## Conventions & Practices
+
+- **Path Aliases:**
+    - Always refer to the `tsconfig.json` for defined path aliases.
+    - Currently, `~/` maps to `./src/` (e.g., `~/components/ui/button`).
+- **UI Components:**
+    - When adding a new `shadcn/ui` component to the project, **update the `plan/frontend/ui-components.md`** document to reflect its availability.
+- **Planning:**
+    - The overall project plan resides in the `plan/` directory.
+    - **Update the relevant documents within `plan/`** whenever a significant feature change or architectural decision is made.
+- **Generated Code:**
+    - Always check in the contents of the `convex/_generated/` directory into version control.
+    - The TanStack Router generated file (`src/routeTree.gen.ts`) should also be checked into version control.
+
+## Coding Style
+
+- (Add coding style guidelines here, e.g., linting, formatting)
+
+## Commit Messages
+
+- (Add commit message conventions here)

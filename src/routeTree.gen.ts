@@ -16,6 +16,7 @@ import { Route as PathlessLayoutRouteImport } from './routes/_pathlessLayout/rou
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as PathlessLayoutIndexImport } from './routes/_pathlessLayout/index'
 import { Route as DashboardSettingsIndexImport } from './routes/dashboard/settings/index'
+import { Route as DashboardManageIndexImport } from './routes/dashboard/manage/index'
 import { Route as DashboardImagesIndexImport } from './routes/dashboard/images/index'
 import { Route as DashboardGuidesIndexImport } from './routes/dashboard/guides/index'
 import { Route as PathlessLayoutProductReviewsIndexImport } from './routes/_pathlessLayout/product-reviews/index'
@@ -57,6 +58,12 @@ const PathlessLayoutIndexRoute = PathlessLayoutIndexImport.update({
 const DashboardSettingsIndexRoute = DashboardSettingsIndexImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const DashboardManageIndexRoute = DashboardManageIndexImport.update({
+  id: '/manage/',
+  path: '/manage/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
@@ -227,6 +234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardImagesIndexImport
       parentRoute: typeof DashboardRouteImport
     }
+    '/dashboard/manage/': {
+      id: '/dashboard/manage/'
+      path: '/manage'
+      fullPath: '/dashboard/manage'
+      preLoaderRoute: typeof DashboardManageIndexImport
+      parentRoute: typeof DashboardRouteImport
+    }
     '/dashboard/settings/': {
       id: '/dashboard/settings/'
       path: '/settings'
@@ -307,6 +321,7 @@ interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardGuidesIndexRoute: typeof DashboardGuidesIndexRoute
   DashboardImagesIndexRoute: typeof DashboardImagesIndexRoute
+  DashboardManageIndexRoute: typeof DashboardManageIndexRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
 }
 
@@ -314,6 +329,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardGuidesIndexRoute: DashboardGuidesIndexRoute,
   DashboardImagesIndexRoute: DashboardImagesIndexRoute,
+  DashboardManageIndexRoute: DashboardManageIndexRoute,
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
 }
 
@@ -334,6 +350,7 @@ export interface FileRoutesByFullPath {
   '/product-reviews': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides': typeof DashboardGuidesIndexRoute
   '/dashboard/images': typeof DashboardImagesIndexRoute
+  '/dashboard/manage': typeof DashboardManageIndexRoute
   '/dashboard/settings': typeof DashboardSettingsIndexRoute
   '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
@@ -352,6 +369,7 @@ export interface FileRoutesByTo {
   '/product-reviews': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides': typeof DashboardGuidesIndexRoute
   '/dashboard/images': typeof DashboardImagesIndexRoute
+  '/dashboard/manage': typeof DashboardManageIndexRoute
   '/dashboard/settings': typeof DashboardSettingsIndexRoute
   '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
@@ -373,6 +391,7 @@ export interface FileRoutesById {
   '/_pathlessLayout/product-reviews/': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides/': typeof DashboardGuidesIndexRoute
   '/dashboard/images/': typeof DashboardImagesIndexRoute
+  '/dashboard/manage/': typeof DashboardManageIndexRoute
   '/dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_pathlessLayout/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/_pathlessLayout/calculators/home-load/': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
@@ -395,6 +414,7 @@ export interface FileRouteTypes {
     | '/product-reviews'
     | '/dashboard/guides'
     | '/dashboard/images'
+    | '/dashboard/manage'
     | '/dashboard/settings'
     | '/guides/$category/$slug'
     | '/calculators/home-load'
@@ -412,6 +432,7 @@ export interface FileRouteTypes {
     | '/product-reviews'
     | '/dashboard/guides'
     | '/dashboard/images'
+    | '/dashboard/manage'
     | '/dashboard/settings'
     | '/guides/$category/$slug'
     | '/calculators/home-load'
@@ -431,6 +452,7 @@ export interface FileRouteTypes {
     | '/_pathlessLayout/product-reviews/'
     | '/dashboard/guides/'
     | '/dashboard/images/'
+    | '/dashboard/manage/'
     | '/dashboard/settings/'
     | '/_pathlessLayout/guides/$category/$slug'
     | '/_pathlessLayout/calculators/home-load/'
@@ -485,6 +507,7 @@ export const routeTree = rootRoute
         "/dashboard/",
         "/dashboard/guides/",
         "/dashboard/images/",
+        "/dashboard/manage/",
         "/dashboard/settings/"
       ]
     },
@@ -526,6 +549,10 @@ export const routeTree = rootRoute
     },
     "/dashboard/images/": {
       "filePath": "dashboard/images/index.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/manage/": {
+      "filePath": "dashboard/manage/index.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/settings/": {
