@@ -21,14 +21,32 @@ export const getGuidesByCategory = query({
     
     if (guideIds.length === 0) return [];
     
-    const guides = await Promise.all(
+    const guidesData = await Promise.all(
       guideIds.map(async guideId => {
         const guide = await ctx.db.get(guideId);
         return guide;
       })
     );
     
-    return guides.filter(Boolean) as NonNullable<typeof guides[number]>[]; // Filter out any null values
+    const guides = guidesData.filter(Boolean) as NonNullable<typeof guidesData[number]>[]; // Filter out any null values
+
+    // Sort guides: those with 'order' first, sorted numerically, then those without 'order'
+    guides.sort((a, b) => {
+      const orderA = a.order;
+      const orderB = b.order;
+      
+      if (orderA !== undefined && orderB !== undefined) {
+        return orderA - orderB; // Both defined, sort numerically
+      } else if (orderA !== undefined) {
+        return -1; // Only A is defined, A comes first
+      } else if (orderB !== undefined) {
+        return 1; // Only B is defined, B comes first
+      } else {
+        return 0; // Neither is defined, keep original relative order
+      }
+    });
+
+    return guides;
   },
 });
 
@@ -50,14 +68,32 @@ export const getGuideByCategorySlug = query({
       .collect();
     
     // Then fetch the full guide details for each
-    const guides = await Promise.all(
+    const guidesData = await Promise.all(
       guideToCategoryRows.map(async row => {
         const guide = await ctx.db.get(row.guideId);
         return guide;
       })
     );
+
+    const guides = guidesData.filter(Boolean) as NonNullable<typeof guidesData[number]>[]; // Filter out any null values
+
+    // Sort guides: those with 'order' first, sorted numerically, then those without 'order'
+    guides.sort((a, b) => {
+      const orderA = a.order;
+      const orderB = b.order;
+      
+      if (orderA !== undefined && orderB !== undefined) {
+        return orderA - orderB; // Both defined, sort numerically
+      } else if (orderA !== undefined) {
+        return -1; // Only A is defined, A comes first
+      } else if (orderB !== undefined) {
+        return 1; // Only B is defined, B comes first
+      } else {
+        return 0; // Neither is defined, keep original relative order
+      }
+    });
     
-    return guides.filter(Boolean) as NonNullable<typeof guides[number]>[]; // Filter out any null values
+    return guides;
   },
 });
 

@@ -16,5 +16,7 @@ export const guides = defineTable({
     sourceUrl: v.string(),
   })),
   featured: v.optional(v.boolean()),
+  order: v.optional(v.number()),
 }).index("by_slug", ["slug"])
-  .index("featured", ["featured"]);
+  .index("featured", ["featured"])
+  .index("order", ["order"]);
