@@ -6,4 +6,6 @@ export const guideCategories = defineTable({
   description: v.string(),
   slug: v.string(),
   icon: v.string(),
-}).index("by_slug", ["slug"]);
+  order: v.optional(v.number()),
+}).index("by_slug", ["slug"])
+  .index("order", ["order"]);

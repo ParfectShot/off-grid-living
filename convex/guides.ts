@@ -3,7 +3,23 @@ import { v } from "convex/values";
 
 export const getGuideCategories = query({
   handler: async (ctx) => {
-    return await ctx.db.query("guideCategories").collect();
+    const categories = await ctx.db.query("guideCategories").collect();
+    // Sort categories: those with 'order' first, sorted numerically, then those without 'order'
+    categories.sort((a, b) => {
+      const orderA = a.order;
+      const orderB = b.order;
+      
+      if (orderA !== undefined && orderB !== undefined) {
+        return orderA - orderB; // Both defined, sort numerically
+      } else if (orderA !== undefined) {
+        return -1; // Only A is defined, A comes first
+      } else if (orderB !== undefined) {
+        return 1; // Only B is defined, B comes first
+      } else {
+        return 0; // Neither is defined, keep original relative order
+      }
+    });
+    return categories;
   },
 });
 
@@ -112,6 +128,22 @@ export const getGuideBySlug = query({
       .query("guideSections")
       .withIndex("by_guideId", q => q.eq("guideId", guide._id))
       .collect();
+
+    // Sort sections: those with 'order' first, sorted numerically, then those without 'order'
+    sections.sort((a, b) => {
+      const orderA = a.order;
+      const orderB = b.order;
+      
+      if (orderA !== undefined && orderB !== undefined) {
+        return orderA - orderB; // Both defined, sort numerically
+      } else if (orderA !== undefined) {
+        return -1; // Only A is defined, A comes first
+      } else if (orderB !== undefined) {
+        return 1; // Only B is defined, B comes first
+      } else {
+        return 0; // Neither is defined, keep original relative order
+      }
+    });
     
     // Get guide categories
     const guideToCategories = await ctx.db
@@ -147,7 +179,7 @@ export const getGuideBySlug = query({
     
     return { 
       ...guide, 
-      sections: sections.sort((a, b) => a.order - b.order),
+      sections: sections, // Already sorted
       categories: categories.filter(Boolean) as NonNullable<typeof categories[number]>[],
       authors: authors.filter(Boolean) as NonNullable<typeof authors[number]>[]
     };

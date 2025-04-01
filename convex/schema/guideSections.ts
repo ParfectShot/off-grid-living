@@ -5,6 +5,7 @@ export const guideSections = defineTable({
   guideId: v.id("guides"),
   sectionId: v.string(), // The section ID like "introduction", "benefits", etc.
   title: v.string(),
-  order: v.number(), // For ordering sections
+  order: v.optional(v.number()), // For ordering sections
 }).index("by_guideId", ["guideId"])
-  .index("by_guide_and_sectionId", ["guideId", "sectionId"]);
+  .index("by_guide_and_sectionId", ["guideId", "sectionId"])
+  .index("order", ["order"]);
