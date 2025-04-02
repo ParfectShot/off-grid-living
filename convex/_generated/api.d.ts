@@ -16,6 +16,7 @@ import type {
 import type * as brands from "../brands.js";
 import type * as guides from "../guides.js";
 import type * as images from "../images.js";
+import type * as newsletter from "../newsletter.js";
 import type * as productAttributes from "../productAttributes.js";
 import type * as productImages from "../productImages.js";
 import type * as products from "../products.js";
@@ -29,6 +30,7 @@ import type * as schema_guideSections from "../schema/guideSections.js";
 import type * as schema_guideToAuthor from "../schema/guideToAuthor.js";
 import type * as schema_guideToCategory from "../schema/guideToCategory.js";
 import type * as schema_images from "../schema/images.js";
+import type * as schema_newsletter from "../schema/newsletter.js";
 import type * as schema_productAttributes from "../schema/productAttributes.js";
 import type * as schema_productCategories from "../schema/productCategories.js";
 import type * as schema_productImages from "../schema/productImages.js";
@@ -48,6 +50,7 @@ declare const fullApi: ApiFromModules<{
   brands: typeof brands;
   guides: typeof guides;
   images: typeof images;
+  newsletter: typeof newsletter;
   productAttributes: typeof productAttributes;
   productImages: typeof productImages;
   products: typeof products;
@@ -61,6 +64,7 @@ declare const fullApi: ApiFromModules<{
   "schema/guideToAuthor": typeof schema_guideToAuthor;
   "schema/guideToCategory": typeof schema_guideToCategory;
   "schema/images": typeof schema_images;
+  "schema/newsletter": typeof schema_newsletter;
   "schema/productAttributes": typeof schema_productAttributes;
   "schema/productCategories": typeof schema_productCategories;
   "schema/productImages": typeof schema_productImages;
