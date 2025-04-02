@@ -61,8 +61,6 @@ function GuidesPage() {
   // Loading states
   const isLoading = categoriesLoading || featuredGuidesLoading;
 
-  console.log(categories);
-
   return (
     <main className="flex-1">
       {/* Hero section */}
@@ -248,8 +246,6 @@ function CategoryGuides({
 }) {
   const guides = useQuery(api.guides.getGuidesByCategory, { categoryId });
   const isLoading = !guides;
-
-  console.log(guides, categorySlug);
 
   if (isLoading) {
     return (

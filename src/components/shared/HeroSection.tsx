@@ -18,7 +18,7 @@ interface HeroSectionProps {
 export function HeroSection({
   title,
   description,
-  backgroundImage = '/assets/guides/getting-started/mountain-solar-home.jpg',
+  backgroundImage = '/assets/guides/getting-started/mountain-solar-home.webp',
   primaryButtonText,
   primaryButtonLink,
   secondaryButtonText,
