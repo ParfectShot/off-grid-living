@@ -1,5 +1,5 @@
 import React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Grid3X3, List } from "lucide-react";
 import { api } from "~/convex/_generated/api";
 import { convexQuery } from "@convex-dev/react-query";
@@ -39,6 +39,16 @@ export const Route = createFileRoute('/_pathlessLayout/product-reviews/')({
     const products = await opts.context.queryClient.ensureQueryData(convexQuery(api.products.listForCards, { paginationOpts: { numItems: 9, cursor: null } }));
     return products;
   },
+  beforeLoad: async ({location}) => {
+    if (process.env.NODE_ENV !== "development") {
+      throw redirect({
+        to: '/guides',
+        search: {
+          redirect: location.href,
+        },
+      })
+    }
+  }
   // TODO: Add pending/error components
   // pendingComponent: () => <div>Loading reviews...</div>,
   // errorComponent: ({ error }) => <div>Error loading reviews: {error.message}</div>,

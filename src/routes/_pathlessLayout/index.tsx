@@ -25,16 +25,6 @@ export const Route = createFileRoute('/_pathlessLayout/')({
   },
   loader: async (opts) => {
     await opts.context.queryClient.ensureQueryData(convexQuery(api.guides.getFeaturedGuides, {}))
-  },
-  beforeLoad: async ({location}) => {
-    if (process.env.NODE_ENV !== "development") {
-      throw redirect({
-        to: '/login',
-        search: {
-          redirect: location.href,
-        },
-      })
-    }
   }
 })
 

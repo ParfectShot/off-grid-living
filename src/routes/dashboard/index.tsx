@@ -9,7 +9,7 @@ export const Route = createFileRoute("/dashboard/")({
   beforeLoad: async ({location}) => {
     if (process.env.NODE_ENV !== "development") {
       throw redirect({
-        to: '/login',
+        to: '/guides',
         search: {
           redirect: location.href,
         },

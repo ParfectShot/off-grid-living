@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate, useSearch } from '@tanstack/react-router';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
 import { Search } from 'lucide-react';
 import { ProcessedImage, S3Image, FolderInfo } from '~/types/s3-types';
@@ -15,6 +15,16 @@ import { Id } from 'convex/_generated/dataModel';
 
 export const Route = createFileRoute('/dashboard/process-images/')({
   component: ImagesPage,
+  beforeLoad: async ({location}) => {
+    if (process.env.NODE_ENV !== "development") {
+      throw redirect({
+        to: '/guides',
+        search: {
+          redirect: location.href,
+        },
+      })
+    }
+  }
 });
 
 function ImagesPage() {

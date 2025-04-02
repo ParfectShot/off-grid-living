@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import ProductManagementTable from '~/features/manage/products/components/ProductManagementTable';
 import { GuideManagementTable } from '~/features/manage/guides/components/GuideManagementTable';
 import BlogManagementTable from '~/features/manage/blogs/components/BlogManagementTable';
@@ -9,6 +9,16 @@ import { Doc } from '~/../convex/_generated/dataModel';
 
 export const Route = createFileRoute("/dashboard/manage/")({
   component: ManageComponent,
+  beforeLoad: async ({location}) => {
+    if (process.env.NODE_ENV !== "development") {
+      throw redirect({
+        to: '/guides',
+        search: {
+          redirect: location.href,
+        },
+      })
+    }
+  }
 });
 
 // This type must match the one expected by GuideEditModalProps['guide']

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, createFileRoute, useParams } from "@tanstack/react-router";
+import { Link, createFileRoute, redirect, useParams } from "@tanstack/react-router";
 import { ChevronRight, AlertTriangle, Clock, Sun, Zap, Shield } from "lucide-react"; // Keep icons used by page/subcomponents
 import { api } from "~/convex/_generated/api";
 import { Id } from "~/convex/_generated/dataModel";
@@ -33,6 +33,16 @@ export const Route = createFileRoute('/_pathlessLayout/product-reviews/$reviewId
           content: 'noindex',
         },
       ],
+    }
+  },
+  beforeLoad: async ({location}) => {
+    if (process.env.NODE_ENV !== "development") {
+      throw redirect({
+        to: '/guides',
+        search: {
+          redirect: location.href,
+        },
+      })
     }
   }
   // TODO: Add pending/error components
