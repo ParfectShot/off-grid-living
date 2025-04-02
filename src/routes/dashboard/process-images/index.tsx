@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
 import { Search } from 'lucide-react';
 import { ProcessedImage, S3Image, FolderInfo } from '~/types/s3-types';
@@ -18,7 +18,9 @@ export const Route = createFileRoute('/dashboard/process-images/')({
 });
 
 function ImagesPage() {
-  const [activeTab, setActiveTab] = useState("upload");
+  const search = useSearch({ from: '/dashboard/process-images/' });
+  const navigate = useNavigate({ from: '/dashboard/process-images/' });
+  const [activeTab, setActiveTab] = useState(search.tab || "upload");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const {
@@ -60,6 +62,19 @@ function ImagesPage() {
     }
   }, [activeTab, s3.s3Bucket, s3.browserCurrentPrefix, s3.s3Region]);
 
+  useEffect(() => {
+    navigate({
+      search: (prev: Record<string, unknown>) => ({ ...prev, tab: activeTab }),
+      replace: true
+    });
+  }, [activeTab, navigate]);
+
+  useEffect(() => {
+    if (search.tab && ['upload', 'processed', 's3'].includes(search.tab as string)) {
+      setActiveTab(search.tab as string);
+    }
+  }, [search.tab]);
+
   const handleFilesSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
@@ -76,6 +91,27 @@ function ImagesPage() {
   };
 
   const handleUploadImagesToS3 = async () => {
+    s3.setShowS3Config(true);
+    return;
+  };
+
+  const handleSaveS3ConfigAndUpload = () => {
+    s3.setShowS3Config(false);
+    if (imagesReadyForUpload.length > 0) {
+      if (s3.s3Bucket && s3.s3Region) {
+        uploadToS3();
+      } else {
+        console.error("Cannot upload: S3 bucket or region not configured after save.");
+        s3.setShowS3Config(true);
+      }
+    } else {
+      if (activeTab === 's3' && s3.s3Bucket) {
+        s3.loadBrowserList(s3.s3Bucket, s3.browserCurrentPrefix, s3.s3Region);
+      }
+    }
+  };
+
+  const uploadToS3 = async () => {
     const result = await s3.uploadProcessedImages(imagesReadyForUpload);
 
     if (result.success && result.uploadedImageIds.length > 0 && result.s3UrlUpdates) {
@@ -157,29 +193,6 @@ function ImagesPage() {
       });
   }, []);
 
-  const handleSaveS3Config = () => {
-    s3.setShowS3Config(false);
-    if (activeTab === 's3' && s3.s3Bucket) {
-      s3.loadBrowserList(s3.s3Bucket, s3.browserCurrentPrefix, s3.s3Region);
-    }
-  };
-
-  const handleSaveS3ConfigAndUpload = () => {
-    s3.setShowS3Config(false);
-    if (imagesReadyForUpload.length > 0) {
-      if (s3.s3Bucket && s3.s3Region) {
-        handleUploadImagesToS3();
-      } else {
-        console.error("Cannot upload: S3 bucket or region not configured after save.");
-        s3.setShowS3Config(true);
-      }
-    } else {
-      if (activeTab === 's3' && s3.s3Bucket) {
-        s3.loadBrowserList(s3.s3Bucket, s3.browserCurrentPrefix, s3.s3Region);
-      }
-    }
-  };
-
   return (
     <div className="p-6 space-y-8 font-sans">
       <h1 className="text-3xl font-bold">Image Processing</h1>
@@ -192,7 +205,7 @@ function ImagesPage() {
           </TabsTrigger>
           <TabsTrigger value="s3" className="relative">
             S3 Browser
-            {s3.browserImageList.length > 0 && !s3.isLoadingBrowserList && (
+            {s3.s3Bucket && s3.browserImageList.length > 0 && !s3.isLoadingBrowserList && (
               <span className="ml-2 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
                 {s3.browserImageList.length}
               </span>
@@ -315,8 +328,8 @@ function ImagesPage() {
         onFolderSelect={s3.handleBrowseConfigFolder}
         onSetTargetFolder={s3.handleSetTargetFolder}
         onLoadBuckets={() => s3.loadBuckets(s3.s3Region)}
-        onSave={handleSaveS3Config}
+        onSave={handleSaveS3ConfigAndUpload}
       />
     </div>
   );
-} 
+}

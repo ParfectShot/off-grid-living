@@ -43,25 +43,28 @@ export function ImageVariantModal({ open, onOpenChange, image, onCopyUrl }: Imag
                         src={variant.url}
                         alt={`${image.originalName} at ${variant.width}px`}
                         className="max-h-full max-w-full object-contain"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-2 bg-gray-50 dark:bg-gray-800">
-                      <a 
-                        href={variant.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline text-sm"
-                      >
-                        {variant.url}
-                      </a>
-                      <Button 
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onCopyUrl(variant.url)}
-                        className="ml-2 h-6 px-1"
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
+                      <div className="flex items-center justify-between">
+                        <a 
+                          href={variant.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline text-sm truncate max-w-[80%]"
+                        >
+                          {variant.url}
+                        </a>
+                        <Button 
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onCopyUrl(variant.url)}
+                          className="h-6 px-1"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -85,23 +88,27 @@ export function ImageVariantModal({ open, onOpenChange, image, onCopyUrl }: Imag
                 <h3 className="font-medium mb-2">Available Widths</h3>
                 <ul className="list-disc pl-5">
                   {image.srcset.map((variant: { width: number; url: string }, index: number) => (
-                    <li key={index}>
-                      {variant.width}px - <a 
-                        href={variant.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        Direct link
-                      </a>
-                      <Button 
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onCopyUrl(variant.url)}
-                        className="ml-2 h-6 px-1"
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
+                    <li key={index} className="mb-2">
+                      <div className="flex items-center justify-between">
+                        <span>
+                          {variant.width}px - <a 
+                            href={variant.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            Direct link
+                          </a>
+                        </span>
+                        <Button 
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onCopyUrl(variant.url)}
+                          className="h-6 px-1"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -131,4 +138,4 @@ export function ImageVariantModal({ open, onOpenChange, image, onCopyUrl }: Imag
       </DialogContent>
     </Dialog>
   );
-} 
+}

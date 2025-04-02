@@ -6,6 +6,16 @@ import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/")({
   component: DashboardPage,
+  beforeLoad: async ({location}) => {
+    if (process.env.NODE_ENV !== "development") {
+      throw redirect({
+        to: '/login',
+        search: {
+          redirect: location.href,
+        },
+      })
+    }
+  }
 });
 
 function DashboardPage() {

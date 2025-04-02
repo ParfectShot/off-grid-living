@@ -221,13 +221,17 @@ export function useS3Management() {
         // Add original file path for deletion (if it exists)
         if (image.originalFilePath) filesToDeleteLocally.push(image.originalFilePath);
 
+        // Get filename without extension for use in S3 keys
+        const filenameWithoutExt = image.originalName.substring(0, image.originalName.lastIndexOf('.'));
+        const sanitizedFilename = filenameWithoutExt.replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase();
+
         // Prepare original file for upload (if path and extension exist)
         if (image.originalFilePath && image.fileExtension) {
             // Ensure s3Folder ends with a slash if it's not empty
             const folderPrefix = s3Folder ? (s3Folder.endsWith('/') ? s3Folder : `${s3Folder}/`) : '';
             filesToUploadPayload.push({
                 filePath: image.originalFilePath, // Absolute server path
-                s3Key: `${folderPrefix}images/original/${image.id}.${image.fileExtension}`, // Add target folder prefix
+                s3Key: `${folderPrefix}${sanitizedFilename}.${image.fileExtension}`, // Use sanitized original filename
                 contentType: image.contentType || 'application/octet-stream', // Provide default content type
                 bucket: s3Bucket,
             });
@@ -242,14 +246,13 @@ export function useS3Management() {
                 const folderPrefix = s3Folder ? (s3Folder.endsWith('/') ? s3Folder : `${s3Folder}/`) : '';
                 filesToUploadPayload.push({
                     filePath: variant.filePath, // Absolute server path
-                    s3Key: `${folderPrefix}images/variants/${image.id}_${variant.width}.${image.fileExtension}`, // Add target folder prefix
+                    s3Key: `${folderPrefix}${sanitizedFilename}-${variant.width}.${image.fileExtension}`, // Use sanitized filename with variant width
                     contentType: image.contentType || 'application/octet-stream', // Provide default content type
                     bucket: s3Bucket,
                 });
             }
         });
     });
-
 
     if (filesToUploadPayload.length === 0) {
       setUploadError('No valid file paths found for upload in selected images.');
@@ -281,43 +284,61 @@ export function useS3Management() {
         uploadResult.results.forEach((r: VariantS3Result) => {
             // Ensure result is successful and has key/url
             if (r.success && r.key && r.url) {
-                let imageId: string | undefined;
+                // Find the matching image and variant based on the S3 key
+                let matchingImage: ProcessedImage | undefined;
                 let isOriginal = false;
                 let variantWidth: number | undefined;
 
-                // Extract imageId and type (original/variant) from the S3 key
+                // Extract the filename from the S3 key
                 const keyParts = r.key.split('/');
-                const filename = keyParts.pop(); // e.g., 'uuid.ext' or 'uuid_width.ext'
-                const typeFolder = keyParts.pop(); // 'original' or 'variants'
+                const filename = keyParts[keyParts.length - 1]; // Get the last part (filename)
+                
+                if (!filename) {
+                    console.warn("Invalid S3 key format:", r.key);
+                    return;
+                }
 
-                 if (filename) {
-                     if (typeFolder === 'original') {
-                         imageId = filename.split('.')[0];
-                         isOriginal = true;
-                     } else if (typeFolder === 'variants') {
-                         const nameParts = filename.split('.')[0].split('_'); // ['uuid', 'width']
-                         if (nameParts.length === 2) {
-                            imageId = nameParts[0];
-                            variantWidth = parseInt(nameParts[1], 10);
-                         }
-                     }
-                 }
+                // Check if this is a variant (contains a dash followed by numbers before extension)
+                const variantMatch = filename.match(/-(\d+)\.[^.]+$/);
+                if (variantMatch) {
+                    // This is a variant
+                    variantWidth = parseInt(variantMatch[1], 10);
+                    isOriginal = false;
+                    
+                    // Find the matching image by comparing sanitized filenames
+                    const filenameWithoutVariant = filename.substring(0, filename.lastIndexOf('-'));
+                    matchingImage = validImages.find(img => {
+                        const imgFilenameWithoutExt = img.originalName.substring(0, img.originalName.lastIndexOf('.'));
+                        const sanitizedImgFilename = imgFilenameWithoutExt.replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase();
+                        return sanitizedImgFilename === filenameWithoutVariant;
+                    });
+                } else {
+                    // This is an original
+                    isOriginal = true;
+                    
+                    // Find the matching image by comparing sanitized filenames
+                    const filenameWithoutExt = filename.substring(0, filename.lastIndexOf('.'));
+                    matchingImage = validImages.find(img => {
+                        const imgFilenameWithoutExt = img.originalName.substring(0, img.originalName.lastIndexOf('.'));
+                        const sanitizedImgFilename = imgFilenameWithoutExt.replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase();
+                        return sanitizedImgFilename === filenameWithoutExt;
+                    });
+                }
 
-
-                if (imageId && validImages.some(img => img.id === imageId)) { // Ensure it's one of the images we tried to upload
-                    successfullyUploadedImageIds.add(imageId); // Mark image ID as having successful uploads
+                if (matchingImage) {
+                    const imageId = matchingImage.id;
+                    successfullyUploadedImageIds.add(imageId);
 
                     // Initialize map entry for this imageId if it doesn't exist
                     if (!s3UrlUpdates.has(imageId)) {
-                         // Find the original ProcessedImage to potentially pre-populate existing s3Urls
-                         const originalImage = validImages.find(img => img.id === imageId);
-                         const initialVariantUrls = new Map<number, string>();
-                         originalImage?.srcset.forEach(v => { if(v.s3Url) initialVariantUrls.set(v.width, v.s3Url) });
+                        // Find the original ProcessedImage to potentially pre-populate existing s3Urls
+                        const initialVariantUrls = new Map<number, string>();
+                        matchingImage.srcset.forEach(v => { if(v.s3Url) initialVariantUrls.set(v.width, v.s3Url) });
 
-                         s3UrlUpdates.set(imageId, {
-                             originalS3Url: originalImage?.s3Url || '', // Use existing if available
-                             variantS3Urls: initialVariantUrls
-                         });
+                        s3UrlUpdates.set(imageId, {
+                            originalS3Url: matchingImage.s3Url || '', // Use existing if available
+                            variantS3Urls: initialVariantUrls
+                        });
                     }
 
                     // Get the update object for this imageId

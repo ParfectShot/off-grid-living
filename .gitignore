@@ -23,3 +23,6 @@ yarn.lock
 
 .env.local
 bun.lock
+
+.cursor
+.windsurfrules

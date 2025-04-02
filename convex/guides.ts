@@ -190,10 +190,27 @@ export const getGuideBySlug = query({
 
 export const getFeaturedGuides = query({
   handler: async (ctx) => {
-    return await ctx.db
+    const guides = await ctx.db
       .query("guides")
       .withIndex("featured", q => q.eq("featured", true))
       .collect();
+
+      guides.sort((a, b) => {
+      const orderA = a.order;
+      const orderB = b.order;
+      
+      if (orderA !== undefined && orderB !== undefined) {
+        return orderA - orderB; // Both defined, sort numerically
+      } else if (orderA !== undefined) {
+        return -1; // Only A is defined, A comes first
+      } else if (orderB !== undefined) {
+        return 1; // Only B is defined, B comes first
+      } else {
+        return 0; // Neither is defined, keep original relative order
+      }
+    });
+
+    return guides;
   },
 });
 
