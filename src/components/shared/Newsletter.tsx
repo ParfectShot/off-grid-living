@@ -30,6 +30,12 @@ export function Newsletter() {
       const result = await subscribe({ email, source: "website-newsletter" })
       setEmail("")
       setShowSuccess(true)
+
+      if (typeof window !== 'undefined') {
+        // Safely access window object
+        (window as any).dataLayer = (window as any).dataLayer || [];
+        (window as any).dataLayer.push({ 'event': 'email_signup_success' });
+      }
       
       // Hide success message after 5 seconds
       setTimeout(() => {
