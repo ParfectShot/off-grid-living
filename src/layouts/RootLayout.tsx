@@ -36,7 +36,7 @@ export function RootLayout({ children }: { children?: React.ReactNode }) {
       <footer className="w-full border-t py-6 md:py-0 px-4 md:px-16">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <div className="flex gap-4">
-            <Link to="/about" className="text-sm font-medium hover:underline">
+            {/* <Link to="/about" className="text-sm font-medium hover:underline">
               About
             </Link>
             <Link to="/contact" className="text-sm font-medium hover:underline">
@@ -47,7 +47,7 @@ export function RootLayout({ children }: { children?: React.ReactNode }) {
             </Link>
             <Link to="/terms" className="text-sm font-medium hover:underline">
               Terms
-            </Link>
+            </Link> */}
           </div>
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
             © {new Date().getFullYear()} OffGridLiving. All rights reserved.

@@ -96,15 +96,7 @@ export function Newsletter() {
               </Button>
             </form>
             <p className="text-xs text-muted-foreground">
-              By subscribing, you agree to our{" "}
-              <Link to="/terms" className="underline underline-offset-2">
-                Terms & Conditions
-              </Link>{" "}
-              and{" "}
-              <Link to="/privacy" className="underline underline-offset-2">
-                Privacy Policy
-              </Link>
-              .
+              By subscribing, you agree to our Terms & Conditions and Privacy Policy.
             </p>
           </div>
         </div>
