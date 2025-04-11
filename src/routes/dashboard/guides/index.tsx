@@ -1,19 +1,9 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 import { LoadingGuideCard } from '~/features/guides';
 
 export const Route = createFileRoute('/dashboard/guides/')({
   component: GuidesPage,
-  beforeLoad: async ({location}) => {
-    if (process.env.NODE_ENV !== "development") {
-      throw redirect({
-        to: '/guides',
-        search: {
-          redirect: location.href,
-        },
-      })
-    }
-  }
 })
 
 

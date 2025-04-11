@@ -28,6 +28,8 @@ export interface ProcessedImage {
     url: string;
     filePath?: string;
     s3Url?: string;
+    contentType?: string;
+    fileExtension?: string;
   }>;
   contentType: string;
   fileExtension?: string;

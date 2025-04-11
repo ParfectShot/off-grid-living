@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { S3Image } from "~/types/s3-types";
 import { FolderInfo } from "~/types/s3-types";
+import { S3Images } from "./S3Images";
 
 interface S3BrowserViewProps {
   s3Bucket: string;
@@ -152,81 +153,7 @@ export function S3BrowserView({
               <p className="text-gray-500">No images found in this location</p>
             </div>
           ) : (
-            <div className="border rounded-lg overflow-hidden">
-              <div className="bg-gray-50 p-3 border-b">
-                <h3 className="font-medium flex items-center">
-                  <FileImage className="h-4 w-4 mr-2 text-blue-500" />
-                  Images ({filteredImages.length})
-                </h3>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Variants</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Modified</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredImages.map((image) => (
-                      <tr key={image.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <FileBox className="h-5 w-5 mr-2 text-gray-400" />
-                            <span className="font-medium">{image.originalName}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatBytes(image.originalSize)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {image.variants}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <div className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-1 text-gray-400" />
-                            {formatDate(image.lastModified)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <div className="flex space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-8"
-                              onClick={() => onImageView(image)}
-                            >
-                              <Eye className="h-4 w-4 mr-1" />
-                              View
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-8"
-                              onClick={() => onCopyUrl(image.originalUrl)}
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                            <a 
-                              href={image.originalUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
-                              className="inline-flex items-center h-8 px-3 py-1 bg-transparent hover:bg-gray-100 border border-transparent rounded"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+           <S3Images images={filteredImages} />
           )}
         </div>
       )}

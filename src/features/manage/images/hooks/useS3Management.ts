@@ -237,17 +237,14 @@ export function useS3Management() {
             });
         }
 
-        // Prepare variants for upload (if path and extension exist)
         image.srcset.forEach(variant => {
             if (variant.filePath && image.fileExtension) {
-                // Add variant file path for deletion
                 filesToDeleteLocally.push(variant.filePath);
-                // Ensure s3Folder ends with a slash if it's not empty
                 const folderPrefix = s3Folder ? (s3Folder.endsWith('/') ? s3Folder : `${s3Folder}/`) : '';
                 filesToUploadPayload.push({
-                    filePath: variant.filePath, // Absolute server path
-                    s3Key: `${folderPrefix}${sanitizedFilename}-${variant.width}.${image.fileExtension}`, // Use sanitized filename with variant width
-                    contentType: image.contentType || 'application/octet-stream', // Provide default content type
+                    filePath: variant.filePath,
+                    s3Key: `${folderPrefix}${sanitizedFilename}-${variant.width}.${variant.fileExtension}`,
+                    contentType: variant.contentType || 'application/octet-stream',
                     bucket: s3Bucket,
                 });
             }

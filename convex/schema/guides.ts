@@ -17,6 +17,7 @@ export const guides = defineTable({
   })),
   featured: v.optional(v.boolean()),
   order: v.optional(v.number()),
+  isPublished: v.optional(v.boolean()),
 }).index("by_slug", ["slug"])
   .index("featured", ["featured"])
   .index("order", ["order"]);

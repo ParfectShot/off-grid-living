@@ -8,16 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export const Route = createFileRoute("/dashboard/settings/")({
   component: SettingsPage,
-  beforeLoad: async ({location}) => {
-    if (process.env.NODE_ENV !== "development") {
-      throw redirect({
-        to: '/guides',
-        search: {
-          redirect: location.href,
-        },
-      })
-    }
-  }
 });
 
 function SettingsPage() {

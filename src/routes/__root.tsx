@@ -8,6 +8,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import * as React from "react";
 import type { QueryClient } from "@tanstack/react-query";
+import { ClerkProvider } from "@clerk/tanstack-react-start";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
@@ -78,6 +79,8 @@ function RootComponent() {
 function RootDocument({ children }: { children: React.ReactNode }) {
   const isDevelopment = process.env.NODE_ENV === "development";
   return (
+    <ClerkProvider>
+
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
@@ -157,5 +160,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         )}
       </body>
     </html>
+    </ClerkProvider>
+
   );
 }

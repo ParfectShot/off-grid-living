@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { BarChart3, Image, Users, FileText, ArrowUpRight } from "lucide-react";
@@ -6,16 +6,6 @@ import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/dashboard/")({
   component: DashboardPage,
-  beforeLoad: async ({location}) => {
-    if (process.env.NODE_ENV !== "development") {
-      throw redirect({
-        to: '/guides',
-        search: {
-          redirect: location.href,
-        },
-      })
-    }
-  }
 });
 
 function DashboardPage() {

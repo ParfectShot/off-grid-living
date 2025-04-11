@@ -6,21 +6,21 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Copy, Eye, Link, Trash2 } from "lucide-react";
-import { ProcessedImage } from "~/lib/services/image-service";
 import { toast } from "sonner";
+import { S3Image } from "../types";
 
 interface S3ImagesProps {
-  images: ProcessedImage[];
+  images: S3Image[];
   onDeleteImage?: (imageId: string) => Promise<void>;
 }
 
 export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
-  const [previewImage, setPreviewImage] = useState<ProcessedImage | null>(null);
+  const [previewImage, setPreviewImage] = useState<S3Image | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handlePreview = (image: ProcessedImage) => {
+  const handlePreview = (image: S3Image) => {
     setPreviewImage(image);
   };
 
@@ -33,7 +33,7 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
     toast.success("Image URL copied to clipboard");
   };
 
-  const handleCopyHtml = (image: ProcessedImage) => {
+  const handleCopyHtml = (image: S3Image) => {
     const html = `<img
   src="${image.originalUrl}"
   srcset="${image.srcset.map((v) => `${v.url} ${v.width}w`).join(", ")}"
@@ -145,7 +145,7 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
                   {image.originalName}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {formatBytes(image.processedSize)} • {image.srcset.length} variants
+                  {formatBytes(image.originalSize)} • {image.srcset.length} variants
                 </p>
               </CardContent>
               <CardFooter className="p-3 pt-0 flex justify-between">
@@ -191,7 +191,7 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
                     {image.originalName}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {formatBytes(image.processedSize)} • {image.srcset.length} variants
+                    {formatBytes(image.originalSize)} • {image.srcset.length} variants
                   </p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">

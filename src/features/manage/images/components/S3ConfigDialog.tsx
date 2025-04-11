@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog";
 import { RefreshCw, CloudUpload } from "lucide-react";
-import { FolderInfo } from "~/types/s3-types";
 
 interface S3ConfigDialogProps {
   open: boolean;
@@ -10,18 +9,13 @@ interface S3ConfigDialogProps {
   s3Bucket: string;
   s3Region: string;
   s3Folder: string;
-  currentPrefix: string;
   buckets: Array<{ name: string; creationDate?: Date }>;
-  folders: FolderInfo[];
   isLoadingBuckets: boolean;
-  isLoadingFolders: boolean;
   bucketError: string | null;
   onBucketChange: (bucket: string) => void;
   onRegionChange: (region: string) => void;
   onFolderChange: (folder: string) => void;
-  onFolderSelect: (folder: FolderInfo) => void;
   onLoadBuckets: () => void;
-  onSetTargetFolder: () => void;
   onSave: () => void;
 }
 
@@ -31,18 +25,13 @@ export function S3ConfigDialog({
   s3Bucket,
   s3Region,
   s3Folder,
-  currentPrefix,
   buckets,
-  folders,
   isLoadingBuckets,
-  isLoadingFolders,
   bucketError,
   onBucketChange,
   onRegionChange,
   onFolderChange,
-  onFolderSelect,
   onLoadBuckets,
-  onSetTargetFolder,
   onSave
 }: S3ConfigDialogProps) {
   return (
@@ -108,50 +97,10 @@ export function S3ConfigDialog({
             </select>
           </div>
           
-          {s3Bucket && (
-            <div className="grid w-full items-center gap-2">
-              <label className="text-sm font-medium">Target Folder</label>
-              <div className="border rounded-md p-2 max-h-40 overflow-y-auto">
-                <div className="text-xs text-gray-500 mb-2">
-                  Current path: {currentPrefix || '/ (root)'}
-                </div>
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  onClick={onSetTargetFolder}
-                  className="mb-2 text-xs h-7"
-                  disabled={!currentPrefix}
-                >
-                  Use Current Path as Target
-                </Button>
-                
-                {isLoadingFolders ? (
-                  <div className="flex justify-center p-4">
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                  </div>
-                ) : folders.length === 0 ? (
-                  <div className="text-sm text-gray-500 p-2">No folders found</div>
-                ) : (
-                  <div className="space-y-1">
-                    {folders.map((folder) => (
-                      <div 
-                        key={folder.prefix}
-                        onClick={() => onFolderSelect(folder)}
-                        className={`p-2 rounded-md cursor-pointer hover:bg-gray-100 text-sm flex items-center ${folder.prefix === currentPrefix ? 'bg-blue-50 text-blue-600' : ''}`}
-                      >
-                        {folder.name}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          
           <div className="grid w-full items-center gap-2">
-            <label htmlFor="customFolder" className="text-sm font-medium">Or enter a custom folder path</label>
+            <label htmlFor="targetFolder" className="text-sm font-medium">Target Folder</label>
             <input
-              id="customFolder"
+              id="targetFolder"
               type="text"
               value={s3Folder}
               onChange={(e) => onFolderChange(e.target.value)}
@@ -159,7 +108,7 @@ export function S3ConfigDialog({
               placeholder="folder/subfolder"
             />
             <p className="text-xs text-gray-500">
-              Leave empty to upload to bucket root
+              Leave empty to upload to bucket root, or enter a path like "folder/subfolder"
             </p>
           </div>
         </div>
@@ -168,7 +117,7 @@ export function S3ConfigDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button 
             onClick={onSave}
-            disabled={!s3Bucket || isLoadingBuckets || isLoadingFolders}
+            disabled={!s3Bucket || isLoadingBuckets}
           >
             <CloudUpload className="h-4 w-4 mr-2" />
             Save Configuration

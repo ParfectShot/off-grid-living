@@ -6,6 +6,17 @@ import { Separator } from "~/components/ui/separator";
 import { Home, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { OrganizationList, Protect, SignedIn, SignedOut, SignInButton, SignOutButton, UserButton } from "@clerk/tanstack-react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
+import { getAuth } from "@clerk/tanstack-react-start/server";
+import { createServerFn } from "@tanstack/react-start";
+
+const authStateFn = createServerFn({ method: 'GET' }).handler(async () => {
+  const request = getWebRequest()
+  if (!request) throw new Error('No request found')
+  const { userId } = await getAuth(request)
+  return { userId }
+})
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardLayout,
@@ -17,12 +28,27 @@ export const Route = createFileRoute("/dashboard")({
       },
     ],
   }),
+
+  beforeLoad: async () => await authStateFn(),
+  loader: async ({ context }) => {
+    return { userId: context.userId }
+  },
 });
 
 function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
+    <>
+    <SignedIn>
+    <Protect
+    condition={(has) => has({ role: 'org:admin' })}
+    fallback={<div className="flex flex-col gap-4 justify-center items-center h-screen">
+      <h2>You are not authorized to access this page</h2>
+      <UserButton />
+      <OrganizationList />
+      <SignOutButton />
+    </div>}>
     <div className="h-screen flex flex-col">
       <header className="border-b bg-background z-10">
         <div className="flex h-16 items-center px-4">
@@ -87,5 +113,14 @@ function DashboardLayout() {
         </main>
       </div>
     </div>
+    </Protect>
+    </SignedIn>
+    <SignedOut>
+      <div className="flex justify-center items-center h-screen">
+        <SignInButton />
+      </div>
+    </SignedOut>
+    </>
+
   );
 } 

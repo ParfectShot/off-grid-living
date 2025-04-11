@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ProcessedImage } from '~/types/s3-types'; // Assuming ProcessedImage is here
 import { ensureDirectory, saveServerFile, processServerImage, deleteServerFiles } from '~/lib/server-helpers';
+import { toast } from 'sonner';
 
 // Helper to convert a file to Base64 (could be moved to a utils file)
 const fileToBase64 = (file: File): Promise<string> => {
@@ -46,13 +47,12 @@ export function useImageProcessing() {
         const imageId = uuidv4();
         const fileExtension = file.name.split('.').pop() || '';
         const filename = `${imageId}.${fileExtension}`;
-        const originalFilePathServer = `public/uploads/${filename}`; // Path on the server
+        const originalFilePathServer = `public/uploads/${filename}`;
 
-        // Save original
         const saveResult = await saveServerFile({
           data: { filePath: originalFilePathServer, fileContent: fileData, contentType: file.type }
         });
-        // Ensure saveResult.path is defined before pushing
+
         if (saveResult.path) {
             filesToDeleteLocally.push(saveResult.path); // Add original server path for potential cleanup
         } else {
@@ -65,31 +65,49 @@ export function useImageProcessing() {
         const variants = [320, 640, 768, 1024, 1280];
         const srcset: ProcessedImage['srcset'] = [];
         let totalProcessedSize = 0;
-        let webpContentType = file.type;
-        let webpFileExtension = fileExtension;
+        const originalContentType = file.type;
+        const originalFileExtension = fileExtension;
+        const outputDir = 'public/uploads/variants';
+
+        const processResult = await processServerImage({
+          data: {
+            inputPath: saveResult.path!, // Assuming path is guaranteed if no error thrown above
+            outputDir: outputDir,
+            // Construct filename based on stem and determined extension (could be webp)
+            outputFilename: imageId + '.' + originalFileExtension,
+          }
+        });
+
+        if (processResult.url && processResult.outputPath && typeof processResult.size === 'number') {
+          srcset.push({
+            width: processResult.width,
+            url: processResult.url, // Relative URL for client preview
+            filePath: processResult.outputPath, // Absolute server path for upload/deletion
+            s3Url: undefined, // Initialize s3Url
+            contentType: processResult.contentType,
+            fileExtension: processResult.fileExtension
+          });
+           filesToDeleteLocally.push(processResult.outputPath); // Add variant server path
+           totalProcessedSize += processResult.size;
+        } else {
+           console.warn("processServerImage did not return expected fields for width");
+           toast.error("processServerImage did not return expected fields for width");
+        }
+
 
         for (const width of variants) {
           const variantFilenameStem = `${imageId}_${width}`;
           // Let processServerImage determine the final extension (e.g., .webp)
           // Pass the original extension for reference if needed by the server function
-          const outputDir = 'public/uploads/variants';
-
           const processResult = await processServerImage({
             data: {
               inputPath: saveResult.path!, // Assuming path is guaranteed if no error thrown above
               outputDir: outputDir,
               // Construct filename based on stem and determined extension (could be webp)
-              outputFilename: variantFilenameStem + '.' + webpFileExtension,
+              outputFilename: variantFilenameStem + '.' + originalFileExtension,
               width
             }
           });
-
-           // Update content type/extension based on the actual processed file
-           // Ensure processResult has these fields defined
-           if (variants.indexOf(width) === 0 && processResult.contentType && processResult.fileExtension) {
-             webpContentType = processResult.contentType;
-             webpFileExtension = processResult.fileExtension;
-           }
 
           // Ensure processResult has required fields before pushing
           if (processResult.url && processResult.outputPath && typeof processResult.size === 'number') {
@@ -97,13 +115,15 @@ export function useImageProcessing() {
               width,
               url: processResult.url, // Relative URL for client preview
               filePath: processResult.outputPath, // Absolute server path for upload/deletion
-              s3Url: undefined // Initialize s3Url
+              s3Url: undefined, // Initialize s3Url
+              contentType: processResult.contentType,
+              fileExtension: processResult.fileExtension
             });
              filesToDeleteLocally.push(processResult.outputPath); // Add variant server path
              totalProcessedSize += processResult.size;
           } else {
              console.warn("processServerImage did not return expected fields for width", width, processResult);
-             // Handle error appropriately
+             toast.error("processServerImage did not return expected fields for width");
           }
         }
 
@@ -117,21 +137,21 @@ export function useImageProcessing() {
                originalUrl: saveResult.url, // Relative URL for client preview
                originalFilePath: saveResult.path, // Absolute server path
                srcset,
-               contentType: webpContentType,
-               fileExtension: webpFileExtension,
+               contentType: originalContentType,
+               fileExtension: originalFileExtension,
                s3Url: undefined // Initialize s3Url
              });
          } else {
-             console.warn("saveServerFile did not return expected fields for original image", saveResult);
-             // Handle error appropriately
+            toast.error("saveServerFile did not return expected fields for original image");
+            console.warn("saveServerFile did not return expected fields for original image", saveResult);
          }
-
       }
-
+      console.log("newlyProcessed", newlyProcessed);
       setProcessedImages(prev => [...prev, ...newlyProcessed]);
       return newlyProcessed; // Return the successfully processed images
 
     } catch (error) {
+      toast.error("Error processing images");
       console.error('Error processing images:', error);
       setProcessingError(error instanceof Error ? error.message : 'Failed to process images');
       // Attempt cleanup on error

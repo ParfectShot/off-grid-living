@@ -405,3 +405,128 @@ export const updateGuideWithDetails = mutation({
     return { success: true }; // Indicate success
   }
 });
+
+// --- NEW MUTATION FOR CREATION ---
+export const createGuideWithDetails = mutation({
+  args: {
+    // Guide fields (most are required for creation)
+    title: v.string(),
+    slug: v.string(), // Consider adding uniqueness check if needed later
+    description: v.string(),
+    level: v.string(),
+    featured: v.optional(v.boolean()),
+    image: v.optional(v.string()),
+    imageCreditAuthorName: v.optional(v.string()),
+    imageCreditAuthorUrl: v.optional(v.string()),
+    imageCreditSourceName: v.optional(v.string()),
+    imageCreditSourceUrl: v.optional(v.string()),
+    readTime: v.string(),
+    order: v.optional(v.number()),
+    isPublished: v.optional(v.boolean()),
+    // Related data (required for linking)
+    categoryIds: v.array(v.id("guideCategories")),
+    primaryCategoryId: v.optional(v.union(v.id("guideCategories"), v.null())),
+    sections: v.array(v.object({
+      // No _id needed for creation
+      sectionId: v.string(), // Unique ID within the guide (e.g., slug-like)
+      title: v.string(),
+      order: v.number(),
+    })),
+    // Add author data if needed (e.g., authorIds, primaryAuthorId)
+  },
+  handler: async (ctx, args) => {
+    const { categoryIds, primaryCategoryId, sections, ...guideData } = args;
+
+    // 1. Prepare imageCredit object
+     const imageCredit = (
+      args.imageCreditAuthorName || args.imageCreditAuthorUrl || 
+      args.imageCreditSourceName || args.imageCreditSourceUrl
+    ) ? {
+        authorName: args.imageCreditAuthorName ?? '',
+        authorUrl: args.imageCreditAuthorUrl ?? '',
+        sourceName: args.imageCreditSourceName ?? '',
+        sourceUrl: args.imageCreditSourceUrl ?? '',
+      } : undefined;
+
+    // 2. Insert the Guide document
+    const guidePayload: Omit<Doc<"guides">, "_id" | "_creationTime"> = {
+        title: guideData.title,
+        slug: guideData.slug,
+        description: guideData.description,
+        level: guideData.level,
+        featured: guideData.featured ?? false,
+        lastUpdated: new Date().toISOString(),
+        readTime: guideData.readTime,
+        isPublished: guideData.isPublished ?? false,
+        // Optional fields
+        ...(guideData.image && { image: guideData.image }),
+        ...(guideData.order && { order: guideData.order }),
+        ...(imageCredit && { imageCredit: imageCredit }),
+    };
+    const guideId = await ctx.db.insert("guides", guidePayload);
+
+    // 3. Insert Category Relationships (guideToCategory links)
+    for (const catId of categoryIds) {
+      // Clearer check for primary category
+      const isCurrentCategoryPrimary = primaryCategoryId !== null && primaryCategoryId !== undefined && catId === primaryCategoryId;
+      await ctx.db.insert("guideToCategory", {
+        guideId: guideId,
+        categoryId: catId,
+        isPrimary: isCurrentCategoryPrimary, // Use the clearer boolean
+      });
+    }
+
+    // 4. Insert Sections (guideSections)
+    for (const sectionData of sections) {
+      await ctx.db.insert("guideSections", {
+        guideId: guideId,
+        sectionId: sectionData.sectionId,
+        title: sectionData.title,
+        order: sectionData.order,
+        // content: sectionData.content, // Ensure this remains removed/commented
+      });
+    }
+
+    // 5. Insert Author relationships if necessary
+
+    return { success: true, guideId: guideId }; // Return new guide ID
+  },
+});
+
+// --- NEW MUTATION FOR CATEGORY CREATION ---
+export const createGuideCategory = mutation({
+  args: {
+    title: v.string(),
+    slug: v.string(),
+    description: v.string(),
+    order: v.optional(v.number()),
+    icon: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Check if category with this slug already exists
+    const existing = await ctx.db
+      .query("guideCategories")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .first();
+
+    if (existing) {
+      console.log(`Category with slug "${args.slug}" already exists.`);
+      return { success: false, categoryId: existing._id, message: "Category already exists" };
+    }
+
+    // Prepare payload for insertion
+    const payload: Partial<Doc<"guideCategories">> = {
+      title: args.title,
+      slug: args.slug,
+      icon: args.icon,
+      // Only include description and order if they are provided
+      description: args.description,
+      ...(args.order !== undefined && { order: args.order }),
+    };
+
+    // Insert new category
+    const categoryId = await ctx.db.insert("guideCategories", payload as any); // Use 'as any' cautiously or refine payload type
+
+    return { success: true, categoryId: categoryId };
+  },
+});

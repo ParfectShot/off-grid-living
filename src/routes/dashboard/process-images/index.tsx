@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { createFileRoute, redirect, useNavigate, useSearch } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
 import { Search } from 'lucide-react';
-import { ProcessedImage, S3Image, FolderInfo } from '~/types/s3-types';
+import { ProcessedImage, S3Image } from '~/types/s3-types';
 import {
   UploadTab,
   ProcessedImagesTab,
@@ -15,16 +15,6 @@ import { Id } from 'convex/_generated/dataModel';
 
 export const Route = createFileRoute('/dashboard/process-images/')({
   component: ImagesPage,
-  beforeLoad: async ({location}) => {
-    if (process.env.NODE_ENV !== "development") {
-      throw redirect({
-        to: '/guides',
-        search: {
-          redirect: location.href,
-        },
-      })
-    }
-  }
 });
 
 function ImagesPage() {
@@ -42,6 +32,8 @@ function ImagesPage() {
     removeProcessedImage,
     updateProcessedImageS3Urls,
   } = useImageProcessing();
+
+  console.log("processedImages", processedImages);
 
   const s3 = useS3Management();
   const { storeImageMetadata, isStoring, storeError } = useConvexImageStore();
@@ -122,6 +114,7 @@ function ImagesPage() {
   };
 
   const uploadToS3 = async () => {
+    console.log("Uploading to S3:", imagesReadyForUpload);
     const result = await s3.uploadProcessedImages(imagesReadyForUpload);
 
     if (result.success && result.uploadedImageIds.length > 0 && result.s3UrlUpdates) {
@@ -326,17 +319,12 @@ function ImagesPage() {
         s3Bucket={s3.s3Bucket}
         s3Region={s3.s3Region}
         s3Folder={s3.s3Folder}
-        currentPrefix={s3.configCurrentPrefix}
-        buckets={s3.buckets}
-        folders={s3.folders}
+        buckets={s3.buckets}  
         isLoadingBuckets={s3.isLoadingBuckets}
-        isLoadingFolders={s3.isLoadingFolders}
         bucketError={s3.bucketError}
         onBucketChange={s3.handleBucketChange}
         onRegionChange={s3.handleRegionChange}
         onFolderChange={s3.setS3Folder}
-        onFolderSelect={s3.handleBrowseConfigFolder}
-        onSetTargetFolder={s3.handleSetTargetFolder}
         onLoadBuckets={() => s3.loadBuckets(s3.s3Region)}
         onSave={handleSaveS3ConfigAndUpload}
       />

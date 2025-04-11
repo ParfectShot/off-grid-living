@@ -42,22 +42,66 @@ export function ProcessedImagesTab({
     setEditingImageId(imageId);
     setEditedFilenames({
       ...editedFilenames,
-      [imageId]: editedFilenames[imageId] || image.originalName
+      [imageId]: editedFilenames[imageId] || image.originalName.split('.')[0] // Store name without extension
     });
   };
 
   const saveFilename = (image: ProcessedImage) => {
-    // Update the image's filename in the state
     const imageId = image.id;
-    const newName = editedFilenames[imageId];
+    const newBaseName = editedFilenames[imageId];
     
-    // Update the actual image object's originalName
-    if (newName && newName !== image.originalName) {
-      image.originalName = newName;
-      console.log(`Changed filename for image ${imageId} from "${image.originalName}" to "${newName}"`);
+    if (newBaseName && newBaseName !== image.originalName.split('.')[0]) {
+      // Update the image object with new filenames
+      const extension = image.fileExtension;
+      
+      // Get the storage ID from the original file path
+      const storageId = image.originalFilePath 
+        ? image.originalFilePath.split('\\').pop()?.split('.')[0]  // Get the UUID part
+        : '';
+
+      if (!storageId) {
+        console.error('Could not extract storage ID from original file path:', image.originalFilePath);
+        return;
+      }
+
+      // Keep track of the original file path directory
+      const originalDir = image.originalFilePath 
+        ? image.originalFilePath.substring(0, image.originalFilePath.lastIndexOf('\\') + 1)
+        : '';
+
+      if (!originalDir) {
+        console.error('Could not extract directory from original file path:', image.originalFilePath);
+        return;
+      }
+
+      // Update original filename (display name only)
+      image.originalName = `${newBaseName}.${extension}`;
+      
+      // Update srcset filenames and paths
+      image.srcset = image.srcset.map(variant => {
+        // Use the storage ID for the actual file path
+        const variantFileName = `${storageId}_${variant.width}.${variant.fileExtension}`;
+        const variantPath = `${originalDir}variants\\${variantFileName}`;
+        
+        return {
+          ...variant,
+          url: variant.url.replace(/[^/]+$/, `${newBaseName}_${variant.width}.${variant.fileExtension}`), // Display URL uses the new name
+          filePath: variantPath
+        };
+      });
+      
+      console.log(`Updated filenames and paths for image ${imageId}:`, {
+        originalName: image.originalName,
+        originalPath: image.originalFilePath,
+        storageId,
+        variants: image.srcset.map(v => ({
+          width: v.width,
+          path: v.filePath,
+          url: v.url
+        }))
+      });
     }
     
-    // Stop editing mode
     setEditingImageId(null);
   };
 
@@ -111,7 +155,7 @@ export function ProcessedImagesTab({
             >
               <img
                 src={image.originalUrl}
-                alt={editedFilenames[image.id] || image.originalName}
+                alt={editedFilenames[image.id] ? `${editedFilenames[image.id]}.${image.fileExtension}` : image.originalName}
                 className="object-contain w-full h-full max-h-48"
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 hover:bg-opacity-10 transition-opacity">
@@ -143,7 +187,9 @@ export function ProcessedImagesTab({
                 </div>
               ) : (
                 <div className="flex items-center justify-between mb-2">
-                  <div><strong>Name:</strong> {editedFilenames[image.id] || image.originalName}</div>
+                  <div>
+                    <strong>Name:</strong> {editedFilenames[image.id] ? `${editedFilenames[image.id]}.${image.fileExtension}` : image.originalName}
+                  </div>
                   {!readOnly && !image.s3Url && (
                     <Button
                       variant="ghost"

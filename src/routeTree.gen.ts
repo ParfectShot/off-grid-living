@@ -25,6 +25,7 @@ import { Route as PathlessLayoutCalculatorsIndexImport } from './routes/_pathles
 import { Route as PathlessLayoutBlogsIndexImport } from './routes/_pathlessLayout/blogs/index'
 import { Route as PathlessLayoutProductReviewsReviewIdImport } from './routes/_pathlessLayout/product-reviews/$reviewId'
 import { Route as PathlessLayoutBlogsIdImport } from './routes/_pathlessLayout/blogs/$id'
+import { Route as DashboardManageImagesIndexImport } from './routes/dashboard/manage/images/index'
 import { Route as PathlessLayoutGuidesCategoryIndexImport } from './routes/_pathlessLayout/guides/$category/index'
 import { Route as PathlessLayoutCalculatorsSolarSystemIndexImport } from './routes/_pathlessLayout/calculators/solar-system/index'
 import { Route as PathlessLayoutCalculatorsHomeLoadIndexImport } from './routes/_pathlessLayout/calculators/home-load/index'
@@ -118,6 +119,14 @@ const PathlessLayoutBlogsIdRoute = PathlessLayoutBlogsIdImport.update({
   path: '/blogs/$id',
   getParentRoute: () => PathlessLayoutRouteRoute,
 } as any)
+
+const DashboardManageImagesIndexRoute = DashboardManageImagesIndexImport.update(
+  {
+    id: '/manage/images/',
+    path: '/manage/images/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any,
+)
 
 const PathlessLayoutGuidesCategoryIndexRoute =
   PathlessLayoutGuidesCategoryIndexImport.update({
@@ -277,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PathlessLayoutGuidesCategoryIndexImport
       parentRoute: typeof PathlessLayoutRouteImport
     }
+    '/dashboard/manage/images/': {
+      id: '/dashboard/manage/images/'
+      path: '/manage/images'
+      fullPath: '/dashboard/manage/images'
+      preLoaderRoute: typeof DashboardManageImagesIndexImport
+      parentRoute: typeof DashboardRouteImport
+    }
   }
 }
 
@@ -324,6 +340,7 @@ interface DashboardRouteRouteChildren {
   DashboardManageIndexRoute: typeof DashboardManageIndexRoute
   DashboardProcessImagesIndexRoute: typeof DashboardProcessImagesIndexRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
+  DashboardManageImagesIndexRoute: typeof DashboardManageImagesIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
@@ -332,6 +349,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardManageIndexRoute: DashboardManageIndexRoute,
   DashboardProcessImagesIndexRoute: DashboardProcessImagesIndexRoute,
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
+  DashboardManageImagesIndexRoute: DashboardManageImagesIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
@@ -357,6 +375,7 @@ export interface FileRoutesByFullPath {
   '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/calculators/solar-system': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
   '/guides/$category': typeof PathlessLayoutGuidesCategoryIndexRoute
+  '/dashboard/manage/images': typeof DashboardManageImagesIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -376,6 +395,7 @@ export interface FileRoutesByTo {
   '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/calculators/solar-system': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
   '/guides/$category': typeof PathlessLayoutGuidesCategoryIndexRoute
+  '/dashboard/manage/images': typeof DashboardManageImagesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -398,6 +418,7 @@ export interface FileRoutesById {
   '/_pathlessLayout/calculators/home-load/': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/_pathlessLayout/calculators/solar-system/': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
   '/_pathlessLayout/guides/$category/': typeof PathlessLayoutGuidesCategoryIndexRoute
+  '/dashboard/manage/images/': typeof DashboardManageImagesIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -421,6 +442,7 @@ export interface FileRouteTypes {
     | '/calculators/home-load'
     | '/calculators/solar-system'
     | '/guides/$category'
+    | '/dashboard/manage/images'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -439,6 +461,7 @@ export interface FileRouteTypes {
     | '/calculators/home-load'
     | '/calculators/solar-system'
     | '/guides/$category'
+    | '/dashboard/manage/images'
   id:
     | '__root__'
     | '/_pathlessLayout'
@@ -459,6 +482,7 @@ export interface FileRouteTypes {
     | '/_pathlessLayout/calculators/home-load/'
     | '/_pathlessLayout/calculators/solar-system/'
     | '/_pathlessLayout/guides/$category/'
+    | '/dashboard/manage/images/'
   fileRoutesById: FileRoutesById
 }
 
@@ -509,7 +533,8 @@ export const routeTree = rootRoute
         "/dashboard/guides/",
         "/dashboard/manage/",
         "/dashboard/process-images/",
-        "/dashboard/settings/"
+        "/dashboard/settings/",
+        "/dashboard/manage/images/"
       ]
     },
     "/_pathlessLayout/": {
@@ -575,6 +600,10 @@ export const routeTree = rootRoute
     "/_pathlessLayout/guides/$category/": {
       "filePath": "_pathlessLayout/guides/$category/index.tsx",
       "parent": "/_pathlessLayout"
+    },
+    "/dashboard/manage/images/": {
+      "filePath": "dashboard/manage/images/index.tsx",
+      "parent": "/dashboard"
     }
   }
 }
