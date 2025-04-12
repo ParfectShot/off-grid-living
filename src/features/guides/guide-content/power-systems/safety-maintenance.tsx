@@ -116,7 +116,7 @@ export const SafetyMaintenanceContent: GuideContentComponent = () => {
                         <li>Check solar input (sunlight?).</li>
                         <li>Check panel disconnects/breakers.</li>
                         <li>Check charge controller status, settings, errors.</li>
-                        <li>Check wiring (panels -> controller -> batteries).</li>
+                        <li>Check wiring (panels &rarr; controller &rarr; batteries).</li>
                     </ul>
                 </CardContent>
             </Card>
