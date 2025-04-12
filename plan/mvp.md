@@ -1,289 +1,109 @@
-# Off-Grid Living Website - MVP Plan
+## Off-Grid Living Website - MVP Completion & Next Steps PRD
 
-## Overview
+**Version:** 1.0
+**Date:** April 12, 2025
+**Status:** Draft
 
-This document outlines the Minimum Viable Product (MVP) for an off-grid living website focused on sustainability, renewable energy, and self-sufficient living. The website aims to provide valuable resources, tools, and content for individuals interested in off-grid lifestyle.
+### 1. Introduction
 
-## Feature Priority
+This document summarizes the features and functionalities implemented as part of the Minimum Viable Product (MVP) for the Off-Grid Living website. It details the current state of the application, including core infrastructure, implemented tools, content pages, and the technical stack. It also outlines the immediate next steps, with a specific focus on expanding the content within the Guides section.
 
-### Priority 1: Core Infrastructure & Homepage
-- Responsive navigation & site framework ✅
-- Home page with hero section and feature highlights ✅
-- Basic routing structure ✅
-- Mobile-friendly layout foundation ✅
-- Footer with essential links ✅
+### 2. Goals of this Document
 
-### Priority 2: Calculator Tools
-- Home load calculator ✅
-  - Basic appliance inventory ✅
-  - Power consumption calculation ✅
-  - Daily/monthly estimates ✅
-- Solar system calculator ⏳
-  - Solar panel requirements based on load
-  - Basic system sizing
-  - Storage recommendations
+* To provide a clear record of the features completed during the MVP phase.
+* To formally document the current state of the application's functionality and structure.
+* To define the immediate next goals for content creation, specifically for the Guides section.
+* To serve as a reference point for future development phases.
 
-### Priority 3: Content Pages
-- Blog listing page with filtering
-- Blog post detail pages
-- Initial set of educational content
-- Reviews page structure ✅
-- Guides section with structured content paths ✅
+### 3. Current State: Implemented MVP Features
 
-### Priority 4: Engagement Features
-- Newsletter subscription
-- Comment functionality on blog posts
-- Social sharing for calculator results
-- Advanced filtering and search
+The following features and components have been successfully implemented based on the MVP plan:
 
-## Core Pages
+**3.1. Core Infrastructure & Architecture:**
 
-### 1. Home Page
-- **Purpose**: Serve as the main entry point, introducing visitors to the concept of off-grid living
-- **Key Components**:
-  - Hero section with compelling imagery and primary CTA
-  - Feature highlights for each main section of the website
-  - Quick access to most popular calculators
-  - Featured blog posts
-  - Top product reviews
-  - Newsletter subscription
+* **Routing:** Basic routing structure implemented using TanStack Router.
+    * `/` (Homepage)
+    * `/guides`
+    * `/guides/[category]`
+    * `/guides/[category]/[slug]`
+    * `/calculators`
+    * `/calculators/home-load`
+    * `/calculators/solar-system` (Structure exists, functionality pending)
+    * `/dashboard`
+    * `/dashboard/manage`
+    * `/dashboard/process-images`
+* **Frontend Framework:** React with TypeScript.
+* **Styling:** Tailwind CSS implemented, supplemented with shadcn/ui for components.
+* **Layout:** Responsive navigation, site framework, mobile-friendly layout foundation, and footer are in place.
+* **Data Management:** React Query for data fetching/caching and Convex for database/real-time sync are integrated.
 
-### 2. Blogs Page
-- **Purpose**: Educational content about off-grid living topics
-- **Key Components**:
-  - Category filtering (solar power, water systems, sustainable building, etc.)
-  - Search functionality
-  - Post listings with featured images, excerpts, and read time
-  - Popular/trending posts section
-  - Related posts recommendations
+**3.2. Calculators:**
 
-### 3. Calculators Page
-- **Purpose**: Interactive tools to help users plan their off-grid systems
-- **Key Components**:
-  - **Home Load Calculator** ✅
-    - Inventory of household appliances/devices ✅
-    - Power consumption calculation ✅
-    - Daily/monthly usage estimates ✅
-    - Energy-saving recommendations ✅
-  - **Solar System Calculator** ⏳
-    - Solar panel requirements based on energy needs
-    - Battery storage recommendations
-    - Cost estimates
-    - System sizing guidance
-  - Results saving/sharing functionality ⏳
+* **Home Load Calculator:** Fully implemented, including:
+    * Appliance inventory input.
+    * Power consumption calculation logic.
+    * Daily/monthly usage estimates.
+    * Basic results visualization/display.
+    * Energy-saving recommendations.
+* **Solar System Calculator:** Page structure and routing exist (`/calculators/solar-system`), but core calculation logic and results display are pending (`⏳`).
 
-### 4. Reviews Page
-- **Purpose**: Honest assessments of solar and off-grid products
-- **Key Components**:
-  - Categorized product listings ✅
-  - Detailed product information ✅
-    - Specifications ✅
-    - Images ✅
-    - Pricing ✅
-    - Availability ✅
-    - Warranty information ✅
-  - Rating system
-    - Efficiency
-    - Durability
-    - Value for money
-    - Installation ease
-  - Comparison features
-  - User comments/experiences section
-  - Product variants and attributes ✅
+**3.3. Content Pages & Features:**
 
-### 5. Guides Page ✅
-- **Purpose**: Structured educational content to help users navigate off-grid living concepts
-- **Key Components**:
-  - **Getting Started Guide** ✅
-    - What is off-grid living? ✅
-    - Key considerations (Power needs, Water systems, Initial costs)
-    - Step-by-step approach
-    - Common questions
-  - Clear navigation between guide sections ✅
-  - Visual aids and diagrams ✅
-  - Downloadable/printable versions ✅
-  - Related calculators and tools ✅
+* **`Homepage (/):`** Basic structure implemented, including hero section and placeholders/structure for feature highlights, calculator/guide/blog/review previews, and newsletter signup.
+* **``Guides (/guides, /guides/[category]/[slug]):``**
+    * Main Guides page structure is complete, including hero, featured guides, category sections (with icons), downloadable resources section, and newsletter signup.
+    * Implemented components: `GuideCard`, `CategorySection`, `ResourceCard`.
+    * Routing for categories and individual guides is functional.
+    * **Content:** The "Getting Started" guide category and its associated content pages are complete and live.
+    * Visual aids and downloadable versions are supported by the structure.
+* **Reviews:** Basic page structure and data schema for reviews are implemented. Functionality like rating systems and user comments are pending.
+* **Blog:** Basic blog listing and detail page structures are in place (`✅` based on roadmap completion). Filtering and advanced features are pending.
 
-## Technical Requirements
+**3.4. Dashboard & Content Management:**
 
-### 1. Frontend Framework & Styling
-- **Framework**: React with TypeScript
-- **Routing**: TanStack Router
-- **Styling Recommendation**: 
-  - Continue using Tailwind CSS for its utility-first approach and rapid development
-  - Supplement with a component library (see recommendations below)
+* **`Dashboard (/dashboard):`** Basic structure exists.
+* **`Guide Management (/dashboard/manage):`** Interface exists for managing guides content.
+* **`Image Processing (/dashboard/process-images):`** Functionality implemented to:
+    * Upload images.
+    * Generate responsive-width WebP images.
+    * Upload processed images to an S3 bucket.
 
-### 2. Component Library Options
-1. **Tailwind UI + HeadlessUI** (Recommended)
-   - Pros: Perfect integration with Tailwind, accessible, customizable
-   - Cons: Requires more manual implementation than all-in-one libraries
+**3.5. Technical Stack Summary:**
 
-2. **Chakra UI**
-   - Pros: Accessible, themeable, works well with Tailwind
-   - Cons: Some style conflicts may require resolution
+* **Frontend:** React, TypeScript, TanStack Router
+* **Styling:** Tailwind CSS, shadcn/ui
+* **State Management/Data Fetching:** React Query
+* **Backend/Database:** Convex
+* **Image Storage:** AWS S3 (via dashboard processing)
 
-3. **shadcn/ui**
-   - Pros: Beautiful, customizable components built on Radix UI
-   - Cons: Not a traditional library (copy-paste approach)
+### 4. Next Steps & Future Goals
 
-**Recommendation**: Keep Tailwind CSS and use shadcn/ui for component-based needs. This combination provides:
-- Rapid development with Tailwind's utility classes
-- High-quality, accessible components from shadcn/ui
-- Maximum flexibility for custom styling
-- Good performance characteristics
+**4.1. Immediate Priority: Guides Content Expansion**
 
-### 3. Data Management
-- Use React Query for data fetching and caching ✅
-- Implement form state management with React Hook Form
-- Consider local storage for calculator inputs/results
-- Using Convex for database and real-time data sync ✅
+* **Goal:** Populate the remaining guide categories with comprehensive content.
+* **Action:** Create and publish guides for categories identified in the MVP plan, such as:
+    * Power Systems (Solar, Wind, Hydro)
+    * Water Systems (Collection, Filtration, Pumping)
+    * Sustainable Building
+    * Waste Management
+    * Off-Grid Food Production
+    * (Add/refine specific categories as needed)
+* **Requirements:** Each guide should follow the established structure (`/guides/[category]/[slug]`), including clear explanations, visual aids (where applicable), and potentially links to relevant calculators or resources.
 
-### 4. Backend Requirements
-- Schema for product and review data ✅
-- API endpoints for blog content
-- Storage solution for calculator configurations
-- Authentication for potential future community features
+**4.2. Other Pending MVP Items & Enhancements:**
 
-## Design Elements
+* **Complete Solar System Calculator:** Implement calculation logic, storage recommendations, cost estimates, and results display.
+* **Enhance Blog:** Implement category filtering, search functionality, and potentially comment features.
+* **Complete Reviews System:** Implement rating system, comparison features, and user comments.
+* **Implement Search Functionality:** Add site-wide or section-specific search capabilities (especially for Guides and Blog).
+* **Accessibility Improvements:** Continue addressing keyboard navigation and screen reader compatibility for Guides and other sections.
+* **Performance Optimization:** Ongoing monitoring and optimization based on performance targets.
+* **User Engagement Features:** Implement newsletter subscription logic, social sharing, etc.
 
-### 1. Color Palette
-- Primary: `#3a7e4f` (Forest Green)
-- Secondary: `#7bb989` (Sage Green)
-- Accent: `#dfbb5a` (Harvest Gold)
-- Text: `#333333` (Dark Gray)
-- Background: `#f8f8f8` (Off-White)
-- Highlights: `#e36414` (Pumpkin) for CTAs and important elements
+### 5. Conclusion
 
-### 2. Typography
-- Headings: System font stack with slightly increased weight
-- Body: Clean, readable sans-serif
-- Consider variable fonts for performance
+The MVP phase has successfully established the core foundation of the Off-Grid Living website, including key infrastructure, essential tools like the Home Load Calculator, and a robust framework for the Guides section. The immediate focus shifts to enriching the platform with valuable content by completing the remaining Guides categories, which will significantly enhance the user value proposition. Subsequent efforts will concentrate on completing the Solar System Calculator and other pending MVP features.
 
-### 3. Imagery
-- High-quality photos of:
-  - Off-grid homes and cabins
-  - Solar panel installations
-  - Sustainable living practices
-  - Natural landscapes
-- Infographics for educational content
-- Icons for features and categories
-
-## Implementation Phases
-
-### Phase 1: Core Structure (Weeks 1-2) ✅
-- Set up project architecture
-- Implement responsive layout components 
-- Create navigation and footer
-- Build home page structure
-
-### Phase 2: Calculator Tools (Weeks 3-4)
-- Develop home load calculator ✅
-- Implement solar system calculator ⏳
-- Create results visualization components ✅
-
-### Phase 3: Content Pages (Weeks 5-6)
-- Build blog listing and detail pages
-- Implement reviews system
-- Create content management interface
-- Develop structured guides framework ✅
-
-### Phase 4: Enhancement & Polish (Weeks 7-8)
-- Add search functionality
-- Implement filtering systems
-- Optimize for performance
-- Add animations and transitions
-
-## Development Roadmap
-
-| Week | Focus | Key Deliverables |
-|------|-------|------------------|
-| 1 | Project Setup | Repository setup, folder structure, base components ✅ |
-| 2 | Homepage | Navigation, hero section, responsive layout ✅ |
-| 3 | Load Calculator | Interface, calculation logic, basic styling ✅ |
-| 4 | Solar Calculator | Interface, calculation logic, results display |
-| 5 | Blog System | Listing page, category filters, detail view ✅ |
-| 6 | Guides System | Getting started guide, navigation structure, content formatting ✅ |
-| 7 | Reviews System | Product listing, rating components, detail pages |
-| 8 | Refinement | Search functionality, UX improvements |
-| 9 | Finalization | Performance optimization, testing, deployment |
-
-## Page Structure Details
-
-### Home Page Layout
-1. **Navigation Bar**
-   - Logo/brand
-   - Main navigation links
-   - Mobile-responsive menu
-
-2. **Hero Section**
-   - Headline: "Your Journey to Self-Sufficient Living Starts Here"
-   - Subheading: Brief value proposition
-   - CTA button: "Explore Our Calculators" or "Read Our Getting Started Guide"
-   - Background: High-quality image of off-grid home with solar panels
-
-3. **Features Section**
-   - 3-4 cards highlighting main site sections
-   - Icons and brief descriptions
-   - Links to respective sections
-
-4. **Calculators Showcase**
-   - Preview of calculator tools
-   - Brief explanation of benefits
-   - Direct links to each calculator
-
-5. **Guides Showcase**
-   - Featured guides with descriptive icons
-   - Brief description of guide benefits
-   - "Get Started" CTAs for each guide
-
-6. **Blog Posts Preview**
-   - 3 latest/featured posts
-   - Thumbnail, title, excerpt
-   - "View All Posts" link
-
-7. **Product Reviews Preview**
-   - Featured product reviews
-   - Rating indicators
-   - Category links
-
-8. **Newsletter Section**
-   - Brief pitch
-   - Email input
-   - Subscription button
-   - Privacy assurance
-
-9. **Footer**
-   - Secondary navigation
-   - Social links
-   - Contact information
-   - Copyright
-
-## Database Models
-
-We've implemented the following models in our Convex schema:
-
-1. **Products** - Core product information ✅
-2. **Product Variants** - Size, color variations ✅
-3. **Product Attributes** - Key-value product features ✅
-4. **Product Specs** - Technical specifications ✅
-5. **Product Images** - Photo galleries ✅
-6. **Brands** - Brand information ✅
-7. **Categories** - Product categorization ✅
-
-Plans for additional models:
-- Blog Posts
-- Calculator Configurations
-- User Profiles
-- Reviews
-- Guides
-
-## Next Steps
-
-1. Finalize technology decisions (component library) ✅
-2. Create detailed wireframes for each page ✅
-3. Develop core layout components ✅
-4. Implement calculator logic ✅ (Home Load Calculator)
-5. Begin content creation for blog posts
 
 ## Technical Considerations
 
