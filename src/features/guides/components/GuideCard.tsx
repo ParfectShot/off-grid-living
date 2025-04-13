@@ -5,6 +5,8 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle, CardContent }
 import { Badge } from "~/components/ui/badge"
 import { ImageCredit } from "./ImageCredit"
 import clsx from "clsx"
+import { useQuery } from "convex/react"
+import { api } from "~/convex/_generated/api"
 
 // Image credits mapping based on guide slugs
 const imageCredits = {
@@ -36,15 +38,13 @@ const imageCredits = {
 
 interface GuideCardProps {
   guide: {
-    _id?: string // For Convex IDs
-    id?: string // For static data
+    _id: string // Make _id required since we're using it for image lookup
     title: string
     description: string
     level: string
     readTime: string
     slug: string
     categorySlug?: string
-    image?: string
     imageCredit?: {
       authorName: string
       authorUrl: string
@@ -65,24 +65,35 @@ export function GuideCard({
 }: GuideCardProps) {
   // Use the passed categorySlug or the guide's categorySlug if available
   // Adding fallback to prevent undefined in URL
-  const category = categorySlug || guide.categorySlug
+  const category = categorySlug || guide.categorySlug;
 
-  // Get image credit based on slug
-  const imageCredit = guide.imageCredit || (guide.slug ? imageCredits[guide.slug as keyof typeof imageCredits] : undefined);
+  // Fetch primary image for the guide
+  const primaryImage = useQuery(api.images.getPrimaryImageForEntity, {
+    entityType: "guides",
+    entityId: guide._id,
+  });
+
+  // Use image credit from either the guide or the primary image
+  const imageCredit = guide.imageCredit || primaryImage?.credit;
+  const hasImage = !!primaryImage?.originalUrl;
 
   return (
     <Card className={
       clsx(
         "hover:shadow-md transition-shadow flex flex-col h-full",
-        guide.image && "pt-0 overflow-hidden" 
+        hasImage && "pt-0 overflow-hidden" 
       )}>
-      {guide.image && (
+      {hasImage && (
         <div className="relative">
           <div className="aspect-video overflow-hidden">
             <img 
-              src={guide.image}
+              src={primaryImage.originalUrl}
               alt={guide.title}
               className="w-full h-full object-cover transition-transform hover:scale-105"
+              {...(primaryImage.srcset && {
+                srcSet: primaryImage.srcset.map(s => `${s.url} ${s.width}w`).join(', '),
+                sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              })}
             />
             <div className="absolute top-2 right-2">
               <Badge variant="outline" className="bg-white/80 text-black">{guide.level}</Badge>
@@ -97,7 +108,7 @@ export function GuideCard({
       )}
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-          {!guide.image && <Badge variant="outline">{guide.level}</Badge>}
+          {!hasImage && <Badge variant="outline">{guide.level}</Badge>}
           <span className="flex items-center">
             <BookOpen className="h-3 w-3 mr-1" />
             {guide.readTime}

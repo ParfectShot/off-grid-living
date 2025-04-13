@@ -103,4 +103,27 @@ export const updateImageCredits = mutation({
     });
     return true;
   },
+});
+
+// Get primary image for an entity
+export const getPrimaryImageForEntity = query({
+  args: {
+    entityType: v.string(),
+    entityId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const imageToEntity = await ctx.db
+      .query("imageToEntity")
+      .withIndex("by_entity", (q) => 
+        q.eq("entityType", args.entityType)
+         .eq("entityId", args.entityId)
+      )
+      .filter(q => q.eq(q.field("isPrimary"), true))
+      .first();
+
+    if (!imageToEntity) return null;
+
+    const image = await ctx.db.get(imageToEntity.imageId);
+    return image;
+  },
 }); 
