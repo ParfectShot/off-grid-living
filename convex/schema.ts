@@ -14,6 +14,7 @@ import { guideToAuthor } from "./schema/guideToAuthor";
 import { images } from "./schema/images";
 import { productCategories } from "./schema/productCategories";
 import { newsletter } from "./schema/newsletter";
+import { imageToEntity } from "./schema/imageToEntity";
 
 export default defineSchema({
   brands,
@@ -30,5 +31,6 @@ export default defineSchema({
   authors,
   guideToAuthor,
   images,
+  imageToEntity,
   newsletter,
 });

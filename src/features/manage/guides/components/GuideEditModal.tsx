@@ -12,6 +12,9 @@ import { Doc, Id } from '~/../convex/_generated/dataModel';
 import { CategorySelector } from './CategorySelector';
 // Import the new component
 import { SectionManager } from './SectionManager';
+import { Search } from 'lucide-react';
+import { ImageGrid } from '../../images/components/ImageGrid';
+import { toast } from 'sonner';
 
 // Type matching the data passed from ManageComponent, expanded for full guide data
 type GuideFull = Doc<"guides"> & {
@@ -53,6 +56,10 @@ export function GuideEditModal({ guide: initialGuideData, isOpen, onClose }: Gui
   const [sections, setSections] = useState<ManagedSection[]>([]); // Use ManagedSection type
   const [isSubmitting, setIsSubmitting] = useState(false); // Add submitting state
 
+  // New state for image search and selection
+  const [imageSearchTerm, setImageSearchTerm] = useState('');
+  const [selectedImageId, setSelectedImageId] = useState<Id<"images"> | null>(null);
+
   // Fetch full guide details using the slug from initialGuideData
   const fullGuide = useQuery(
     api.guides.getGuideBySlug,
@@ -63,8 +70,76 @@ export function GuideEditModal({ guide: initialGuideData, isOpen, onClose }: Gui
   // Fetch all available categories for the selector
   const allCategories = useQuery(api.guides.getGuideCategories);
 
+  // Fetch all images
+  const allImages = useQuery(api.images.getAllImages);
+
+  // Fetch primary image for the guide if it exists
+  const primaryImage = useQuery(
+    api.imageToEntity.getPrimaryImageForEntity,
+    guideData
+      ? {
+          entityType: "guides",
+          entityId: guideData._id,
+        }
+      : "skip"
+  );
+
   // Use the mutation
   const updateGuide = useMutation(api.guides.updateGuideWithDetails);
+
+  // Mutations for image linking
+  const linkImage = useMutation(api.imageToEntity.linkImageToEntity);
+  const unlinkImage = useMutation(api.imageToEntity.unlinkImageFromEntity);
+
+  // Filter images based on search term
+  const filteredImages = React.useMemo(() => {
+    if (!allImages) return [];
+    return allImages.filter((image) =>
+      image.originalName.toLowerCase().includes(imageSearchTerm.toLowerCase())
+    );
+  }, [allImages, imageSearchTerm]);
+
+  // Handle image selection
+  const handleImageSelect = async (image: Doc<"images">) => {
+    if (!guideData) return;
+    
+    try {
+      if (selectedImageId === image._id) {
+        // If clicking the currently selected image, unlink it
+        if (primaryImage?.linkId) {
+          await unlinkImage({ linkId: primaryImage.linkId });
+          setSelectedImageId(null);
+          toast.success('Image unlinked successfully');
+        }
+      } else {
+        // If there's already a primary image, unlink it first
+        if (primaryImage?.linkId) {
+          await unlinkImage({ linkId: primaryImage.linkId });
+        }
+        // Link the new image
+        await linkImage({
+          imageId: image._id,
+          entityId: guideData._id,
+          entityType: "guides",
+          isPrimary: true
+        });
+        setSelectedImageId(image._id);
+        toast.success('Image linked successfully');
+      }
+    } catch (error) {
+      console.error('Error linking/unlinking image:', error);
+      toast.error('Failed to update image link');
+    }
+  };
+
+  // Update selected image when primary image changes
+  useEffect(() => {
+    if (primaryImage) {
+      setSelectedImageId(primaryImage._id);
+    } else {
+      setSelectedImageId(null);
+    }
+  }, [primaryImage]);
 
   // Effect to populate form and state when full guide data is loaded
   useEffect(() => {
@@ -111,6 +186,8 @@ export function GuideEditModal({ guide: initialGuideData, isOpen, onClose }: Gui
        setPrimaryCategory(null);
        setSections([]);
        setIsSubmitting(false); // Reset submitting state
+       setImageSearchTerm('');
+       setSelectedImageId(null);
      }
    }, [isOpen]);
 
@@ -194,6 +271,51 @@ export function GuideEditModal({ guide: initialGuideData, isOpen, onClose }: Gui
         {/* Use grid layout for overall structure, make form scrollable */}
         <form id="guide-edit-form" onSubmit={handleSubmit} className="grid gap-6 py-4 max-h-[75vh] overflow-y-auto pr-4">
           
+          {/* Image Selection Section */}
+          <div className="space-y-4 border-t pt-6">
+            <h3 className="text-lg font-medium">Featured Image</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                <Input
+                  placeholder="Search images..."
+                  className="pl-8"
+                  value={imageSearchTerm}
+                  onChange={(e) => setImageSearchTerm(e.target.value)}
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setImageSearchTerm('')}
+                title="Clear search"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="border rounded-lg p-4 max-h-[300px] overflow-y-auto">
+              {primaryImage && (
+                <div className="mb-4 p-4 bg-muted rounded-lg">
+                  <h4 className="text-sm font-medium mb-2">Current Featured Image</h4>
+                  <div className="relative aspect-video">
+                    <img
+                      src={primaryImage.originalUrl}
+                      alt={primaryImage.alt || "Featured image"}
+                      className="rounded object-cover w-full h-full"
+                    />
+                  </div>
+                </div>
+              )}
+              <ImageGrid
+                images={filteredImages}
+                onSelectImage={handleImageSelect}
+                isLoading={!allImages}
+                selectedImageId={selectedImageId}
+              />
+            </div>
+          </div>
+
           {/* Basic Info Section */}
           <div className="space-y-4">
              <h3 className="text-lg font-medium border-b pb-2">Basic Information</h3>

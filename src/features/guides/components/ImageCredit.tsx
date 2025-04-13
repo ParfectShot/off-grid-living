@@ -2,10 +2,10 @@ import React from 'react';
 
 interface ImageCreditProps {
   credit?: {
-    authorName: string;
-    authorUrl: string;
-    sourceName: string;
-    sourceUrl: string;
+    authorName?: string;
+    authorUrl?: string;
+    sourceName?: string;
+    sourceUrl?: string;
   };
   className?: string;
 }

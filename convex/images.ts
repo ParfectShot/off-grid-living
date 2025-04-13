@@ -84,4 +84,23 @@ export const deleteImage = mutation({
     await ctx.db.delete(args.imageId);
     return true;
   },
+});
+
+// Update image credits
+export const updateImageCredits = mutation({
+  args: {
+    imageId: v.id("images"),
+    credit: v.object({
+      authorName: v.string(),
+      authorUrl: v.optional(v.string()),
+      sourceName: v.string(),
+      sourceUrl: v.optional(v.string()),
+    }),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.imageId, {
+      credit: args.credit,
+    });
+    return true;
+  },
 }); 

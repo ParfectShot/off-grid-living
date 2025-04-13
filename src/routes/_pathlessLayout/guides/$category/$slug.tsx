@@ -33,42 +33,6 @@ import {
 import { Input } from "~/components/ui/input";
 import { toast } from "sonner";
 
-// Image credits mapping based on guide slugs
-const imageCredits = {
-  "what-is-off-grid-living": {
-    authorName: "Eugene Chystiakov",
-    authorUrl:
-      "https://unsplash.com/@eugenechystiakov?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-    sourceName: "Unsplash",
-    sourceUrl:
-      "https://unsplash.com/photos/a-house-with-a-solar-panel-on-the-roof-XVwYGihplmY?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-  },
-  "key-considerations": {
-    authorName: "VD Photography",
-    authorUrl:
-      "https://unsplash.com/@vdphotography?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-    sourceName: "Unsplash",
-    sourceUrl:
-      "https://unsplash.com/photos/an-aerial-view-of-a-house-with-a-solar-panel-on-the-roof-tC4tHCeoO44?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-  },
-  "step-by-step-approach": {
-    authorName: "Sumit Mangela",
-    authorUrl:
-      "https://unsplash.com/@sumitmangela?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-    sourceName: "Unsplash",
-    sourceUrl:
-      "https://unsplash.com/photos/a-very-large-building-that-has-a-bunch-of-stairs-in-it-ASM0H3ul2yo?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-  },
-  "common-questions": {
-    authorName: "Rakshit Yadav",
-    authorUrl:
-      "https://unsplash.com/@rakshityadav190?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-    sourceName: "Unsplash",
-    sourceUrl:
-      "https://unsplash.com/photos/a-monkey-sitting-on-top-of-a-solar-panel-mIa5hPkh42w?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
-  },
-};
-
 export const Route = createFileRoute("/_pathlessLayout/guides/$category/$slug")(
   {
     component: GuideDetailPage,
@@ -122,11 +86,6 @@ function GuideDetailPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
-  // Get image credit based on slug
-  const imageCredit = slug
-    ? imageCredits[slug as keyof typeof imageCredits]
-    : undefined;
-
   // Fetch guide data from Convex
   const guide = useQuery(api.guides.getGuideBySlug, { slug });
   const categoryData = useQuery(api.guides.getGuideCategoryBySlug, {
@@ -135,6 +94,20 @@ function GuideDetailPage() {
   const guidesInCategory = useQuery(api.guides.getGuideByCategorySlug, {
     categorySlug: category,
   });
+
+  // Fetch primary image for the guide if it exists
+  const primaryImage = useQuery(
+    api.imageToEntity.getPrimaryImageForEntity,
+    guide
+      ? {
+          entityType: "guides",
+          entityId: guide._id,
+        }
+      : "skip"
+  );
+
+  // Get image credit from the primary image
+  const imageCredit = primaryImage?.credit;
 
   // Loading states
   const isLoading = !guide || !categoryData || !guidesInCategory;
@@ -468,11 +441,17 @@ function GuideDetailPage() {
                   </h1>
 
                   {/* Guide image with credit */}
-                  {guide.image && (
+                  {primaryImage?.srcset && (
                     <div className="mb-8 relative">
                       <img
-                        src={guide.image}
-                        alt={guide.title}
+                        src={primaryImage.srcset.reduce((largest, current) => 
+                          current.width > largest.width ? current : largest
+                        ).url}
+                        srcSet={primaryImage.srcset.map(item => 
+                          `${item.url} ${item.width}w`
+                        ).join(', ')}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        alt={primaryImage.alt || guide?.title}
                         className="w-full h-auto rounded-lg object-cover aspect-video"
                       />
                       {imageCredit && (
