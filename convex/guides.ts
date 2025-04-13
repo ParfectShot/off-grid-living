@@ -530,3 +530,56 @@ export const createGuideCategory = mutation({
     return { success: true, categoryId: categoryId };
   },
 });
+
+// --- NEW MUTATION FOR DELETION ---
+export const deleteGuide = mutation({
+  args: { guideId: v.id("guides") },
+  handler: async (ctx, args) => {
+    // 1. Delete all guide-to-category relationships
+    const guideToCategories = await ctx.db
+      .query("guideToCategory")
+      .withIndex("by_guideId", q => q.eq("guideId", args.guideId))
+      .collect();
+    
+    for (const relation of guideToCategories) {
+      await ctx.db.delete(relation._id);
+    }
+
+    // 2. Delete all guide sections
+    const guideSections = await ctx.db
+      .query("guideSections")
+      .withIndex("by_guideId", q => q.eq("guideId", args.guideId))
+      .collect();
+    
+    for (const section of guideSections) {
+      await ctx.db.delete(section._id);
+    }
+
+    // 3. Delete all guide-to-author relationships if they exist
+    const guideToAuthors = await ctx.db
+      .query("guideToAuthor")
+      .withIndex("by_guideId", q => q.eq("guideId", args.guideId))
+      .collect();
+    
+    for (const relation of guideToAuthors) {
+      await ctx.db.delete(relation._id);
+    }
+
+    // 4. Delete all image relationships
+    const imageLinks = await ctx.db
+      .query("imageToEntity")
+      .withIndex("by_entity", q => 
+        q.eq("entityType", "guides").eq("entityId", args.guideId)
+      )
+      .collect();
+    
+    for (const link of imageLinks) {
+      await ctx.db.delete(link._id);
+    }
+
+    // 5. Finally delete the guide itself
+    await ctx.db.delete(args.guideId);
+
+    return { success: true };
+  },
+});
