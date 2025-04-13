@@ -22,7 +22,6 @@ export const AssessingPowerNeedsContent: GuideContentComponent = () => {
         Before you even think about specific panels or batteries, you MUST accurately determine how much power you actually need. This is arguably the <em>most critical</em> step in designing your <strong>off-grid solar system</strong> or hybrid system.
       </p>
 
-      {/* Identifying Your Energy Consumption */}
       <section id="identifying-energy-consumption" className="scroll-mt-20 space-y-6">
         <h2 className="text-3xl font-bold tracking-tight">Identifying Your Energy Consumption</h2>
         <p>
@@ -35,9 +34,40 @@ export const AssessingPowerNeedsContent: GuideContentComponent = () => {
             Step 1: List Everything
           </h3>
           <p className="mb-4">
-            Create a comprehensive inventory of <em>every single</em> appliance, light, tool, and electronic device that will draw power. Think room by room. Include easily forgotten items like phone chargers, laptops, modems/routers, fans, pumps (well, septic), and any intermittent loads.
+            Create a comprehensive inventory of <em>every single</em> appliance, light, tool, and electronic device that will draw power. Go room by room. Don't forget easily missed items like: 
           </p>
-          {/* Optionally, add a more detailed list or link to a checklist */}
+          <ul className="list-disc pl-5 space-y-2">
+            <li>
+              <strong>Lights:</strong> Ceiling lights, desk lamps, nightlights, etc.
+            </li>
+            <li>
+              <strong>HVAC:</strong> Heaters, air conditioners, fans, dehumidifiers, etc.
+            </li>
+            <li>
+              <strong>Kitchen:</strong> Refrigerator, freezer, microwave, toaster, coffee maker, blender, etc.
+            </li>
+            <li>
+              <strong>Entertainment:</strong> TV, gaming consoles, speakers, streaming devices, etc.
+            </li>
+            <li>
+              <strong>Connectivity:</strong> Modems, routers, Wi-Fi boosters, smart home hubs, etc.
+            </li>
+            <li>
+              <strong>Charging:</strong> Phone/tablet chargers, laptop chargers, power banks, etc.
+            </li>
+            <li>
+              <strong>Plumbing:</strong> Well pumps, pressure pumps, septic pumps, water heaters, etc.
+            </li>
+            <li>
+              <strong>Tools:</strong> Power tools, workshop equipment, garage door openers, etc.
+            </li>
+            <li>
+              <strong>Medical:</strong> CPAP machines, air purifiers, medical refrigeration, etc.
+            </li>
+            <li>
+              <strong>Phantom Loads:</strong> Devices that draw power even when "off" (TVs with instant-on, standby electronics, etc.)
+            </li>
+          </ul>
         </div>
 
         <div className="bg-muted p-6 rounded-lg border">

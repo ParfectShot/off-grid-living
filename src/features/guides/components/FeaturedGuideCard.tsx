@@ -7,18 +7,17 @@ import { useQuery } from "convex/react"
 import { api } from "~/convex/_generated/api"
 import { LoadingGuideCard } from "./LoadingGuideCard"
 import { ImageCredit } from "./ImageCredit"
+import { Doc } from "~/convex/_generated/dataModel"
 
 interface FeaturedGuideCardProps {
   guide: {
-    _id?: string // For Convex IDs
-    id?: string // For static data
+    _id: string // Make _id required since we're using it for image lookup
     title: string
     description: string
     level: string
     readTime: string
     slug: string
     categorySlug?: string
-    image?: string
     imageCredit?: {
       authorName: string;
       authorUrl: string;
@@ -30,26 +29,37 @@ interface FeaturedGuideCardProps {
 }
 
 export function FeaturedGuideCard({ guide }: FeaturedGuideCardProps) {
-  // Use the passed categorySlug or the guide's categorySlug if available
+  // Fetch guide data and primary image
   const guideWithCategory = useQuery(api.guides.getGuideBySlug, {
     slug: guide.slug
   })
-  const isLoading = !guideWithCategory
-  const categorySlug = guideWithCategory?.categories[0]?.slug
+
+  const primaryImage = useQuery(api.images.getPrimaryImageForEntity, {
+    entityType: "guides",
+    entityId: guide._id,
+  });
+
+  const isLoading = !guideWithCategory;
+  const categorySlug = guideWithCategory?.categories[0]?.slug;
 
   if (isLoading) {
-    return <LoadingGuideCard />
+    return <LoadingGuideCard />;
   }
 
-  const imageCredit = guideWithCategory.imageCredit || guide.imageCredit;
+  // Use image credit from either the guide or the primary image
+  const imageCredit = guideWithCategory.imageCredit || primaryImage?.credit;
 
   return (
     <Card className="overflow-hidden flex flex-col pt-0 h-full">
       <div className="aspect-video relative overflow-hidden">
         <img
-          src={guide.image || "/images/placeholder.jpg"}
+          src={primaryImage?.originalUrl || "/images/placeholder.jpg"}
           alt={guide.title}
           className="w-full h-full object-cover transition-transform hover:scale-105"
+          {...(primaryImage?.srcset && {
+            srcSet: primaryImage.srcset.map(s => `${s.url} ${s.width}w`).join(', '),
+            sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          })}
         />
         <div className="absolute top-2 right-2">
           <Badge className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white">
