@@ -38,10 +38,10 @@ interface FolderInfo {
 }
 
 // Helper function to initialize S3 client
-export function getS3Client(region: string = 'us-east-1') {
+export function getS3Client(region: string = 'ap-south-1') {
   // Check for environment variables
-  const accessKeyId = import.meta.env.AWS_ACCESS_KEY_ID;
-  const secretAccessKey = import.meta.env.AWS_SECRET_ACCESS_KEY;
+  const accessKeyId = import.meta.env.VITE_VITE_AWS_ACCESS_KEY_ID;
+  const secretAccessKey = import.meta.env.VITE_AWS_SECRET_ACCESS_KEY;
   
   if (!accessKeyId || !secretAccessKey) {
     throw new Error('AWS credentials not found in environment variables');

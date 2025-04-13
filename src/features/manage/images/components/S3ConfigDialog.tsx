@@ -66,7 +66,7 @@ export function S3ConfigDialog({
               </Button>
             </div>
             <p className="text-xs text-gray-500">
-              Note: Make sure VITE_AWS_ACCESS_KEY_ID and VITE_AWS_SECRET_ACCESS_KEY environment variables are set on your server
+              Note: Make sure VITE_VITE_AWS_ACCESS_KEY_ID and VITE_AWS_SECRET_ACCESS_KEY environment variables are set on your server
             </p>
           </div>
           
