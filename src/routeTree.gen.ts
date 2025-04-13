@@ -16,16 +16,17 @@ import { Route as PathlessLayoutRouteImport } from './routes/_pathlessLayout/rou
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as PathlessLayoutIndexImport } from './routes/_pathlessLayout/index'
 import { Route as DashboardSettingsIndexImport } from './routes/dashboard/settings/index'
-import { Route as DashboardProcessImagesIndexImport } from './routes/dashboard/process-images/index'
+import { Route as DashboardMediaIndexImport } from './routes/dashboard/media/index'
 import { Route as DashboardManageIndexImport } from './routes/dashboard/manage/index'
 import { Route as DashboardGuidesIndexImport } from './routes/dashboard/guides/index'
 import { Route as PathlessLayoutProductReviewsIndexImport } from './routes/_pathlessLayout/product-reviews/index'
 import { Route as PathlessLayoutGuidesIndexImport } from './routes/_pathlessLayout/guides/index'
 import { Route as PathlessLayoutCalculatorsIndexImport } from './routes/_pathlessLayout/calculators/index'
 import { Route as PathlessLayoutBlogsIndexImport } from './routes/_pathlessLayout/blogs/index'
+import { Route as DashboardMediaProcessImagesImport } from './routes/dashboard/media/process-images'
+import { Route as DashboardMediaImageLibraryImport } from './routes/dashboard/media/image-library'
 import { Route as PathlessLayoutProductReviewsReviewIdImport } from './routes/_pathlessLayout/product-reviews/$reviewId'
 import { Route as PathlessLayoutBlogsIdImport } from './routes/_pathlessLayout/blogs/$id'
-import { Route as DashboardManageImagesIndexImport } from './routes/dashboard/manage/images/index'
 import { Route as PathlessLayoutGuidesCategoryIndexImport } from './routes/_pathlessLayout/guides/$category/index'
 import { Route as PathlessLayoutCalculatorsSolarSystemIndexImport } from './routes/_pathlessLayout/calculators/solar-system/index'
 import { Route as PathlessLayoutCalculatorsHomeLoadIndexImport } from './routes/_pathlessLayout/calculators/home-load/index'
@@ -62,12 +63,11 @@ const DashboardSettingsIndexRoute = DashboardSettingsIndexImport.update({
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
-const DashboardProcessImagesIndexRoute =
-  DashboardProcessImagesIndexImport.update({
-    id: '/process-images/',
-    path: '/process-images/',
-    getParentRoute: () => DashboardRouteRoute,
-  } as any)
+const DashboardMediaIndexRoute = DashboardMediaIndexImport.update({
+  id: '/media/',
+  path: '/media/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 const DashboardManageIndexRoute = DashboardManageIndexImport.update({
   id: '/manage/',
@@ -107,6 +107,21 @@ const PathlessLayoutBlogsIndexRoute = PathlessLayoutBlogsIndexImport.update({
   getParentRoute: () => PathlessLayoutRouteRoute,
 } as any)
 
+const DashboardMediaProcessImagesRoute =
+  DashboardMediaProcessImagesImport.update({
+    id: '/media/process-images',
+    path: '/media/process-images',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+
+const DashboardMediaImageLibraryRoute = DashboardMediaImageLibraryImport.update(
+  {
+    id: '/media/image-library',
+    path: '/media/image-library',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any,
+)
+
 const PathlessLayoutProductReviewsReviewIdRoute =
   PathlessLayoutProductReviewsReviewIdImport.update({
     id: '/product-reviews/$reviewId',
@@ -119,14 +134,6 @@ const PathlessLayoutBlogsIdRoute = PathlessLayoutBlogsIdImport.update({
   path: '/blogs/$id',
   getParentRoute: () => PathlessLayoutRouteRoute,
 } as any)
-
-const DashboardManageImagesIndexRoute = DashboardManageImagesIndexImport.update(
-  {
-    id: '/manage/images/',
-    path: '/manage/images/',
-    getParentRoute: () => DashboardRouteRoute,
-  } as any,
-)
 
 const PathlessLayoutGuidesCategoryIndexRoute =
   PathlessLayoutGuidesCategoryIndexImport.update({
@@ -202,6 +209,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PathlessLayoutProductReviewsReviewIdImport
       parentRoute: typeof PathlessLayoutRouteImport
     }
+    '/dashboard/media/image-library': {
+      id: '/dashboard/media/image-library'
+      path: '/media/image-library'
+      fullPath: '/dashboard/media/image-library'
+      preLoaderRoute: typeof DashboardMediaImageLibraryImport
+      parentRoute: typeof DashboardRouteImport
+    }
+    '/dashboard/media/process-images': {
+      id: '/dashboard/media/process-images'
+      path: '/media/process-images'
+      fullPath: '/dashboard/media/process-images'
+      preLoaderRoute: typeof DashboardMediaProcessImagesImport
+      parentRoute: typeof DashboardRouteImport
+    }
     '/_pathlessLayout/blogs/': {
       id: '/_pathlessLayout/blogs/'
       path: '/blogs'
@@ -244,11 +265,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardManageIndexImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/dashboard/process-images/': {
-      id: '/dashboard/process-images/'
-      path: '/process-images'
-      fullPath: '/dashboard/process-images'
-      preLoaderRoute: typeof DashboardProcessImagesIndexImport
+    '/dashboard/media/': {
+      id: '/dashboard/media/'
+      path: '/media'
+      fullPath: '/dashboard/media'
+      preLoaderRoute: typeof DashboardMediaIndexImport
       parentRoute: typeof DashboardRouteImport
     }
     '/dashboard/settings/': {
@@ -285,13 +306,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/guides/$category'
       preLoaderRoute: typeof PathlessLayoutGuidesCategoryIndexImport
       parentRoute: typeof PathlessLayoutRouteImport
-    }
-    '/dashboard/manage/images/': {
-      id: '/dashboard/manage/images/'
-      path: '/manage/images'
-      fullPath: '/dashboard/manage/images'
-      preLoaderRoute: typeof DashboardManageImagesIndexImport
-      parentRoute: typeof DashboardRouteImport
     }
   }
 }
@@ -336,20 +350,22 @@ const PathlessLayoutRouteRouteWithChildren =
 
 interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardMediaImageLibraryRoute: typeof DashboardMediaImageLibraryRoute
+  DashboardMediaProcessImagesRoute: typeof DashboardMediaProcessImagesRoute
   DashboardGuidesIndexRoute: typeof DashboardGuidesIndexRoute
   DashboardManageIndexRoute: typeof DashboardManageIndexRoute
-  DashboardProcessImagesIndexRoute: typeof DashboardProcessImagesIndexRoute
+  DashboardMediaIndexRoute: typeof DashboardMediaIndexRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
-  DashboardManageImagesIndexRoute: typeof DashboardManageImagesIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardMediaImageLibraryRoute: DashboardMediaImageLibraryRoute,
+  DashboardMediaProcessImagesRoute: DashboardMediaProcessImagesRoute,
   DashboardGuidesIndexRoute: DashboardGuidesIndexRoute,
   DashboardManageIndexRoute: DashboardManageIndexRoute,
-  DashboardProcessImagesIndexRoute: DashboardProcessImagesIndexRoute,
+  DashboardMediaIndexRoute: DashboardMediaIndexRoute,
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
-  DashboardManageImagesIndexRoute: DashboardManageImagesIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
@@ -363,19 +379,20 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/blogs/$id': typeof PathlessLayoutBlogsIdRoute
   '/product-reviews/$reviewId': typeof PathlessLayoutProductReviewsReviewIdRoute
+  '/dashboard/media/image-library': typeof DashboardMediaImageLibraryRoute
+  '/dashboard/media/process-images': typeof DashboardMediaProcessImagesRoute
   '/blogs': typeof PathlessLayoutBlogsIndexRoute
   '/calculators': typeof PathlessLayoutCalculatorsIndexRoute
   '/guides': typeof PathlessLayoutGuidesIndexRoute
   '/product-reviews': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides': typeof DashboardGuidesIndexRoute
   '/dashboard/manage': typeof DashboardManageIndexRoute
-  '/dashboard/process-images': typeof DashboardProcessImagesIndexRoute
+  '/dashboard/media': typeof DashboardMediaIndexRoute
   '/dashboard/settings': typeof DashboardSettingsIndexRoute
   '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/calculators/solar-system': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
   '/guides/$category': typeof PathlessLayoutGuidesCategoryIndexRoute
-  '/dashboard/manage/images': typeof DashboardManageImagesIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -383,19 +400,20 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/blogs/$id': typeof PathlessLayoutBlogsIdRoute
   '/product-reviews/$reviewId': typeof PathlessLayoutProductReviewsReviewIdRoute
+  '/dashboard/media/image-library': typeof DashboardMediaImageLibraryRoute
+  '/dashboard/media/process-images': typeof DashboardMediaProcessImagesRoute
   '/blogs': typeof PathlessLayoutBlogsIndexRoute
   '/calculators': typeof PathlessLayoutCalculatorsIndexRoute
   '/guides': typeof PathlessLayoutGuidesIndexRoute
   '/product-reviews': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides': typeof DashboardGuidesIndexRoute
   '/dashboard/manage': typeof DashboardManageIndexRoute
-  '/dashboard/process-images': typeof DashboardProcessImagesIndexRoute
+  '/dashboard/media': typeof DashboardMediaIndexRoute
   '/dashboard/settings': typeof DashboardSettingsIndexRoute
   '/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/calculators/home-load': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/calculators/solar-system': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
   '/guides/$category': typeof PathlessLayoutGuidesCategoryIndexRoute
-  '/dashboard/manage/images': typeof DashboardManageImagesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -406,19 +424,20 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/_pathlessLayout/blogs/$id': typeof PathlessLayoutBlogsIdRoute
   '/_pathlessLayout/product-reviews/$reviewId': typeof PathlessLayoutProductReviewsReviewIdRoute
+  '/dashboard/media/image-library': typeof DashboardMediaImageLibraryRoute
+  '/dashboard/media/process-images': typeof DashboardMediaProcessImagesRoute
   '/_pathlessLayout/blogs/': typeof PathlessLayoutBlogsIndexRoute
   '/_pathlessLayout/calculators/': typeof PathlessLayoutCalculatorsIndexRoute
   '/_pathlessLayout/guides/': typeof PathlessLayoutGuidesIndexRoute
   '/_pathlessLayout/product-reviews/': typeof PathlessLayoutProductReviewsIndexRoute
   '/dashboard/guides/': typeof DashboardGuidesIndexRoute
   '/dashboard/manage/': typeof DashboardManageIndexRoute
-  '/dashboard/process-images/': typeof DashboardProcessImagesIndexRoute
+  '/dashboard/media/': typeof DashboardMediaIndexRoute
   '/dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_pathlessLayout/guides/$category/$slug': typeof PathlessLayoutGuidesCategorySlugRoute
   '/_pathlessLayout/calculators/home-load/': typeof PathlessLayoutCalculatorsHomeLoadIndexRoute
   '/_pathlessLayout/calculators/solar-system/': typeof PathlessLayoutCalculatorsSolarSystemIndexRoute
   '/_pathlessLayout/guides/$category/': typeof PathlessLayoutGuidesCategoryIndexRoute
-  '/dashboard/manage/images/': typeof DashboardManageImagesIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -430,38 +449,40 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/blogs/$id'
     | '/product-reviews/$reviewId'
+    | '/dashboard/media/image-library'
+    | '/dashboard/media/process-images'
     | '/blogs'
     | '/calculators'
     | '/guides'
     | '/product-reviews'
     | '/dashboard/guides'
     | '/dashboard/manage'
-    | '/dashboard/process-images'
+    | '/dashboard/media'
     | '/dashboard/settings'
     | '/guides/$category/$slug'
     | '/calculators/home-load'
     | '/calculators/solar-system'
     | '/guides/$category'
-    | '/dashboard/manage/images'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/dashboard'
     | '/blogs/$id'
     | '/product-reviews/$reviewId'
+    | '/dashboard/media/image-library'
+    | '/dashboard/media/process-images'
     | '/blogs'
     | '/calculators'
     | '/guides'
     | '/product-reviews'
     | '/dashboard/guides'
     | '/dashboard/manage'
-    | '/dashboard/process-images'
+    | '/dashboard/media'
     | '/dashboard/settings'
     | '/guides/$category/$slug'
     | '/calculators/home-load'
     | '/calculators/solar-system'
     | '/guides/$category'
-    | '/dashboard/manage/images'
   id:
     | '__root__'
     | '/_pathlessLayout'
@@ -470,19 +491,20 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/_pathlessLayout/blogs/$id'
     | '/_pathlessLayout/product-reviews/$reviewId'
+    | '/dashboard/media/image-library'
+    | '/dashboard/media/process-images'
     | '/_pathlessLayout/blogs/'
     | '/_pathlessLayout/calculators/'
     | '/_pathlessLayout/guides/'
     | '/_pathlessLayout/product-reviews/'
     | '/dashboard/guides/'
     | '/dashboard/manage/'
-    | '/dashboard/process-images/'
+    | '/dashboard/media/'
     | '/dashboard/settings/'
     | '/_pathlessLayout/guides/$category/$slug'
     | '/_pathlessLayout/calculators/home-load/'
     | '/_pathlessLayout/calculators/solar-system/'
     | '/_pathlessLayout/guides/$category/'
-    | '/dashboard/manage/images/'
   fileRoutesById: FileRoutesById
 }
 
@@ -530,11 +552,12 @@ export const routeTree = rootRoute
       "filePath": "dashboard/route.tsx",
       "children": [
         "/dashboard/",
+        "/dashboard/media/image-library",
+        "/dashboard/media/process-images",
         "/dashboard/guides/",
         "/dashboard/manage/",
-        "/dashboard/process-images/",
-        "/dashboard/settings/",
-        "/dashboard/manage/images/"
+        "/dashboard/media/",
+        "/dashboard/settings/"
       ]
     },
     "/_pathlessLayout/": {
@@ -552,6 +575,14 @@ export const routeTree = rootRoute
     "/_pathlessLayout/product-reviews/$reviewId": {
       "filePath": "_pathlessLayout/product-reviews/$reviewId.tsx",
       "parent": "/_pathlessLayout"
+    },
+    "/dashboard/media/image-library": {
+      "filePath": "dashboard/media/image-library.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/media/process-images": {
+      "filePath": "dashboard/media/process-images.tsx",
+      "parent": "/dashboard"
     },
     "/_pathlessLayout/blogs/": {
       "filePath": "_pathlessLayout/blogs/index.tsx",
@@ -577,8 +608,8 @@ export const routeTree = rootRoute
       "filePath": "dashboard/manage/index.tsx",
       "parent": "/dashboard"
     },
-    "/dashboard/process-images/": {
-      "filePath": "dashboard/process-images/index.tsx",
+    "/dashboard/media/": {
+      "filePath": "dashboard/media/index.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/settings/": {
@@ -600,10 +631,6 @@ export const routeTree = rootRoute
     "/_pathlessLayout/guides/$category/": {
       "filePath": "_pathlessLayout/guides/$category/index.tsx",
       "parent": "/_pathlessLayout"
-    },
-    "/dashboard/manage/images/": {
-      "filePath": "dashboard/manage/images/index.tsx",
-      "parent": "/dashboard"
     }
   }
 }

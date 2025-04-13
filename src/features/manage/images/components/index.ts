@@ -6,3 +6,5 @@ export * from './S3ConfigDialog';
 export * from './UploadTab';
 export * from './ImageGrid';
 export * from './ImageDetailModal'; 
+export * from './ImageLibrary';
+export * from './ProcessImagesPage';

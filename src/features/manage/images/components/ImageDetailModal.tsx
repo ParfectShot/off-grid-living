@@ -11,10 +11,9 @@ import { Button } from '~/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import { Separator } from '~/components/ui/separator';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { Card, CardContent } from '~/components/ui/card';
-import { Copy, Trash2, Link, ExternalLink } from 'lucide-react';
+import { Copy, Trash2, Link as LinkIcon, ExternalLink, Save, Star, StarOff } from 'lucide-react';
 import { AspectRatio } from '~/components/ui/aspect-ratio';
 import { 
   AlertDialog,
@@ -26,7 +25,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '~/components/ui/alert-dialog';
-import { Doc } from '~/convex/_generated/dataModel';
+import { Doc, Id } from '~/convex/_generated/dataModel';
+import { useMutation, useQuery } from 'convex/react';
+import { api } from '~/convex/_generated/api';
+import { toast } from 'sonner';
 
 interface ImageDetailModalProps {
   image: Doc<"images"> | null;
@@ -45,11 +47,51 @@ export function ImageDetailModal({
 }: ImageDetailModalProps) {
   const [activeTab, setActiveTab] = useState('details');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
+  // Credit form state
+  const [creditForm, setCreditForm] = useState({
+    authorName: '',
+    authorUrl: '',
+    sourceName: '',
+    sourceUrl: '',
+  });
+
+  // Get linked entities
+  const linkedEntities = useQuery(
+    api.imageToEntity.getEntitiesByImage,
+    image ? { imageId: image._id } : "skip"
+  );
+
+  // Mutations
+  const updateCredits = useMutation(api.images.updateImageCredits);
+  const updateImageLink = useMutation(api.imageToEntity.updateImageLink);
+  const unlinkImage = useMutation(api.imageToEntity.unlinkImageFromEntity);
+  
+  // Initialize form when image changes
+  React.useEffect(() => {
+    if (image && image.credit) {
+      setCreditForm({
+        authorName: image.credit.authorName || '',
+        authorUrl: image.credit.authorUrl || '',
+        sourceName: image.credit.sourceName || '',
+        sourceUrl: image.credit.sourceUrl || '',
+      });
+    } else {
+      setCreditForm({
+        authorName: '',
+        authorUrl: '',
+        sourceName: '',
+        sourceUrl: '',
+      });
+    }
+  }, [image]);
+
   if (!image) return null;
   
   const handleCopyUrl = (url: string) => {
     navigator.clipboard.writeText(url);
+    toast.success('URL copied to clipboard');
   };
   
   const handleDelete = async () => {
@@ -58,13 +100,66 @@ export function ImageDetailModal({
       onClose();
     }
   };
+
+  const handleCreditChange = (field: keyof typeof creditForm) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCreditForm((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
+  };
+
+  const handleSaveCredits = async () => {
+    try {
+      setIsSaving(true);
+      await updateCredits({
+        imageId: image._id,
+        credit: {
+          authorName: creditForm.authorName,
+          authorUrl: creditForm.authorUrl || undefined,
+          sourceName: creditForm.sourceName,
+          sourceUrl: creditForm.sourceUrl || undefined,
+        },
+      });
+      toast.success('Image credits updated successfully');
+    } catch (error) {
+      toast.error('Failed to update image credits');
+      console.error('Error updating credits:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleTogglePrimary = async (linkId: Id<"imageToEntity">, isPrimary: boolean) => {
+    try {
+      await updateImageLink({
+        linkId,
+        isPrimary: !isPrimary,
+      });
+      toast.success('Image link updated successfully');
+    } catch (error) {
+      toast.error('Failed to update image link');
+      console.error('Error updating link:', error);
+    }
+  };
+
+  const handleUnlink = async (linkId: Id<"imageToEntity">, entityType: string) => {
+    try {
+      await unlinkImage({ linkId });
+      toast.success(`Image unlinked from ${entityType}`);
+    } catch (error) {
+      toast.error('Failed to unlink image');
+      console.error('Error unlinking:', error);
+    }
+  };
   
   const variants = image.srcset || [];
   
   return (
     <>
       <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+        <DialogContent className="max-w-11/12 md:max-w-11/12 max-h-10/12 overflow-auto">
           <DialogHeader>
             <DialogTitle>Image Details</DialogTitle>
             <DialogDescription>
@@ -73,7 +168,7 @@ export function ImageDetailModal({
           </DialogHeader>
           
           <div className="flex flex-col md:flex-row gap-4 mt-4 h-full">
-            <div className="w-full md:w-1/2">
+            <div className="w-full md:w-1/4">
               <AspectRatio ratio={1}>
                 <img 
                   src={image.originalUrl} 
@@ -111,89 +206,109 @@ export function ImageDetailModal({
                   Delete
                 </Button>
               </div>
+
+              <div className="mt-6">
+                <h3 className="text-sm font-medium mb-2">Linked To</h3>
+                {linkedEntities && linkedEntities.length > 0 ? (
+                  <div className="space-y-2">
+                    {linkedEntities.map((link) => (
+                      <div 
+                        key={link._id} 
+                        className="flex items-center justify-between p-2 bg-muted rounded-md"
+                      >
+                        <div className="flex items-center gap-2">
+                          <LinkIcon className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm">
+                            {link.entityType}: {link.entityId}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleTogglePrimary(link._id, link.isPrimary)}
+                            title={link.isPrimary ? "Remove as primary" : "Set as primary"}
+                          >
+                            {link.isPrimary ? (
+                              <Star className="w-4 h-4 text-yellow-500" />
+                            ) : (
+                              <StarOff className="w-4 h-4" />
+                            )}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleUnlink(link._id, link.entityType)}
+                            title="Unlink"
+                          >
+                            <Trash2 className="w-4 h-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Not linked to any entities
+                  </p>
+                )}
+              </div>
             </div>
             
-            <div className="w-full md:w-1/2">
+            <div className="w-full md:w-3/4">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="w-full">
                   <TabsTrigger value="details">Details</TabsTrigger>
                   <TabsTrigger value="variants">
                     Variants ({variants.length})
                   </TabsTrigger>
+                  <TabsTrigger value="credits">Credits</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="details" className="h-[calc(100%-40px)]">
                   <ScrollArea className="h-[300px] mt-2">
-                    <div className="grid gap-4">
-                      <div>
+                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                      <div className='grid w-full items-center gap-1.5'>
                         <Label htmlFor="originalName">File Name</Label>
-                        <Input id="originalName" value={image.originalName} readOnly />
+                        <Input id="originalName" disabled value={image.originalName} readOnly />
                       </div>
                       
-                      <div>
+                      <div className='grid w-full items-center gap-1.5'>
                         <Label htmlFor="uploadDate">Upload Date</Label>
-                        <Input id="uploadDate" value={image.uploadDate ? new Date(image.uploadDate).toLocaleString() : 'N/A'} readOnly />
+                        <Input id="uploadDate" disabled value={image.uploadDate ? new Date(image.uploadDate).toLocaleString() : 'N/A'} readOnly />
                       </div>
                       
-                      <div>
+                      <div className='grid w-full items-center gap-1.5'>
                         <Label htmlFor="fileSize">File Size</Label>
-                        <Input id="fileSize" value={`${(image.originalSize / 1024 / 1024).toFixed(2)} MB`} readOnly />
+                        <Input id="fileSize" disabled value={`${(image.originalSize / 1024 / 1024).toFixed(2)} MB`} readOnly />
                       </div>
                       
-                      <div>
+                      <div className='grid w-full items-center gap-1.5'>
                         <Label htmlFor="processedSize">Processed Size</Label>
-                        <Input id="processedSize" value={`${(image.processedSize / 1024 / 1024).toFixed(2)} MB`} readOnly />
+                        <Input id="processedSize" disabled value={`${(image.processedSize / 1024 / 1024).toFixed(2)} MB`} readOnly />
                       </div>
                       
-                      <div>
+                      <div className='grid w-full items-center gap-1.5'>
                         <Label htmlFor="contentType">Content Type</Label>
-                        <Input id="contentType" value={image.contentType} readOnly />
+                        <Input id="contentType" disabled value={image.contentType} readOnly />
                       </div>
                       
-                      <div>
+                      <div className='grid w-full items-center gap-1.5'>
                         <Label htmlFor="alt">Alt Text</Label>
-                        <Input id="alt" value={image.alt || ''} readOnly />
+                        <Input id="alt" disabled value={image.alt || ''} readOnly />
                       </div>
-                      
-                      {image.entityType && image.entityId && (
-                        <div>
-                          <Label htmlFor="entity">Linked To</Label>
-                          <div className="flex items-center mt-1">
-                            <Link className="w-4 h-4 mr-2" />
-                            <span>
-                              {image.entityType}: {image.entityId}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {image.credit && (
-                        <div>
-                          <Label className="block mb-1">Image Credits</Label>
-                          <div className="text-sm">
-                            <p>Author: {image.credit.authorName}</p>
-                            {image.credit.authorUrl && (
-                              <p>Author URL: {image.credit.authorUrl}</p>
-                            )}
-                            <p>Source: {image.credit.sourceName}</p>
-                            {image.credit.sourceUrl && (
-                              <p>Source URL: {image.credit.sourceUrl}</p>
-                            )}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </ScrollArea>
                 </TabsContent>
                 
-                <TabsContent value="variants" className="h-[calc(100%-40px)]">
+                <TabsContent value="variants">
                   {variants.length === 0 ? (
                     <div className="py-8 text-center">
                       <p className="text-gray-500">No image variants available</p>
                     </div>
                   ) : (
                     <ScrollArea className="h-[300px] mt-2">
-                      <div className="grid gap-4">
+                      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                         {variants.map((variant, index) => (
                           <Card key={index}>
                             <CardContent className="p-4">
@@ -221,6 +336,61 @@ export function ImageDetailModal({
                       </div>
                     </ScrollArea>
                   )}
+                </TabsContent>
+
+                <TabsContent value="credits">
+                  <ScrollArea className="h-[300px] mt-2">
+                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                      <div className='grid w-full items-center gap-1.5'>
+                        <Label htmlFor="authorName">Author Name*</Label>
+                        <Input 
+                          id="authorName" 
+                          placeholder='Enter author name' 
+                          value={creditForm.authorName}
+                          onChange={handleCreditChange('authorName')}
+                        />
+                      </div>
+                      <div className='grid w-full items-center gap-1.5'>
+                        <Label htmlFor="authorUrl">Author URL</Label>
+                        <Input 
+                          id="authorUrl" 
+                          placeholder='Enter author URL' 
+                          value={creditForm.authorUrl}
+                          onChange={handleCreditChange('authorUrl')}
+                        />
+                      </div>
+                      <div className='grid w-full items-center gap-1.5'>
+                        <Label htmlFor="sourceName">Source Name*</Label>
+                        <Input 
+                          id="sourceName" 
+                          placeholder='Enter source name' 
+                          value={creditForm.sourceName}
+                          onChange={handleCreditChange('sourceName')}
+                        />
+                      </div>
+                      <div className='grid w-full items-center gap-1.5'>
+                        <Label htmlFor="sourceUrl">Source URL</Label>
+                        <Input 
+                          id="sourceUrl" 
+                          placeholder='Enter source URL' 
+                          value={creditForm.sourceUrl}
+                          onChange={handleCreditChange('sourceUrl')}
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-4 flex justify-end">
+                      <Button 
+                        onClick={handleSaveCredits}
+                        disabled={isSaving || !creditForm.authorName || !creditForm.sourceName}
+                      >
+                        <Save className="w-4 h-4 mr-2" />
+                        {isSaving ? 'Saving...' : 'Save Credits'}
+                      </Button>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-4">
+                      * Required fields
+                    </p>
+                  </ScrollArea>
                 </TabsContent>
               </Tabs>
             </div>

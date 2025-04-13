@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
 import { Search } from 'lucide-react';
 import { ProcessedImage, S3Image } from '~/types/s3-types';
@@ -13,13 +13,9 @@ import {
 import { useImageProcessing, useConvexImageStore, useS3Management } from '~/features/manage/images/';
 import { Id } from 'convex/_generated/dataModel';
 
-export const Route = createFileRoute('/dashboard/process-images/')({
-  component: ImagesPage,
-});
-
-function ImagesPage() {
-  const search = useSearch({ from: '/dashboard/process-images/' });
-  const navigate = useNavigate({ from: '/dashboard/process-images/' });
+export function ProcessImagesPage() {
+  const search = useSearch({ from: '/dashboard/media/process-images' });
+  const navigate = useNavigate({ from: '/dashboard/media/process-images' });
   const [activeTab, setActiveTab] = useState(search.tab || "upload");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
@@ -118,35 +114,62 @@ function ImagesPage() {
     const result = await s3.uploadProcessedImages(imagesReadyForUpload);
 
     if (result.success && result.uploadedImageIds.length > 0 && result.s3UrlUpdates) {
-      result.uploadedImageIds.forEach((id: string) => {
-        const updateInfo = result.s3UrlUpdates!.get(id);
+      // Prepare the updated images with their S3 URLs before any state updates
+      const updatedImages = imagesReadyForUpload.map(img => {
+        const updateInfo = result.s3UrlUpdates!.get(img.id);
         if (updateInfo) {
-          updateProcessedImageS3Urls(id, updateInfo.originalS3Url, updateInfo.variantS3Urls);
+          return {
+            ...img,
+            s3Url: updateInfo.originalS3Url,
+            srcset: img.srcset.map(variant => {
+              const variantUrl = updateInfo.variantS3Urls.get(variant.width);
+              return variantUrl ? { ...variant, s3Url: variantUrl } : variant;
+            })
+          };
+        }
+        return img;
+      }).filter(img => img.s3Url); // Only keep images that got S3 URLs
+
+      // Update local state
+      updatedImages.forEach(img => {
+        const updateInfo = result.s3UrlUpdates!.get(img.id);
+        if (updateInfo) {
+          updateProcessedImageS3Urls(img.id, updateInfo.originalS3Url, updateInfo.variantS3Urls);
         }
       });
 
-      setTimeout(() => {
-        const imagesToStore = processedImages.filter((img: ProcessedImage) => result.uploadedImageIds.includes(img.id));
-        console.log(`Found ${imagesToStore.length} images to store metadata for in Convex.`);
-        imagesToStore.forEach((imageToStore: ProcessedImage) => {
-          if (imageToStore.s3Url) {
-            storeImageMetadata(imageToStore)
-              .then((convexId: Id<"images"> | null) => {
-                if (convexId) {
-                  console.log(`Successfully stored metadata for ${imageToStore.originalName} (ID: ${convexId})`);
-                } else {
-                  console.error(`Failed to store metadata for ${imageToStore.originalName} after successful S3 upload.`);
-                }
-              })
-              .catch((err: unknown) => {
-                console.error(`Unhandled exception storing metadata for ${imageToStore.originalName}:`, err);
-              });
-          } else {
-            console.warn(`Skipping Convex storage for ${imageToStore.originalName} - S3 URL missing after update.`);
+      // Store in Convex using the prepared updated images
+      console.log(`Storing metadata for ${updatedImages.length} images in Convex...`);
+      
+      const storeResults = await Promise.allSettled(
+        updatedImages.map(async (imageToStore) => {
+          try {
+            const convexId = await storeImageMetadata(imageToStore);
+            if (convexId) {
+              console.log(`✓ Stored metadata for ${imageToStore.originalName} (ID: ${convexId})`);
+              return { success: true, imageId: imageToStore.id, convexId };
+            } else {
+              console.error(`✗ Failed to store metadata for ${imageToStore.originalName}`);
+              return { success: false, imageId: imageToStore.id, error: 'Failed to get Convex ID' };
+            }
+          } catch (err) {
+            console.error(`✗ Error storing metadata for ${imageToStore.originalName}:`, err);
+            return { 
+              success: false, 
+              imageId: imageToStore.id, 
+              error: err instanceof Error ? err.message : 'Unknown error'
+            };
           }
-        });
-      }, 0);
+        })
+      );
 
+      // Log summary of Convex storage results
+      const successCount = storeResults.filter(
+        r => r.status === 'fulfilled' && (r.value as any).success
+      ).length;
+      console.log(`Successfully stored ${successCount} of ${updatedImages.length} images in Convex`);
+
+      // Navigate to S3 browser and refresh the list
       setActiveTab("s3");
       s3.loadBrowserList(s3.s3Bucket, s3.browserCurrentPrefix, s3.s3Region);
 

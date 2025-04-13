@@ -1,16 +1,17 @@
 import React from 'react';
 import { Image } from 'lucide-react';
 import { Card, CardContent } from '~/components/ui/card';
-import { Doc } from '~/convex/_generated/dataModel';
+import { Doc, Id } from '~/convex/_generated/dataModel';
 import { AspectRatio } from '~/components/ui/aspect-ratio';
 
 interface ImageGridProps {
   images: Doc<"images">[] | undefined;
   onSelectImage: (image: Doc<"images">) => void;
   isLoading?: boolean;
+  selectedImageId?: Id<"images"> | null;
 }
 
-export function ImageGrid({ images, onSelectImage, isLoading = false }: ImageGridProps) {
+export function ImageGrid({ images, onSelectImage, isLoading = false, selectedImageId }: ImageGridProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -42,7 +43,11 @@ export function ImageGrid({ images, onSelectImage, isLoading = false }: ImageGri
       {images.map((image) => (
         <Card 
           key={image._id} 
-          className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all duration-200"
+          className={`overflow-hidden cursor-pointer transition-all duration-200 ${
+            selectedImageId === image._id 
+              ? 'ring-2 ring-primary bg-primary/5' 
+              : 'hover:ring-2 hover:ring-primary/50'
+          }`}
           onClick={() => onSelectImage(image)}
         >
           <CardContent className="p-2">

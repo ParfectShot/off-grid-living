@@ -5,9 +5,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "~/components/u
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { Copy, Eye, Link, Trash2 } from "lucide-react";
+import { Copy, Eye, Link, Trash2, Check, Import } from "lucide-react";
 import { toast } from "sonner";
 import { S3Image } from "../types";
+import { useMutation } from "convex/react";
+import { api } from "~/convex/_generated/api";
 
 interface S3ImagesProps {
   images: S3Image[];
@@ -19,6 +21,13 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+  const [originalImageId, setOriginalImageId] = useState<string | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+
+  // Convex mutations
+  const storeImage = useMutation(api.images.storeImage);
 
   const handlePreview = (image: S3Image) => {
     setPreviewImage(image);
@@ -59,6 +68,74 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
     }
   };
 
+  const toggleImageSelection = (imageId: string) => {
+    const newSelection = new Set(selectedImages);
+    if (newSelection.has(imageId)) {
+      newSelection.delete(imageId);
+    } else {
+      newSelection.add(imageId);
+    }
+    setSelectedImages(newSelection);
+  };
+
+  const handleImportToConvex = async () => {
+    if (!originalImageId) {
+      toast.error('Please select an original image');
+      return;
+    }
+
+    setIsImporting(true);
+    const selectedImagesList = images.filter(img => selectedImages.has(img.id));
+    const originalImage = selectedImagesList.find(img => img.id === originalImageId);
+    const variantImages = selectedImagesList.filter(img => img.id !== originalImageId);
+    
+    if (!originalImage) {
+      toast.error('Original image not found in selection');
+      setIsImporting(false);
+      return;
+    }
+
+    // Helper function to extract width from URL
+    const getWidthFromUrl = (url: string): number | null => {
+      const match = url.match(/-(\d+)\.[^.]+$/);
+      return match ? parseInt(match[1], 10) : null;
+    };
+    
+    try {
+      // Create a single image entry with variants
+      await storeImage({
+        originalName: originalImage.originalName,
+        originalSize: originalImage.originalSize,
+        processedSize: originalImage.originalSize,
+        originalUrl: originalImage.originalUrl,
+        srcset: variantImages.map(variant => {
+          const width = getWidthFromUrl(variant.originalUrl);
+          if (!width) {
+            console.warn(`Could not extract width from URL: ${variant.originalUrl}`);
+            return null;
+          }
+          return {
+            url: variant.originalUrl,
+            width,
+          };
+        }).filter((v): v is { url: string; width: number } => v !== null),
+        contentType: `image/${originalImage.originalName.split('.').pop() || 'jpeg'}`,
+        fileExtension: originalImage.originalName.split('.').pop() || 'jpg',
+        alt: originalImage.originalName.split('.')[0],
+      });
+      
+      toast.success('Successfully imported image with variants');
+      setSelectedImages(new Set());
+      setOriginalImageId(null);
+      setShowImportDialog(false);
+    } catch (error) {
+      console.error('Error importing images:', error);
+      toast.error('Failed to import image');
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   // Helper functions
   const formatBytes = (bytes: number, decimals = 2) => {
     if (bytes === 0) return "0 Bytes";
@@ -77,7 +154,21 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h3 className="font-medium">S3 Uploaded Images ({images.length})</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="font-medium">S3 Uploaded Images ({images.length})</h3>
+          {selectedImages.size > 0 && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => setShowImportDialog(true)}
+              disabled={isImporting}
+              className="flex items-center gap-2"
+            >
+              <Import className="h-4 w-4" />
+              {isImporting ? 'Importing...' : `Import ${selectedImages.size} Images`}
+            </Button>
+          )}
+        </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <Input
             placeholder="Search images..."
@@ -113,7 +204,7 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredImages.map((image) => (
-            <Card key={image.id} className="overflow-hidden">
+            <Card key={image.id} className={`overflow-hidden ${selectedImages.has(image.id) ? 'ring-2 ring-primary' : ''}`}>
               <div className="relative aspect-square">
                 <img
                   src={image.originalUrl}
@@ -137,6 +228,19 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
                   >
                     <Copy className="h-4 w-4 mr-1" />
                     Copy
+                  </Button>
+                </div>
+                <div className="absolute top-2 right-2">
+                  <Button
+                    variant={selectedImages.has(image.id) ? "default" : "secondary"}
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleImageSelection(image.id);
+                    }}
+                  >
+                    <Check className={`h-4 w-4 ${selectedImages.has(image.id) ? 'opacity-100' : 'opacity-50'}`} />
                   </Button>
                 </div>
               </div>
@@ -333,6 +437,57 @@ export function S3Images({ images, onDeleteImage }: S3ImagesProps) {
             </div>
           </DialogContent>
         )}
+      </Dialog>
+
+      {/* Import Dialog */}
+      <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Import Images</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Select Original Image</Label>
+              <p className="text-sm text-muted-foreground mb-4">
+                Choose which image will be the original. Other selected images will become its variants.
+              </p>
+              <div className="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto">
+                {Array.from(selectedImages).map(imageId => {
+                  const image = images.find(img => img.id === imageId);
+                  if (!image) return null;
+                  
+                  return (
+                    <div 
+                      key={imageId}
+                      className={`relative border rounded-lg p-2 cursor-pointer ${
+                        originalImageId === imageId ? 'border-primary ring-2 ring-primary' : ''
+                      }`}
+                      onClick={() => setOriginalImageId(imageId)}
+                    >
+                      <img
+                        src={image.originalUrl}
+                        alt={image.originalName}
+                        className="w-full h-32 object-cover rounded"
+                      />
+                      <p className="text-sm mt-2 truncate">{image.originalName}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowImportDialog(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleImportToConvex}
+                disabled={!originalImageId || isImporting}
+              >
+                {isImporting ? 'Importing...' : 'Import Images'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
       </Dialog>
     </div>
   );

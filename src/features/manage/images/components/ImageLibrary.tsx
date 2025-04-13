@@ -1,29 +1,17 @@
-import React, { useState } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
-import { 
-  ImageGrid, 
-  ImageDetailModal 
-} from '~/features/manage/images/components';
-import { useImages } from '~/features/manage/images/hooks';
-import { Doc } from '~/convex/_generated/dataModel';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '~/components/ui/card';
-import { Input } from '~/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { Separator } from '~/components/ui/separator';
-import { Button } from '~/components/ui/button';
-import { Search, RefreshCw } from 'lucide-react';
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Search, RefreshCw } from "lucide-react";
+import React, { useState } from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "~/components/ui/tabs";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "~/components/ui/card";
+import { Doc, Id } from "~/convex/_generated/dataModel";
+import { useImages } from "../hooks";
+import { ImageDetailModal } from "./ImageDetailModal";
+import { ImageGrid } from "./ImageGrid";
+import { Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/dashboard/manage/images/')({
-  component: ManageImagesPage,
-});
-
-function ManageImagesPage() {
+export function ImageLibrary() {
   const { images, deleteImage, isDeleting, deleteError } = useImages();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedImage, setSelectedImage] = useState<Doc<"images"> | null>(null);
@@ -67,7 +55,7 @@ function ManageImagesPage() {
   
   // Handle image deletion
   const handleDeleteImage = async (imageId: string) => {
-    return await deleteImage(imageId);
+    return await deleteImage(imageId as Id<"images">);
   };
   
   return (
@@ -77,10 +65,12 @@ function ManageImagesPage() {
           <h1 className="text-3xl font-bold">Image Library</h1>
           <p className="text-gray-500 mt-1">Manage all images used across the site</p>
         </div>
-        
-        <Button variant="default" onClick={() => window.location.href = '/dashboard/process-images'}>
-          Process New Images
-        </Button>
+
+        <Link to="/dashboard/media/process-images">
+          <Button variant="default">
+            Process New Images
+          </Button>
+        </Link>
       </div>
       
       <Separator />
