@@ -23,9 +23,9 @@ export type ProcessedImage = {
 
 // S3 Configuration
 const s3Client = new S3Client({
-  region: import.meta.env.VITE_AWS_REGION || 'us-east-1',
+  region: import.meta.env.VITE_AWS_REGION || 'ap-south-1',
   credentials: {
-    accessKeyId: import.meta.env.AWS_ACCESS_KEY_ID || '',
+    accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID || '',
     secretAccessKey: import.meta.env.AWS_SECRET_ACCESS_KEY || '',
   },
 });
