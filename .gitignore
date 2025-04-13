@@ -5,6 +5,8 @@ yarn.lock
 .DS_Store
 .cache
 .env
+.env.local
+.env.*.local
 .vercel
 .output
 .vinxi
@@ -21,7 +23,6 @@ yarn.lock
 /blob-report/
 /playwright/.cache/
 
-.env.local
 bun.lock
 
 .cursor
